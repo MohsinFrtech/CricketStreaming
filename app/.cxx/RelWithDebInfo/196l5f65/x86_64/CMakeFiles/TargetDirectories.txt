@@ -1,0 +1,3 @@
+/Users/macbookpro/Documents/new-live-cricket-scores-updates/app/.cxx/RelWithDebInfo/196l5f65/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/macbookpro/Documents/new-live-cricket-scores-updates/app/.cxx/RelWithDebInfo/196l5f65/x86_64/CMakeFiles/edit_cache.dir
+/Users/macbookpro/Documents/new-live-cricket-scores-updates/app/.cxx/RelWithDebInfo/196l5f65/x86_64/CMakeFiles/cricket.dir

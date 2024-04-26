@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.dream.live.cricket.score.hd.scores.viewmodel.MatchesCategoryViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:background="@color/background"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/noChange"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_title_match"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/raleway_medium"
+                android:maxLines="2"
+                android:text="@string/team_name"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_search"
+                app:layout_constraintStart_toEndOf="@+id/iv_back_arrow"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_back_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+                tools:ignore="VectorDrawableCompat" />
+
+            <ImageView
+                android:id="@+id/iv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_search"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/rotateloadingMatches"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/home_loading" />
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabsMatches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:background="@drawable/gradient_back"
+            app:tabTextAppearance="@style/tab_text"
+            app:tabIndicatorColor="#0085FF"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager_matches"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabsMatches" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

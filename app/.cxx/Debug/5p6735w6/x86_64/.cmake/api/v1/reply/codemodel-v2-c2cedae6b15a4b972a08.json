@@ -1,0 +1,59 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.6.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "cricket",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "cricket::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cricket-Debug-ba66b0704c5cf7ea3d78.json",
+					"name" : "cricket",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "F:/BitbucketDownloadedProjects/AliBhiProjects/AliCricketStreamingNewAppStartedInMay/app/.cxx/Debug/5p6735w6/x86_64",
+		"source" : "F:/BitbucketDownloadedProjects/AliBhiProjects/AliCricketStreamingNewAppStartedInMay/app/src/main/cpp"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 1
+	}
+}

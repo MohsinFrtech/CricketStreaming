@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.dream.live.cricket.score.hd.scores.viewmodel.LiveViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_black"
+        tools:context=".fragments.HomeFragment">
+
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
+        <ScrollView
+            android:id="@+id/homeScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:animateLayoutChanges="false"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+                    android:id="@+id/view_dots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@id/recyclerview_Events"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerview_slider"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:spi_dotColor="#737373"
+                    app:spi_dotSelectedColor="@color/colorAccent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview_Events"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/view_dots" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:progressTint="@color/colorPrimaryDark"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

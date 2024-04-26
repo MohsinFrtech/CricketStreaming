@@ -1,0 +1,3 @@
+/Users/abc/Documents/CricketStreaming/app/.cxx/Debug/64p3u3g4/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/Users/abc/Documents/CricketStreaming/app/.cxx/Debug/64p3u3g4/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/abc/Documents/CricketStreaming/app/.cxx/Debug/64p3u3g4/arm64-v8a/CMakeFiles/cricket.dir

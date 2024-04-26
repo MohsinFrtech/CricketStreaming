@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view_layout="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.dream.live.cricket.score.hd.scores.model.SeriesScoresModel" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layout_slider"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/grey"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="8sp"
+        app:cardPreventCornerOverlap="false"
+        app:strokeColor="@color/white"
+        app:strokeWidth="0.3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
+
+
+
+            <TextView
+                android:id="@+id/tv_first_team"
+                android:layout_width="0sp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:layout_constraintEnd_toStartOf="@+id/tv_match_status"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="start"
+                android:textColor="@color/moreTextColor"
+                android:textSize="12sp"
+                android:textStyle="bold"
+
+                 />
+
+            <TextView
+                android:id="@+id/tv_series"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center"
+                android:text='@{model.series_name}'
+                android:textColor="@color/moreTextColor"
+                android:textSize="14sp"
+                card_view_layout:layout_constraintBottom_toBottomOf="parent"
+                card_view_layout:layout_constraintEnd_toEndOf="parent"
+                card_view_layout:layout_constraintStart_toStartOf="parent"
+                card_view_layout:layout_constraintTop_toTopOf="parent"
+                card_view_layout:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/moreTextColor"
+                android:textSize="12sp"
+                card_view_layout:layout_constraintBottom_toBottomOf="parent"
+                card_view_layout:layout_constraintEnd_toEndOf="parent"
+                card_view_layout:layout_constraintStart_toStartOf="parent"
+                card_view_layout:layout_constraintTop_toBottomOf="@+id/tv_series"
+                card_view_layout:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/tv_match_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@color/colormatchResult"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="@{model.state}"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/iv_background"
+                app:layout_constraintStart_toStartOf="@+id/iv_background"
+                app:layout_constraintTop_toBottomOf="@+id/tv_time" />
+
+            <ImageView
+                android:id="@+id/iv_background"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:visibility="gone"
+                android:contentDescription="@string/vs"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_match_status"
+                app:layout_constraintVertical_bias="0.032"
+                app:srcCompat="@drawable/ic_circle_vs"
+                tools:ignore="VectorDrawableCompat" />
+
+            <TextView
+                android:id="@+id/tv_match_vs"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="VS"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_background"
+                app:layout_constraintEnd_toEndOf="@+id/iv_background"
+                app:layout_constraintStart_toStartOf="@+id/iv_background"
+                app:layout_constraintTop_toTopOf="@+id/iv_background" />
+
+
+
+            <TextView
+                android:id="@+id/tv_second_team"
+                android:layout_width="0sp"
+                android:visibility="visible"
+                android:layout_marginStart="@dimen/_5sdp"
+                app:layout_constraintStart_toEndOf="@+id/tv_match_status"
+                android:text="@string/notification"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="end"
+                android:textColor="@color/moreTextColor"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                />
+
+
+
+
+            >
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</layout>

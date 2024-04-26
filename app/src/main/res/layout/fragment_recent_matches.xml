@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.dream.live.cricket.score.hd.scores.viewmodel.AllMatchesViewModel" />
+    </data>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:onRefreshListener="@{()->viewModel.againLoad()}"
+        app:refreshing="@{viewModel.isLoading()}"
+        android:focusableInTouchMode="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMatches"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp" />
+
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:id="@+id/tv_no_data"
+                android:visibility="gone"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/raleway_medium"
+                android:text="No matches available"
+                android:textColor="@color/detail_tv"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>

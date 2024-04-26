@@ -1,0 +1,38 @@
+{
+  "buildFiles": [
+    "F:\\BitbucketDownloadedProjects\\AliBhiProjects\\AliLive Cricket Scores & UpdatesClone\\cloneLiveCricketScoreAndUpdates\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\FrTech\\AppData\\Local\\Android\\Sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+      "-C",
+      "F:\\BitbucketDownloadedProjects\\AliBhiProjects\\AliLive Cricket Scores & UpdatesClone\\cloneLiveCricketScoreAndUpdates\\app\\.cxx\\Debug\\6h7361l3\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\FrTech\\AppData\\Local\\Android\\Sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+    "-C",
+    "F:\\BitbucketDownloadedProjects\\AliBhiProjects\\AliLive Cricket Scores & UpdatesClone\\cloneLiveCricketScoreAndUpdates\\app\\.cxx\\Debug\\6h7361l3\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "cricket::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "cricket",
+      "output": "F:\\BitbucketDownloadedProjects\\AliBhiProjects\\AliLive Cricket Scores & UpdatesClone\\cloneLiveCricketScoreAndUpdates\\app\\build\\intermediates\\cxx\\Debug\\6h7361l3\\obj\\x86\\libcricket.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "C:\\Users\\FrTech\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\FrTech\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

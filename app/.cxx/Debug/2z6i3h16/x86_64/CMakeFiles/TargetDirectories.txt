@@ -1,0 +1,3 @@
+D:/Live Cricket tv hd/New folder/CricketStreaming/CricketStreaming/app/.cxx/Debug/2z6i3h16/x86_64/CMakeFiles/edit_cache.dir
+D:/Live Cricket tv hd/New folder/CricketStreaming/CricketStreaming/app/.cxx/Debug/2z6i3h16/x86_64/CMakeFiles/cricket.dir
+D:/Live Cricket tv hd/New folder/CricketStreaming/CricketStreaming/app/.cxx/Debug/2z6i3h16/x86_64/CMakeFiles/rebuild_cache.dir

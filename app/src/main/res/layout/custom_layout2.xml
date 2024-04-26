@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="350dp"
+        app:cardBackgroundColor="@android:color/white"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:contentDescription="@string/app_name"
+                android:layout_height="100dp"
+                android:id="@+id/icon_clcik"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/splash_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="@string/app_rating"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold" />
+
+
+
+
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:weightSum="100">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="20dp"
+                    android:id="@+id/yes"
+                    android:layout_weight="50"
+                    android:background="@drawable/new_draw4"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:text="@string/rate"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="30dp"
+                    android:id="@+id/no"
+                    android:layout_weight="50"
+                    android:background="@drawable/new_draw4"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:text="@string/Exit"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

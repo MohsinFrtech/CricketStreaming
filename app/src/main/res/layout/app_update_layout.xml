@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+    </data>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="@dimen/_260sdp"
+        app:cardBackgroundColor="@android:color/white"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/mainTxt"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@android:color/black"
+                android:text="@string/version"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0sp"
+                app:layout_constraintTop_toBottomOf="@+id/mainTxt"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:id="@+id/app_update_txt"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/appUpdate"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_20sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@+id/app_update_txt"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@android:color/white"
+                app:layout_constraintRight_toLeftOf="@+id/update"
+                android:id="@+id/no_thanks"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:text="@string/noThanks"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="@dimen/_10sdp"
+                app:layout_constraintTop_toBottomOf="@+id/app_update_txt"
+                android:textAllCaps="false"
+                app:layout_constraintRight_toRightOf="parent"
+                android:background="@color/colorPrimaryDark"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:id="@+id/update"
+                android:textColor="@android:color/white"
+                android:text="@string/Up"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

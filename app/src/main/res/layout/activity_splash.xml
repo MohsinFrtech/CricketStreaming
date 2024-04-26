@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <data>
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="@dimen/_200sdp"
+            android:id="@+id/lottieAnimLayout"
+            android:layout_height="@dimen/_200sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_margin="10dp"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/splash_no_internet"
+            app:lottie_loop="true"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/lottieAnimLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/noInternetText"
+            android:textSize="@dimen/_16sdp"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/no_internet_string"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/noInternetText"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="@string/retry"
+            android:id="@+id/retry"
+            android:textColor="@android:color/white"
+            android:background="@color/design_default_color_primary"
+            android:layout_gravity="center_horizontal">
+
+        </Button>
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="@dimen/_100sdp"
+            android:id="@+id/homeAnimLayout"
+            android:layout_height="@dimen/_100sdp"
+            android:visibility="visible"
+            android:layout_marginBottom="@dimen/_100sdp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/home_loading"
+            app:lottie_loop="true"
+            />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:id="@+id/notificationLayout"
+            android:background="@color/colorPrimary"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="@dimen/_140sdp"
+                android:contentDescription="@string/notifications"
+                android:layout_marginTop="@dimen/_70sdp"
+                android:src="@drawable/splash_icon"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/bellIcon"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_height="@dimen/_140sdp"
+                 />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/_18sdp"
+                android:id="@+id/notifying"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="@dimen/_20sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bellIcon"
+                android:text="@string/notified"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/_14sdp"
+                android:id="@+id/notifying2"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notifying"
+                android:text="@string/Allow"/>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:id="@+id/yesBtn"
+                android:background="@drawable/new_dot_bg_channel"
+                android:gravity="center_horizontal"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notifying2"
+                android:textColor="@android:color/white"
+                android:text="@string/skip"
+                android:layout_height="@dimen/_40sdp">
+
+
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@android:color/white"
+                    android:layout_marginStart="@dimen/_40sdp"
+                    android:layout_marginEnd="@dimen/_40sdp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:text="@string/allow_text"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/skipBtn"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/yesBtn"
+                app:layout_constraintStart_toStartOf="@+id/yesBtn"
+                app:layout_constraintTop_toBottomOf="@+id/yesBtn"
+                android:textSize="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:textColor="@android:color/white"
+                android:text="@string/stringValue"
+                android:layout_height="wrap_content"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

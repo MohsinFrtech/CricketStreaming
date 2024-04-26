@@ -1,0 +1,3 @@
+G:/BitbucketDownloadedProjects/UmerBhiNewProjects/UmerCricketStreamingAppFinal/clone/app/.cxx/Debug/1v5h6336/x86_64/CMakeFiles/edit_cache.dir
+G:/BitbucketDownloadedProjects/UmerBhiNewProjects/UmerCricketStreamingAppFinal/clone/app/.cxx/Debug/1v5h6336/x86_64/CMakeFiles/cricket.dir
+G:/BitbucketDownloadedProjects/UmerBhiNewProjects/UmerCricketStreamingAppFinal/clone/app/.cxx/Debug/1v5h6336/x86_64/CMakeFiles/rebuild_cache.dir

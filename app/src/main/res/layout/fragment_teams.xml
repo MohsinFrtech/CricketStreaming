@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.dream.live.cricket.score.hd.scores.viewmodel.AllTeamViewModel" />
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:onRefreshListener="@{()->viewModel.againLoad()}"
+        app:refreshing="@{viewModel.isLoading()}"
+        android:focusableInTouchMode="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:background="@color/background"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/noChange"
+                android:id="@+id/toolbar"
+                layout="@layout/toolbar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/raleway_medium"
+                    android:textColor="@color/detail_tv"
+                    android:text="Teams"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_title_match"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@string/app_name"
+                    android:textAlignment="center"
+                    android:textColor="@color/detail_tv"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_search"
+                    app:layout_constraintStart_toEndOf="@+id/iv_back_arrow"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_back_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+                    tools:ignore="VectorDrawableCompat"
+                    app:tint="@color/detail_tv" />
+
+                <ImageView
+                    android:id="@+id/iv_search"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_search"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/tv_title"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/detail_tv" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_search_series"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/noChange"
+                android:paddingStart="32dp"
+                android:paddingLeft="32dp"
+                android:layout_below="@id/toolbar"
+                android:paddingTop="8dp"
+                android:paddingEnd="32dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:layout_constraintVertical_bias="0.0">
+
+                <EditText
+                    android:id="@+id/et_search"
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_squad"
+                    android:hint="Search Team"
+                    android:inputType="text"
+                    android:paddingStart="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:fontFamily="@font/raleway_medium"
+                    android:paddingEnd="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textSize="13sp" />
+
+            </RelativeLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_teams"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/layout_search_series"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>

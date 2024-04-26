@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="channel"
+            type="com.dream.live.cricket.score.hd.streaming.models.Channel" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/channelFront"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_width="@dimen/_26sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="@dimen/_26sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:contentDescription="@string/back_icon"
+                android:padding="@dimen/_3sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/back_latest" />
+
+            <TextView
+                android:id="@+id/eventNameChannel"
+                android:layout_width="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/btnBack"
+                app:layout_constraintTop_toTopOf="@+id/btnBack"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_16sdp"
+                android:textStyle="bold">
+
+            </TextView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:layout_marginTop="0sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channelFront">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/channelRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="0sp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <ImageView
+            android:id="@+id/noChannelIcon"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:contentDescription="@string/live"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_live"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/noChannelText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/noLiveChannel"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/_14sdp"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/noChannelIcon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

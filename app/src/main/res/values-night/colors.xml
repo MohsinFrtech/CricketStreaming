@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimary">#1a1c22</color>-->
+    <color name="colorPrimary">#1E2D3F</color>
+    <!--<color name="colorPrimary">#3c3c3c</color>-->
+<!--     <color name="colorPrimaryDark">#E91E57C9</color>-->
+    <color name="colorPrimaryDark">#1e2d3f</color>
+    <color name="colorAccent">#186FCB</color>
+    <color name="colorRed">#801424</color>
+    <color name="detail_tv">#FFFFFF</color>
+    <color name="background">#0e1725</color>
+    <color name="textColor">#739ABF</color>
+
+    <color name="noChange"> #1E2D3F</color>
+
+
+
+    <color name="iconTint">#FFFFFF</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="blackLight">#E9000000</color>
+    <color name="colormatchResult">#FF0000</color>
+    <color name="grey">#9E9E9E</color>
+    <color name="grey_light">#F5F5F5</color>
+    <color name="guideLine">#E4E4E4</color>
+    <color name="moreTextColor">@android:color/white</color>
+
+
+    <color name="bottombar_grey">#1f2333</color>
+    <color name="search_box_grey">#08172d</color>
+    <color name="text_grey">#848484</color>
+    <color name="bg_stats">#6A6A6A</color>
+    <color name="bg_matches">#262B3F</color>
+    <color name="bg_light_grey">#434A67</color>
+    <color name="green">#4aa400</color>
+    <color name="notifyCol">#0188ca</color>
+    <color name="themeCol">#191721</color>
+
+    <color name="main_activity_bg">#ffff</color>
+    <color name="bottom_nav_bg">#ffff</color>
+    <color name="pager_text_col">#191721</color>
+    <color name="commentry_bg">#ffff</color>
+
+    <color name="more_icon_color">#FFFFFF</color>
+    <color name="text_color">#FFFFFF</color>
+    <color name="switchinactive">#5E5956</color>
+
+    <color name="gnt_red">#FF0000</color>
+    <color name="gnt_ad_green">#3A6728</color>
+    <color name="gnt_gray">#808080</color>
+    <color name="gray">#A9A9A9</color>
+    <color name="gnt_white">#FFFFFF</color>
+    <color name="gnt_blue">#4285f4</color>
+</resources>

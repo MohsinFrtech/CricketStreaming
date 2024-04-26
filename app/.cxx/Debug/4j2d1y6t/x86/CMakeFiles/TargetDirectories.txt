@@ -1,0 +1,3 @@
+F:/BitbucketDownloadedProjects/BitbucketCloneLiveCricketScoresAndUpdates/cloneFolderLiveScoresandupdates/app/.cxx/Debug/4j2d1y6t/x86/CMakeFiles/edit_cache.dir
+F:/BitbucketDownloadedProjects/BitbucketCloneLiveCricketScoresAndUpdates/cloneFolderLiveScoresandupdates/app/.cxx/Debug/4j2d1y6t/x86/CMakeFiles/cricket.dir
+F:/BitbucketDownloadedProjects/BitbucketCloneLiveCricketScoresAndUpdates/cloneFolderLiveScoresandupdates/app/.cxx/Debug/4j2d1y6t/x86/CMakeFiles/rebuild_cache.dir

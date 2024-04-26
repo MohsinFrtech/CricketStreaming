@@ -1,0 +1,38 @@
+{
+  "buildFiles": [
+    "D:\\Live Cricket tv hd\\New folder\\CricketStreaming\\CricketStreaming\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\Hp\\AppData\\Local\\Android\\Sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+      "-C",
+      "D:\\Live Cricket tv hd\\New folder\\CricketStreaming\\CricketStreaming\\app\\.cxx\\Debug\\2z6i3h16\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\Hp\\AppData\\Local\\Android\\Sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+    "-C",
+    "D:\\Live Cricket tv hd\\New folder\\CricketStreaming\\CricketStreaming\\app\\.cxx\\Debug\\2z6i3h16\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "cricket::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "cricket",
+      "output": "D:\\Live Cricket tv hd\\New folder\\CricketStreaming\\CricketStreaming\\app\\build\\intermediates\\cxx\\Debug\\2z6i3h16\\obj\\x86\\libcricket.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "C:\\Users\\Hp\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\Hp\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainPlayerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:clickable="true"
+        android:focusable="true">
+
+        <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@+id/playerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true"
+            android:focusable="true"
+            android:visibility="visible"
+            app:controller_layout_id="@layout/exo_playback_control_view"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:show_buffering="always" />
+
+
+        <com.startapp.sdk.ads.banner.Banner
+            android:id="@+id/startAppBannerTop"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.startapp.sdk.ads.banner.Banner
+            android:id="@+id/startAppBannerBottom"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_120sdp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/adViewTop"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/adViewTopPermanent"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/adViewBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_120sdp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/fbAdViewTop"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/fbAdViewBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_120sdp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RelativeLayout
+            android:id="@+id/unityBannerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:visibility="visible"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <RelativeLayout
+            android:id="@+id/unityBannerViewBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_120sdp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="0dp"
+            android:theme="@style/ToolbarTheme"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.dream.live.cricket.score.hd.streaming.utils.playerutils.ClickLayoutClass
+                android:id="@+id/leftView"
+                android:layout_width="0sp"
+                android:layout_height="200dp"
+                android:layout_marginBottom="100dp"
+                app:layout_constraintHorizontal_weight="5"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/rightView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.dream.live.cricket.score.hd.streaming.utils.playerutils.VerticalSlider
+                android:id="@+id/leftVerticalSlider"
+                android:layout_width="10sp"
+                android:layout_height="200dp"
+                android:layout_marginStart="30sp"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:vs_max="100"
+                app:vs_progress="10" />
+
+
+            <com.dream.live.cricket.score.hd.streaming.utils.playerutils.ClickLayoutClass
+                android:id="@+id/rightView"
+                android:layout_width="0sp"
+                android:layout_height="200dp"
+                android:layout_marginBottom="100sp"
+                app:layout_constraintHorizontal_weight="5"
+                app:layout_constraintLeft_toRightOf="@+id/leftView"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.dream.live.cricket.score.hd.streaming.utils.playerutils.VerticalSlider
+                android:id="@+id/verticalSlider"
+                android:layout_width="10sp"
+                android:layout_height="200dp"
+                android:layout_marginEnd="30sp"
+                android:visibility="gone"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:vs_max="100"
+                app:vs_progress="0" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/volumeLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/rectangular_view"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:id="@+id/volumeIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/volume"
+                app:srcCompat="@drawable/ic_volume_low_grey600_36dp"
+                app:tint="@android:color/white">
+
+            </ImageView>
+
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/lottie_player"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:progressTint="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

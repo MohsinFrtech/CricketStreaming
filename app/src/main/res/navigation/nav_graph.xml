@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="com.dream.live.cricket.score.hd.MainFragment"
+        android:label="Home Fragment"
+        tools:layout="@layout/fragment_event">
+
+        <action
+            android:id="@+id/action_live_to_details"
+            app:destination="@id/live_details" />
+        <action
+            android:id="@+id/action_home_to_player"
+            app:destination="@id/player" />
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/live_details"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.LiveScoreDetail"
+        android:label="Live Details Fragment"
+        tools:layout="@layout/fragment_live_detail">
+
+        <argument
+            android:name="getDetails"
+            app:nullable="true"
+            app:argType="com.dream.live.cricket.score.hd.scores.model.LiveScoresModel" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/channel"
+        android:name="com.dream.live.cricket.score.hd.streaming.ui.fragments.ChannelFragment"
+        tools:layout="@layout/fragment_channels"
+        android:label="Channel Fragment">
+
+        <argument
+            android:name="getEvent"
+            app:argType="com.dream.live.cricket.score.hd.streaming.models.Event"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_channel_to_player"
+            app:destination="@id/player" />
+    </fragment>
+
+
+    <activity
+        android:id="@+id/player"
+        android:name="com.dream.live.cricket.score.hd.streaming.ui.activities.PlayerScreen"
+        tools:layout="@layout/activity_exo_test_player"
+        android:label="player Fragment">
+
+        <argument
+            android:name="baseURL"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="abc" />
+        <argument
+            android:name="linkAppend"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="abc" />
+        <argument
+            android:name="channleType"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="abc" />
+    </activity>
+    <fragment
+        android:id="@+id/recentFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.RecentFragment"
+        android:label="Recent Fragment"
+        tools:layout="@layout/fragment_recent">
+
+        <action
+            android:id="@+id/action_recentFragment_to_live_details"
+            app:destination="@id/live_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/upcomingFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.UpcomingFragment"
+        android:label="Upcoming Fragment"
+        tools:layout="@layout/fragment_upcoming">
+
+    </fragment>
+    <fragment
+        android:id="@+id/streaming"
+        android:name="com.dream.live.cricket.score.hd.streaming.ui.fragments.StreamingFragment"
+        android:label="Upcoming Fragment"
+        tools:layout="@layout/streaminglay">
+
+        <action
+            android:id="@+id/action_streaming_to_channel"
+            app:destination="@id/channel" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/browseFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.BrowseFragmentMain"
+        android:label="Browse Fragment"
+        tools:layout="@layout/fragment_browse">
+
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/teamRankingFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.ranking.TeamsRankingFragment"
+        android:label="Team Ranking Fragment"
+        tools:layout="@layout/fragment_teams_rank">
+        <action
+            android:id="@+id/action_rankingFragment_to_teamsMatchesFragment"
+            app:destination="@id/teamsMatchesFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/rankingFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.ranking.RankingFragment"
+        android:label="Ranking Fragment"
+        tools:layout="@layout/fragment_ranking">
+
+        <action
+            android:id="@+id/action_rankingFragment_to_teamsMatchesFragment"
+            app:destination="@id/teamsMatchesFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/seriesFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.BrowseFragment"
+        android:label="Upcoming Fragment"
+        tools:layout="@layout/fragment_series">
+
+        <action
+            android:id="@+id/action_seriesFragment_to_seriesMatchFragment"
+            app:destination="@id/seriesMatchFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/teamsMatchesFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.matches.MatchesFragment"
+        android:label="Matches Fragment"
+        tools:layout="@layout/fragment_matches">
+
+        <argument
+            android:name="teamId"
+            app:argType="integer" />
+        <argument
+            android:name="teamName"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_recentFragment_to_live_details"
+            app:destination="@id/live_details" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/moreFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.MoreFragment"
+        android:label="More Fragment"
+        tools:layout="@layout/more_layout">
+
+        <action
+            android:id="@+id/action_moreFragment_to_rankingFragment"
+            app:destination="@id/rankingFragment" />
+        <action
+            android:id="@+id/action_moreFragment_to_seriesFragment"
+            app:destination="@id/seriesFragment" />
+        <action
+            android:id="@+id/action_moreFragment_to_teamFragment"
+            app:destination="@id/teamFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/teamFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.TeamFragment"
+        android:label="Team Fragment"
+        tools:layout="@layout/fragment_teams">
+
+        <action
+            android:id="@+id/action_teamFragment_to_teamsMatchesFragment"
+            app:destination="@id/teamsMatchesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/seriesMatchFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.SeriesMatchFragment"
+        android:label="SeriesMatch Fragment"
+        tools:layout="@layout/fragment_matches">
+
+        <action
+            android:id="@+id/action_seriesMatchFragment_to_live_details"
+            app:destination="@id/live_details" />
+    </fragment>
+
+</navigation>
+

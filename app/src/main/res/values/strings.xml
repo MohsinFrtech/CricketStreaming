@@ -1,0 +1,156 @@
+<resources>
+    <string name="app_name">Live Cricket</string>
+
+    <string name="facebook_app_id"></string>
+    <string name="download_app">Download App</string>
+    <!--AppUpdateDialog-->
+    <string name="update_text1">No,Thanks</string>
+    <string name="update_text2">Update</string>
+    <string name="newVersion">New Version Available</string>
+    <string name="usb_debugging">Please Disable \"USB Debugging\" from your phone to use the app.</string>
+
+
+    <!--AppUpdateDialog-->
+    <string name="appUpdate">Please, update to new version to continue reposting.</string>
+    <string name="noThanks">No,Thanks</string>
+    <string name="Up">Update</string>
+    <string name="version">New version available</string>
+    <string name="versionApp">Version</string>
+
+    <string name="Exit">Exit</string>
+
+
+
+    <!--backPressedDialog-->
+    <string name="back_title">App Rating..</string>
+    <string name="back_text1">Are you sure to exit?</string>
+    <string name="exit">Exit</string>
+    <string name="back_button1">YES</string>
+    <string name="back_button2">NO</string>
+    <!--MainScreen-->
+    <string name="cpp_file_error">Something went wrong. please restart your phone to use the app</string>
+    <string name="againVal">Something went wrong,Please retry.</string>
+
+    <!--SplashScreen-->
+    <string name="no_internet_string">Internet connection lost! , please check your internet connection.</string>
+    <string name="retry">Retry</string>
+    <string name="notifications">Notifications</string>
+    <string name="notified">Enable Notifications</string>
+
+    <!--ExpandedScreen-->
+    <string name="media_route_menu_title">Play on&#8230;</string>
+
+
+
+    <!--PlayerScreen-->
+    <string name="yes">liveIcon</string>
+    <string name="playerLive">Live</string>
+    <string name="lockIcon">lockIcon</string>
+    <string name="pauseIcon">pauseIcon</string>
+    <string name="screenModeIcon">screenModeIcon</string>
+    <string name="playerStretch">Stretch</string>
+    <string name="volume">volume</string>
+
+    <!--    home fragment-->
+
+    <string name="adblock">We detected ad blocker running on your device.Please disable adblocker and then use our app.</string>
+    <string name="ad_blocker">adblocker</string>
+
+<!--    live scores layout-->
+
+    <string name="team_1_image">team one image</string>
+    <string name="team_2_image">team second image</string>
+    <string name="vs">VS</string>
+    <string name="app_rating">App Rating..</string>
+
+    //Splash screen..
+    <string name="Allow">We will notify you about the latest game updates,upcoming matches,and live stars.</string>
+    <string name="skip">Okay</string>
+    <string name="allow_text">okay</string>
+    <string name="stringValue">not now</string>
+    <string name="back_icon">backIcon</string>
+    <string name="live">live</string>
+    <string name="noLiveChannel">No live channel available to show.</string>
+    <string name="channelimage">channelImage</string>
+    <string name="eventimageicon">eventImageIcon</string>
+    <string name="cricket">CRICKET</string>
+    <string name="rate">Rate</string>
+
+    ///
+    <string-array name="matches_formats">
+        <item>T20</item>
+        <item>ODI</item>
+        <item>TEST</item>
+    </string-array>
+
+
+    <string-array name="browse_rankings">
+        <item>Teams</item>
+        <item>Batsman</item>
+        <item>Bowlers</item>
+        <item>All Rounders</item>
+    </string-array>
+
+    <string-array name="matches_status">
+        <item>RECENT</item>
+        <item>LIVE</item>
+        <item>UPCOMING</item>
+        <item>ABANDONED</item>
+    </string-array>
+
+
+    <!--    browse fragment-->
+
+    <string name="rank_teams">Rank teams &amp; players</string>
+    <string name="browse">Browse</string>
+    <string name="ranking">Rankings</string>
+    <string name="browse_series">Browse Series</string>
+    <string name="browse_teams">Browse Teams</string>
+    <string name="team_name">Team Name</string>
+
+
+    <!--    more Screen layout-->
+    <string name="rate_us">Rate Us</string>
+    <string name="terms">Terms of Use</string>
+    <string name="PP">Privacy Policy</string>
+    <string name="share">Share</string>
+    <string name="Feed_back">FeedBack</string>
+    <string name="contact">contact</string>
+    <string name="rateus">rateus</string>
+    <string name="notification">Notification</string>
+    <string name="darkmode">darkmode</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="venue">Venue:%1$s %2$s.</string>
+    <string name="startTime">Start in:%1$dh %2$dm.</string>
+    <string name="startedTime">Started:%1$dh %2$dm.</string>
+    <string name="dateAndTime">%1$s %2$s %3$s,%4$s.</string>
+
+    <!--Bottom bar Icons-->
+    <string name="home">Home</string>
+    <string name="streaming">Streaming</string>
+    <string name="recent">Recent</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="more">More</string>
+    <string name="noLive">No Live Event Available to show.</string>
+    <string name="content_index">Content Index</string>
+    <string name="next">next</string>
+    <string name="browseTeam">Browse Teams</string>
+    <string name="browseSeries">Browse Series</string>
+    <string name="setting">Settings</string>
+    <string name="darkTheme">Dark Theme</string>
+    <string name="general">General</string>
+    <string name="rateUs">Rate Us</string>
+    <string name="feedback">Send Us Feedback</string>
+
+    <!--    rating team -->
+    <string name="team_ranking">Team Rankings</string>
+    <string name="rank">Rank</string>
+    <string name="team">Team</string>
+    <string name="points">Points</string>
+    <string name="avg">Avg</string>
+    <string name="rating">Ratings</string>
+    <string name="player">Player</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+
+</resources>

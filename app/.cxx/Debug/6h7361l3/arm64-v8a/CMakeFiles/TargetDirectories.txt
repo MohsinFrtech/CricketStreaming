@@ -1,0 +1,3 @@
+F:/BitbucketDownloadedProjects/AliBhiProjects/AliLive Cricket Scores & UpdatesClone/cloneLiveCricketScoreAndUpdates/app/.cxx/Debug/6h7361l3/arm64-v8a/CMakeFiles/edit_cache.dir
+F:/BitbucketDownloadedProjects/AliBhiProjects/AliLive Cricket Scores & UpdatesClone/cloneLiveCricketScoreAndUpdates/app/.cxx/Debug/6h7361l3/arm64-v8a/CMakeFiles/cricket.dir
+F:/BitbucketDownloadedProjects/AliBhiProjects/AliLive Cricket Scores & UpdatesClone/cloneLiveCricketScoreAndUpdates/app/.cxx/Debug/6h7361l3/arm64-v8a/CMakeFiles/rebuild_cache.dir
