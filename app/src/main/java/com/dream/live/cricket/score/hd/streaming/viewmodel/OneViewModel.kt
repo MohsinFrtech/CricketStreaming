@@ -78,8 +78,8 @@ class OneViewModel(application: Application?) : AndroidViewModel(application!!) 
                     val addUser = StoneFile()
                     addUser.id = stringId
                     addUser.auth_token = cementType
-                    addUser.build_no = "0".toString()
-//                    addUser.build_no = appVersionCode.toString()
+//                    addUser.build_no = "0".toString()
+                    addUser.build_no = appVersionCode.toString()
 
                     val body = Gson().toJson(addUser)
                         .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())

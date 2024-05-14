@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
                     passVal = numberFile?.get(screenUtil.reMem4()).toString()
                     baseUrlChannel = numberFile?.get(screenUtil.reMem3()).toString()
                     emptyCheck = numberFile?.get(screenUtil.reMem5()).toString()
-                    baseUrlDemo = numberFile?.get(screenUtil.reMem6()).toString()
+//                    baseUrlDemo = numberFile?.get(screenUtil.reMem6()).toString()
                     base_url_scores = numberFile?.get(screenUtil.reMem7()).toString()
                     Cons.s_token = numberFile?.get(screenUtil.reMem17()).toString()
                     Cons.socketUrl = numberFile?.get(screenUtil.reMem16()).toString()
@@ -762,7 +762,12 @@ class MainActivity : AppCompatActivity(), DialogListener,
                                 }
 
                             }
-
+                            if (configuration.key.equals("baseURL", true)) {
+                                if (configuration.value != null) {
+                                    baseUrlDemo= configuration.value.toString()
+                                    Log.d("baseUrlDemo","demo"+ baseUrlDemo)
+                                }
+                            }
                             ///For setting heading
                             if (configuration.key.equals("Heading", true)) {
                                 if (configuration.value != null) {
