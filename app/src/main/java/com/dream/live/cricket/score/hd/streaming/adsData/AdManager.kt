@@ -7,7 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.chartboost.sdk.Chartboost
 import com.chartboost.sdk.ads.Interstitial
@@ -45,6 +47,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.Logger
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.admobInterstitial
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeAdmob
 import com.google.android.gms.ads.AdView
 
 class AdManager(
@@ -642,7 +645,7 @@ class AdManager(
             try {
                 StartAppSDK.init(context, Constants.startAppId, false)
                 StartAppAd.disableSplash()
-                StartAppSDK.setTestAdsEnabled(true)
+//                StartAppSDK.setTestAdsEnabled(true)
                 Constants.isStartAppSdkInit = true
                 loadAdAtParticularLocation(
                     adLocation,
@@ -909,8 +912,10 @@ class AdManager(
     }
 
 
-    fun loadFacebookNativeAd(nativeAdLayout: NativeAdLayout) {
-        fbNativeAd = NativeAd(context, Constants.nativeFacebook)
+    fun loadFacebookNativeAd(
+        fbNativeAd: NativeAd, nativeAdLayout: NativeAdLayout,
+        adLayout: ConstraintLayout?
+    ) {
         val nativeAdListener: NativeAdListener = object : NativeAdListener {
             override fun onMediaDownloaded(ad: Ad) {
 
@@ -919,16 +924,14 @@ class AdManager(
 
             override fun onError(ad: Ad?, adError: AdError) {
 
-
+                adLayout?.visibility = View.GONE
                 // Native ad failed to load
             }
 
             override fun onAdLoaded(ad: Ad) {
+                adLayout?.visibility = View.INVISIBLE
                 // Native ad is loaded and ready to be displayed
-                if (fbNativeAd != null) {
-                    inflateFbNativeAd(fbNativeAd!!, nativeAdLayout)
-
-                }
+                inflateFbNativeAd(fbNativeAd, nativeAdLayout)
             }
 
             override fun onAdClicked(ad: Ad) {
@@ -941,10 +944,10 @@ class AdManager(
         }
 
         // Request an ad
-        fbNativeAd?.buildLoadAdConfig()
-            ?.withAdListener(nativeAdListener)
-            ?.build().let {
-                fbNativeAd?.loadAd(
+        fbNativeAd.buildLoadAdConfig()
+            .withAdListener(nativeAdListener)
+            .build().let {
+                fbNativeAd.loadAd(
                     it
                 )
             }
@@ -995,12 +998,16 @@ class AdManager(
         )
     }
 
-    fun loadAdmobNativeAd(view_holder: ViewHolder?, nativeAdView: NativeAdView?) {
-        val builder = AdLoader.Builder(context, Constants.nativeAdmob)
+    fun loadAdmobNativeAd(
+        view_holder: RecyclerView.ViewHolder?, nativeAdView: NativeAdView,
+        adLayout: ConstraintLayout?
+    ) {
+        val builder = AdLoader.Builder(context, nativeAdmob)
         builder.forNativeAd { nativeAd ->
 
             currentNativeAd?.destroy()
             currentNativeAd = nativeAd
+
         }
 
         val videoOptions = VideoOptions.Builder()
@@ -1016,18 +1023,19 @@ class AdManager(
         val adLoader = builder.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
 
-                nativeAdView?.visibility = View.GONE
-
+                logger.printLog(taG, "Admob Native $loadAdError")
+                nativeAdView.visibility = View.GONE
+                adLayout?.visibility = View.GONE
             }
 
             override fun onAdLoaded() {
-                if (view_holder != null) {
-
-                    adView = view_holder.itemView.findViewById(R.id.native_ad_view)
-                } else {
-                    adView = nativeAdView
+                if (view_holder!=null) {
+                    adView = view_holder?.itemView?.findViewById(R.id.native_ad_view)
+                }else
+                {
+                    adView =nativeAdView
                 }
-
+                adLayout?.visibility = View.INVISIBLE
                 android.os.Handler(Looper.getMainLooper()).postDelayed({
                     adView?.let {
                         currentNativeAd?.let { it1 ->
@@ -1039,34 +1047,35 @@ class AdManager(
                     }
 
                 }, 100)
-
             }
         }).build()
 
         adLoader.loadAd(AdRequest.Builder().build())
 
     }
-
     fun populateNativeAdView(
         nativeAd: com.google.android.gms.ads.nativead.NativeAd,
         adView: NativeAdView
     ) {
         try {
+
             adView.visibility = View.VISIBLE
             // Set the media view.
 //            adView.mediaView = adView.findViewById(com.google.android.gms.ads.R.id.ad_media)
             // Set other ad assets.
-            adView.headlineView = adView.findViewById(R.id.headline)
+//            adView.headlineView = adView.findViewById(R.id.headline)
 //            adView.bodyView = adView.findViewById(com.google.android.ads.nativetemplates.R.id.body)
             adView.callToActionView = adView.findViewById(R.id.cta)
             adView.iconView = adView.findViewById(R.id.icon)
 //            adView.priceView = adView.findViewById(com.google.android.gms.ads.R.id.ad_price)
             adView.starRatingView = adView.findViewById(R.id.rating_bar)
             adView.storeView = adView.findViewById(R.id.secondary)
+            adView.headlineView = adView.findViewById(R.id.primary)
 //            adView.advertiserView = adView.findViewById(com.google.android.gms.ads.R.id.ad_advertiser)
 
+//           val primaryView =  findViewById(R.id.primary)
             // The headline and media content are guaranteed to be in every UnifiedNativeAd.
-//            (adView.headlineView as TextView).text = nativeAd.headline
+            (adView.headlineView as TextView).text = nativeAd.headline
 //            nativeAd.mediaContent?.let { adView.mediaView?.setMediaContent(it) }
 
             // These assets aren't guaranteed to be in every UnifiedNativeAd, so it's important to

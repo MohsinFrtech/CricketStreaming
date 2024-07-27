@@ -9,6 +9,7 @@ import com.dream.live.cricket.score.hd.databinding.ItemTeamNameBinding
 import com.dream.live.cricket.score.hd.scores.model.AllTeamsModel
 import com.dream.live.cricket.score.hd.scores.ui.fragments.TeamFragmentDirections
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
+import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 
 class TotalTeamsAdapter(private val listSeries: List<AllTeamsModel?>, private val teamFragment: NavigateData): ListAdapter<AllTeamsModel, TotalTeamsAdapter.ViewHolder>(
     DiffCallback
@@ -43,7 +44,7 @@ class TotalTeamsAdapter(private val listSeries: List<AllTeamsModel?>, private va
         val league = currentList[position]
         holder.bind(league)
 
-        holder.itemView.setOnClickListener {
+        holder.itemView.setSafeOnClickListener {
 
             val direction= league.team_id?.let { it1 ->
                 TeamFragmentDirections.actionTeamFragmentToTeamsMatchesFragment(

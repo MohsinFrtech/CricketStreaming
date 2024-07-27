@@ -31,6 +31,14 @@ class SharedPreference(context: Context?) {
         mEditor?.commit()
     }
 
+    fun saveRateUsBool(key: String, value: Boolean) {
+        mEditor?.putBoolean(key, value)
+        mEditor?.commit()
+    }
+
+    fun getRateUsBool(key: String):Boolean? {
+        return mPref?.getBoolean(key, false)
+    }
     fun getBool(key: String):Boolean? {
        return mPref?.getBoolean(key, false)
     }

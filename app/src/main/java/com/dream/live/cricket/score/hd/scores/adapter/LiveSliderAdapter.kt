@@ -17,6 +17,7 @@ import com.dream.live.cricket.score.hd.scores.ui.fragments.SeriesMatchFragmentDi
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.scores.utility.Cons
 import com.dream.live.cricket.score.hd.scores.utility.Cons.convertLongToTime
+import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -504,7 +505,7 @@ class LiveSliderAdapter(
 //        holder.setIsRecyclable(false)
         holder.bindScoreData(currentList[position])
         val data = currentList[position]
-        holder.itemView.setOnClickListener {
+        holder.itemView.setSafeOnClickListener {
             if (!data.status.isNullOrEmpty()) {
                 if (source.equals("main", true)) {
 

@@ -34,7 +34,7 @@
     <color name="green">#4aa400</color>
     <color name="notifyCol">#0188ca</color>
     <color name="themeCol">#191721</color>
-    <color name="noChange"> #1E2D3F</color>
+    <color name="noChange">#1E2D3F</color>
 
 
 
@@ -47,6 +47,7 @@
 
     <color name="more_icon_color">#FFFFFF</color>
 
+    <color name="deep">#B31E2D3F</color>
 
     <color name="iconTint">#0085FF</color>
     <color name="text_color">#FFFFFF</color>

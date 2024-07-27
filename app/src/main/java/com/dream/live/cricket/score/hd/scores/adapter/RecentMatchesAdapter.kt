@@ -22,6 +22,7 @@ import com.dream.live.cricket.score.hd.scores.utility.Cons
 import com.dream.live.cricket.score.hd.scores.utility.Cons.convertDateAndTime
 import com.dream.live.cricket.score.hd.scores.utility.Cons.convertLongToTime
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
+import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.google.android.gms.ads.nativead.NativeAd
 import java.text.SimpleDateFormat
@@ -44,6 +45,7 @@ class RecentMatchesAdapter(
     private val nativeAdsLayout = 1
     private val simpleMenuLayout = 0
     private var binding2: NativeAdLayoutBinding? = null
+    private var fbNativeAd: com.facebook.ads.NativeAd? = null
 
     class LiveSliderAdapterViewHolder(
         private var binding: RecentitemBinding,
@@ -491,14 +493,21 @@ class RecentMatchesAdapter(
 
                 if (adType.equals(Constants.facebook, true)) {
 
-//                    val params = binding2?.fbNativeAdContainer?.layoutParams
-//                    params?.width = ViewGroup.LayoutParams.MATCH_PARENT
-//                    params?.height = 432
-//                    binding2?.fbNativeAdContainer?.layoutParams = params
                     if (Cons.currentNativeAdFacebook != null) {
                         binding2?.fbNativeAdContainer?.let {
                             adManager.inflateFbNativeAd(
-                                Cons.currentNativeAdFacebook!!,it
+                                Cons.currentNativeAdFacebook!!, it
+                            )
+                        }
+                    }
+                    else
+                    {
+                        fbNativeAd = com.facebook.ads.NativeAd(context, Constants.nativeFacebook)
+                        binding2?.adLoadLay2?.visibility = View.VISIBLE
+                        binding2?.fbNativeAdContainer?.let {
+                            adManager.loadFacebookNativeAd(
+                                fbNativeAd!!,
+                                it, binding2?.adLoadLay2
                             )
                         }
                     }
@@ -506,14 +515,22 @@ class RecentMatchesAdapter(
 
                     if (Cons.currentNativeAd != null) {
                         binding2?.nativeAdView?.let {
-                            adManager?.populateNativeAdView(
+                            adManager.populateNativeAdView(
                                 Cons.currentNativeAd!!,
                                 it
                             )
                         }
+//                        binding2?.nativeAdView?.let { adManager.loadAdmobNativeAd(viewHolder, it) }
+                    } else {
+                        binding2?.adLoadLay?.visibility = View.VISIBLE
+                        binding2?.nativeAdView?.let {
+                            adManager.loadAdmobNativeAd(
+                                viewHolder,
+                                it,
+                                binding2?.adLoadLay
+                            )
+                        }
                     }
-//                    binding2?.nativeAdView?.let { adManager.loadAdmobNativeAd(viewHolder, it) }
-
                 }
             }
 
@@ -522,7 +539,7 @@ class RecentMatchesAdapter(
                     holder as LiveSliderAdapterViewHolder
                 viewHolderMatch.bindMatchesData(currentList[position], source)
                 val data = currentList[position]
-                holder.itemView.setOnClickListener {
+                holder.itemView.setSafeOnClickListener {
                     if (!data.status.isNullOrEmpty()) {
                         if (source.equals("main", true)) {
 

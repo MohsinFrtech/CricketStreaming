@@ -99,6 +99,19 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/noChannelIcon" />
+
+        <ProgressBar
+            android:id="@+id/MainLottie"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_marginBottom="@dimen/_50sdp"
+            android:elevation="@dimen/_10sdp"
+            android:layout_height="@dimen/_50sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

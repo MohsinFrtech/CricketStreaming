@@ -10,7 +10,13 @@
         <!-- Customize your theme here. -->
     </style>
     <style name="HomeScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splashbg</item>
+        <item name="colorPrimaryDark">@color/noChange</item>
+        <item name="colorAccent">@color/noChange</item>
+    </style>
+
+    <style name="TvTheme" parent="@style/Theme.Leanback">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/noChange</item>
         <item name="colorAccent">@color/noChange</item>
     </style>

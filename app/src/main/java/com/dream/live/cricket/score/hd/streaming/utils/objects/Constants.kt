@@ -13,7 +13,7 @@ object Constants {
     const val unity = "unity"
     const val startApp = "startapp"
     var checkNativeAdProvider = "none"
-    var middleAdProvider="none"
+    var middleAdProvider = "none"
 
 
     var admobInterstitial = ""
@@ -24,42 +24,46 @@ object Constants {
     var chartBoostAppSig = ""
     var nativeAdmob: String = ""
     var unityGameID = ""
-    var startAppId=""
+    var startAppId = ""
     var nativeFacebook = ""
-    var admobBannerId=""
+    var admobBannerId = ""
     var modeCheckValue = ""
     const val adLocation2topPermanent = "Location2TopPermanent"
-    var location2TopPermanentProvider="none"
-
+    var location2TopPermanentProvider = "none"
+    const val rateUsKey = "rateus"
+    var rateUsText = ""
+    var rateUsDialogValue: Boolean = false
+    var rateShown = false
+    var nativeAdProvider=""
 
     //Ad Locations
-    const val adMiddle="Middle"
+    const val adMiddle = "Middle"
     const val adTap = "tap"
-    const val adBefore="BeforeVideo"
-    const val adAfter="AfterVideo"
-    const val adLocation1="Location1"
-    const val adLocation2top="Location2Top"
-    const val adLocation2bottom="Location2Bottom"
-    const val nativeAdLocation="native"
-    var location2TopProvider="none"
+    const val adBefore = "BeforeVideo"
+    const val adAfter = "AfterVideo"
+    const val adLocation1 = "Location1"
+    const val adLocation2top = "Location2Top"
+    const val adLocation2bottom = "Location2Bottom"
+    const val nativeAdLocation = "native"
+    var location2TopProvider = "none"
     var adLocation1Provider = "none"
 
-    var location2BottomProvider="none"
-    var locationAfter="none"
-    var isInitAdmobSdk=false
-    var isInitFacebookSdk= false
-    var isUnitySdkInit=false
-    var isChartboostSdkInit=false
-    var isStartAppSdkInit=false
-    const val preferenceKey="Message"
-    const val preferenceMode="mode"
+    var location2BottomProvider = "none"
+    var locationAfter = "none"
+    var isInitAdmobSdk = false
+    var isInitFacebookSdk = false
+    var isUnitySdkInit = false
+    var isChartboostSdkInit = false
+    var isStartAppSdkInit = false
+    const val preferenceKey = "Message"
+    const val preferenceMode = "mode"
 
     //DefamationClass
     var myUserLock1 = "locked"
     var myUserCheck1 = "myUserCheck1"
 
-    const val  key = "nonenFootBall@Key"
-    const val  salt = "Fit4533op"
+    const val key = "nonenFootBall@Key"
+    const val salt = "Fit4533op"
     const val mySecretCheckDel: String = "&"
     const val mySecretSize = 16
     var userIp = "userIp"
@@ -69,19 +73,21 @@ object Constants {
     const val algoTypeS2 = "SHA-256"
     const val algoName = "iso-8859-1"
 
-    var splash_status=false
-    var app_update_dialog=false
+    var splash_status = false
+    var app_update_dialog = false
+
     //Api data
     const val stringId = "6"
     var authToken = ""
     const val buildNo = ""
-    var passVal=""
-    var emptyCheck=""
+    var passVal = ""
+    var emptyCheck = ""
     const val IpApi = "https://ip-api.streamingucms.com/"
     var baseUrlChannel = ""
     var baseUrlDemo = ""
     var userLinkVal = ""
-
+    var positionClick = -1
+    var previousClick = -1
     const val userApi = "get_url"
     const val channelApi = "details"
     const val sepUrl = ".net"
@@ -90,6 +96,7 @@ object Constants {
     const val channelBuild = "build_no"
     var passphraseVal = ""
     var channel_url_val = ""
+
     //playLand
     const val userBaseExtraDel1 = "999"
     const val userBaseExtraDel2 = "%"
@@ -105,27 +112,27 @@ object Constants {
     var defaultString = ""
     //StoneData
 
-    const val chName="UTF-8"
-    const val asp="AES"
-    const val instanceVal="PBKDF2WithHmacSHA1"
-    const val transForm="AES/CBC/PKCS5Padding"
+    const val chName = "UTF-8"
+    const val asp = "AES"
+    const val instanceVal = "PBKDF2WithHmacSHA1"
+    const val transForm = "AES/CBC/PKCS5Padding"
 
     //billing
     var removeAds = false
     var oldSku: List<String> = ArrayList()
-    var videoFinish=false
+    var videoFinish = false
 
     ///RecentFragment
-    const val testFormat="TEST"
-    const val odiFormat="ODI"
-    const val t20Format="T20"
-     var selectedSeriesId=1
+    const val testFormat = "TEST"
+    const val odiFormat = "ODI"
+    const val t20Format = "T20"
+    var selectedSeriesId = 1
 
 
     //splash
     var updateScreenStatus = false
-    var mailId="apps.greek@gmail.com"
-    var mailText="Send Email..."
+    var mailId = "apps.greek@gmail.com"
+    var mailText = "Send Email..."
 
     //userValues
     var cementData = "cementData"

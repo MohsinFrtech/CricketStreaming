@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dream.live.cricket.score.hd.R
 import com.dream.live.cricket.score.hd.databinding.ItemTeamRankBinding
 import com.dream.live.cricket.score.hd.scores.model.RankingTeams
+import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 
 class TeamRankAdapterNew(private val onClickListener: (RankingTeams) -> Unit) :
     ListAdapter<RankingTeams, TeamRankAdapterNew.ViewHolder>(DiffCallback) {
@@ -55,7 +56,7 @@ class TeamRankAdapterNew(private val onClickListener: (RankingTeams) -> Unit) :
                 else -> ivTeamLogo.setImageResource(R.drawable.placehold)
             }
 
-            root.setOnClickListener {
+            root.setSafeOnClickListener {
                 onClickListener(data)
             }
         }

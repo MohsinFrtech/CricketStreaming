@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -141,9 +142,6 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
                     binding?.noEvent?.visibility=View.VISIBLE
                     binding?.noEventText?.visibility=View.VISIBLE
                     ///if event list is empty from backend...
-
-
-
                 }
             }
             else
@@ -152,9 +150,6 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
                 binding?.noEventText?.visibility=View.VISIBLE
 
             }
-
-
-
         }
     }
 
@@ -177,7 +172,10 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
             navDirections=viewId
             if (adStatus)
             {
+                Constants.positionClick=-1
+                Constants.previousClick=-1
                 if (!adProviderName.equals("none",true)) {
+                    binding?.MainLottie?.visibility=View.VISIBLE
                     adManager?.showAds(adProviderName)
                 }
                 else
@@ -200,6 +198,9 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
     }
 
     override fun onAdFinish() {
+        if(binding?.MainLottie?.isVisible == true){
+            binding?.MainLottie?.visibility=View.GONE
+        }
         if (navDirections!=null)
         {
             findNavController().navigate(navDirections!!)

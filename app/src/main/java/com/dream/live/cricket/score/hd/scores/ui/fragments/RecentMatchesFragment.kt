@@ -118,6 +118,13 @@ class RecentMatchesFragment : Fragment(), NavigateData,AdManagerListener{
                     }
 
                 }
+
+                if(!liveScores.isNullOrEmpty()){
+
+                }
+                else{
+                    binding?.tvNoData?.visibility = View.VISIBLE
+                }
                 setAdapter2(liveScores)
             }
             else

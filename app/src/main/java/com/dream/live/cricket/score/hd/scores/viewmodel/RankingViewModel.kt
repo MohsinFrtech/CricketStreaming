@@ -58,10 +58,6 @@ class RankingViewModel : ViewModel() {
         list.add("TEST")
 
         return list
-
-        /*val tempList = list.distinct()
-
-        _matchFormats.value = tempList*/
     }
 
     fun getODIRanking() {

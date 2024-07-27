@@ -1,6 +1,7 @@
 package com.dream.live.cricket.score.hd.streaming.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -22,10 +25,14 @@ import com.dream.live.cricket.score.hd.streaming.date.ProcessingFile
 import com.dream.live.cricket.score.hd.streaming.models.Channel
 import com.dream.live.cricket.score.hd.streaming.ui.fragments.ChannelFragmentDirections
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
+import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.channel_url_val
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.defaultString
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeFacebook
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.passphraseVal
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.positionClick
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.previousClick
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.sepUrl
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType1
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType2
@@ -51,6 +58,7 @@ class ChannelAdapter(
     private val nativeAdsLayout = 1
     private val simpleMenuLayout = 0
     private var binding2: NativeAdLayoutBinding? = null
+    private var fbNativeAd: com.facebook.ads.NativeAd? = null
 
     object ChannelAdapterDiffUtilCallback : DiffUtil.ItemCallback<Channel>() {
         override fun areItemsTheSame(oldItem: Channel, newItem: Channel): Boolean {
@@ -102,13 +110,24 @@ class ChannelAdapter(
                     if (Cons.currentNativeAdFacebook != null) {
                         binding2?.fbNativeAdContainer?.let {
                             adManager.inflateFbNativeAd(
-                                Cons.currentNativeAdFacebook!!,it
+                                Cons.currentNativeAdFacebook!!, it
+                            )
+                        }
+                    }
+                    else
+                    {
+                        fbNativeAd = com.facebook.ads.NativeAd(context, nativeFacebook)
+                        binding2?.adLoadLay2?.visibility = View.VISIBLE
+                        binding2?.fbNativeAdContainer?.let {
+                            adManager.loadFacebookNativeAd(
+                                fbNativeAd!!,
+                                it, binding2?.adLoadLay2
                             )
                         }
                     }
                 } else if (adType.equals(Constants.admob, true)) {
 
-                    if (Cons.currentNativeAd!=null) {
+                    if (Cons.currentNativeAd != null) {
                         binding2?.nativeAdView?.let {
                             adManager.populateNativeAdView(
                                 Cons.currentNativeAd!!,
@@ -116,6 +135,15 @@ class ChannelAdapter(
                             )
                         }
 //                        binding2?.nativeAdView?.let { adManager.loadAdmobNativeAd(viewHolder, it) }
+                    } else {
+                        binding2?.adLoadLay?.visibility = View.VISIBLE
+                        binding2?.nativeAdView?.let {
+                            adManager.loadAdmobNativeAd(
+                                viewHolder,
+                                it,
+                                binding2?.adLoadLay
+                            )
+                        }
                     }
                 }
 
@@ -128,12 +156,26 @@ class ChannelAdapter(
                 viewHolder.textChannel.text = currentList[position].name
                 loadImage(viewHolder.imageViewChannel,currentList[position].image_url)
 
+
+                if (position == positionClick) {
+                    viewHolder?.channelBck?.setBackgroundColor(Color.parseColor("#A9A9A9"))
+                } else {
+                    viewHolder?.channelBck?.setBackgroundColor(Color.parseColor("#00FFFFFF"))
+                }
+
                 if (!currentList[position].date.isNullOrEmpty()) {
                     dateAndTime(currentList[position].date,viewHolder)
                 }
 
-                holder.itemView.setOnClickListener {
-
+                holder.itemView.setSafeOnClickListener {
+                    positionClick = holder.absoluteAdapterPosition
+                    if (previousClick == -1)
+                        previousClick = positionClick
+                    else {
+                        notifyItemChanged(previousClick)
+                        previousClick = positionClick
+                    }
+                    notifyItemChanged(positionClick)
                     try {
 
                         if (currentList[position]?.channel_type.equals(
@@ -340,6 +382,8 @@ class ChannelAdapter(
         val imageViewChannel = itemView.findViewById<ImageView>(R.id.channelImage)
         val textChannel = itemView.findViewById<TextView>(R.id.channelName)
         val channelDateTime = itemView.findViewById<TextView>(R.id.dateOfChannel)
+        val channelBck = itemView.findViewById<ConstraintLayout>(R.id.channelBack)
+
     }
 
     ///View holder class

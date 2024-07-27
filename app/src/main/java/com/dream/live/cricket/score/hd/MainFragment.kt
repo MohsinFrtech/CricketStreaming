@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -26,8 +27,11 @@ import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListe
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.checkNativeAdProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeAdProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeFacebook
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.dream.live.cricket.score.hd.utils.InternetUtil
+import com.facebook.ads.NativeAd
 import java.util.ArrayList
 
 class MainFragment : Fragment(), NavigateData, AdManagerListener {
@@ -47,6 +51,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
         ViewModelProvider(requireActivity())[LiveViewModel::class.java]
     }
     private var nativeFieldVal = ""
+    private var fbNativeAd: NativeAd? = null
 
     private var listWithAd: List<Channel?> =
         ArrayList<Channel?>()
@@ -76,7 +81,6 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
     }
 
     private fun setUpViewModel() {
-
         // Observe Live Data for updating Data in slider
         liveViewModel.sliderList.observe(viewLifecycleOwner) {
 
@@ -117,32 +121,53 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                     nativeAdProviderName =
                         adManager?.checkProvider(it.app_ads!!, Constants.nativeAdLocation)
                             .toString()
-
+                    nativeAdProvider = nativeAdProviderName
+                    if(nativeAdProvider!="none")
+                    {
+                        adManager?.loadAdProvider(nativeAdProvider,Constants.nativeAdLocation,null,
+                            null,null,null)
+                    }
                     checkNativeAdProvider = nativeAdProviderName
 
                     if (nativeAdProviderName.equals(Constants.admob, true)) {
-//                        if (Cons.currentNativeAd != null) {
-//                            binding?.nativeAdView?.let {
-//                                adManager?.populateNativeAdView(
-//                                    Cons.currentNativeAd!!,
-//                                    it
-//                                )
-//                            }
-//                        }
-//                        adManager?.loadAdmobNativeAd(null, binding?.nativeAdView)
-                    } else if (nativeAdProviderName.equals(Constants.facebook, true)) {
-                        if (Cons.currentNativeAdFacebook != null) {
-                            binding?.fbNativeAdContainer?.let {
-                                adManager?.inflateFbNativeAd(
-                                    Cons.currentNativeAdFacebook!!,it
+                        if (Cons.currentNativeAd != null) {
+                            binding?.nativeAdView?.let {
+                                adManager?.populateNativeAdView(
+                                    Cons.currentNativeAd!!,
+                                    it
                                 )
                             }
                         }
-//                        binding?.fbNativeAdContainer?.let { it1 ->
-//                            adManager?.loadFacebookNativeAd(
-//                                it1
-//                            )
-//                        }
+                        else {
+                            binding?.adLoadLay?.visibility = View.VISIBLE
+                            binding?.nativeAdView?.let {
+                                adManager?.loadAdmobNativeAd(
+                                    null,
+                                    it,
+                                    binding?.adLoadLay
+                                )
+                            }
+                        }
+
+                    } else if (nativeAdProviderName.equals(Constants.facebook, true)) {
+
+                        if (Cons.currentNativeAdFacebook != null) {
+                            binding?.fbNativeAdContainer?.let {
+                                adManager?.inflateFbNativeAd(
+                                    Cons.currentNativeAdFacebook!!, it
+                                )
+                            }
+                        }
+                        else {
+                            fbNativeAd = NativeAd(context, nativeFacebook)
+                            binding?.adLoadLay2?.visibility = View.VISIBLE
+                            binding?.fbNativeAdContainer?.let {
+                                adManager?.loadFacebookNativeAd(
+                                    fbNativeAd!!,
+                                    it, binding?.adLoadLay2
+                                )
+                            }
+                        }
                     }
 
 
@@ -211,7 +236,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                     }
 
                 } else {
-                   hideLiveImpChannels()
+                    hideLiveImpChannels()
                 }
             } else {
                 hideLiveImpChannels()
@@ -221,14 +246,14 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
 
     private fun showLiveImpChannels() {
         binding?.streamText?.visibility = View.VISIBLE
-        binding?.gameRecycler?.visibility=View.VISIBLE
+        binding?.gameRecycler?.visibility = View.VISIBLE
         binding?.noLiveChannel?.visibility = View.GONE
     }
 
     private fun hideLiveImpChannels() {
         binding?.streamText?.visibility = View.GONE
-        binding?.gameRecycler?.visibility=View.GONE
-        binding?.noLiveChannel?.visibility=View.VISIBLE
+        binding?.gameRecycler?.visibility = View.GONE
+        binding?.noLiveChannel?.visibility = View.VISIBLE
     }
 
 
@@ -319,6 +344,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
             navDirections = viewId
             if (adStatus) {
                 if (!adProviderName.equals("none", true)) {
+                    binding?.MainLottie?.visibility=View.VISIBLE
                     adManager?.showAds(adProviderName)
                 } else {
                     findNavController().navigate(viewId)
@@ -336,6 +362,9 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
     }
 
     override fun onAdFinish() {
+        if(binding?.MainLottie?.isVisible == true){
+            binding?.MainLottie?.visibility=View.GONE
+        }
         if (navDirections != null) {
             findNavController().navigate(navDirections!!)
         }

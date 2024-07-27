@@ -60,7 +60,6 @@ class AppOpenManager(myApplication: MyApp?) : Application.ActivityLifecycleCallb
                 return
             }
 
-//            ca-app-pub-3634409289872167/1657403501
             isLoadingAd = true
             val request = AdRequest.Builder().build()
             AppOpenAd.load(

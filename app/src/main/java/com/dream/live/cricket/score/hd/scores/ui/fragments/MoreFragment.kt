@@ -68,17 +68,17 @@ class MoreFragment:Fragment() {
 
             if (isOn)
             {
-                preference?.saveString(Constants.preferenceMode,"dark")
                 Constants.modeCheckValue="dark"
                 binding?.notificationOnOff2?.isOn=true
                 AppCompatDelegate
                     .setDefaultNightMode(
                         AppCompatDelegate
                             .MODE_NIGHT_YES)
+                preference?.saveString(Constants.preferenceMode,"dark")
             }
             else
             {
-                preference?.saveString(Constants.preferenceMode,"light")
+
                 Constants.modeCheckValue="light"
                 binding?.notificationOnOff2?.isOn=false
                 AppCompatDelegate
@@ -86,6 +86,7 @@ class MoreFragment:Fragment() {
                         AppCompatDelegate
                             .MODE_NIGHT_NO
                     )
+                preference?.saveString(Constants.preferenceMode,"light")
 
             }
 

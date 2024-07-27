@@ -94,12 +94,36 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view_dots">
 
-                    <com.google.android.gms.ads.nativead.NativeAdView
-                        android:layout_height="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:id="@+id/adLoadLay"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone"
+                        android:background="@color/white"
+                        android:layout_height="@dimen/_82sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/_14sdp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:text="Ad is Loading...."
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_height="wrap_content"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.google.android.gms.ads.nativead.NativeAdView
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginBottom="@dimen/_4sdp"
                         android:layout_marginStart="@dimen/_10sdp"
@@ -176,7 +200,7 @@
                                             android:id="@+id/primary"
                                             android:textStyle="bold"
                                             android:textSize="@dimen/gnt_text_size_large"
-                                            android:textColor="@color/gray"
+                                            android:textColor="@color/gnt_gray"
                                             android:lines="1"
                                             android:layout_height="match_parent"
                                             android:layout_width="wrap_content"
@@ -289,19 +313,39 @@
 
                     </com.google.android.gms.ads.nativead.NativeAdView>
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:id="@+id/adLoadLay2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone"
+                        android:background="@color/white"
+                        android:layout_height="@dimen/_140sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/_14sdp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:text="Ad is Loading...."
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_height="wrap_content"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <com.facebook.ads.NativeAdLayout
                         android:id="@+id/fb_native_ad_container"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginBottom="@dimen/_10sdp"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:visibility="visible"
+                        android:layout_height="wrap_content">
                     </com.facebook.ads.NativeAdLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -365,6 +409,19 @@
                     android:layout_height="wrap_content">
 
                 </TextView>
+
+                <ProgressBar
+                    android:id="@+id/MainLottie"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_marginBottom="@dimen/_50sdp"
+                    android:elevation="@dimen/_10sdp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>

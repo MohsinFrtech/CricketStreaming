@@ -12,61 +12,88 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="@dimen/_200sdp"
-            android:id="@+id/lottieAnimLayout"
-            android:layout_height="@dimen/_200sdp"
-            android:visibility="gone"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY"
+            android:src="@drawable/splashbg"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_margin="10dp"
-            app:lottie_autoPlay="true"
-            app:lottie_rawRes="@raw/splash_no_internet"
-            app:lottie_loop="true"
-            />
+            app:layout_constraintVertical_bias="0.5" />
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/lottieAnimLayout"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_height="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:visibility="gone"
-            android:id="@+id/noInternetText"
-            android:textSize="@dimen/_16sdp"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/no_internet_string"/>
+            android:id="@+id/noInternetMainLayout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/deep"
+            android:layout_height="match_parent">
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="@dimen/_200sdp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:id="@+id/lottieAnimLayout"
+                android:layout_height="@dimen/_200sdp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_rawRes="@raw/splash_no_internet"
+                app:lottie_loop="true"
+                />
 
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noInternetText"
-            android:layout_marginTop="@dimen/_10sdp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:text="@string/retry"
-            android:id="@+id/retry"
-            android:textColor="@android:color/white"
-            android:background="@color/design_default_color_primary"
-            android:layout_gravity="center_horizontal">
+            <TextView
+                android:layout_width="0sp"
+                app:layout_constraintTop_toBottomOf="@+id/lottieAnimLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:id="@+id/noInternetText"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:textStyle="bold"
+                android:textSize="@dimen/_16sdp"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/no_internet_string"/>
 
-        </Button>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:visibility="visible"
+                android:backgroundTint="@color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/noInternetText"
+                android:layout_marginTop="@dimen/_80sdp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:text="@string/retry"
+                android:id="@+id/retry"
+                android:textColor="@android:color/black"
+                android:background="@color/design_default_color_primary"
+                android:layout_gravity="center_horizontal">
+
+            </Button>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="@dimen/_100sdp"
             android:id="@+id/homeAnimLayout"
             android:layout_height="@dimen/_100sdp"
             android:visibility="visible"
-            android:layout_marginBottom="@dimen/_100sdp"
+            android:layout_marginBottom="@dimen/_50sdp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

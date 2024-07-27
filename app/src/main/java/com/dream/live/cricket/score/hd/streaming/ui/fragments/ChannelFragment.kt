@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -36,7 +38,6 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
     private var adStatus = false
     private var navDirections: NavDirections? = null
     private var adProviderName = "none"
-    private var nativeAdProviderName = "none"
     private var nativeFieldVal = ""
     private var listWithAd: List<Channel>? =
         ArrayList<Channel>()
@@ -55,6 +56,8 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
         bindingChannel = DataBindingUtil.bind(view)
         bindingChannel?.lifecycleOwner = this
         adManager = context?.let { activity?.let { it1 -> AdManager(it, it1, this) } }
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
         if (Constants.middleAdProvider.equals(Constants.startApp, true)) {
             Log.d("providerval", "mid" + Constants.middleAdProvider)
 
@@ -68,6 +71,7 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
             )
 
         }
+        settingChannels()
         bindingChannel?.btnBack?.setOnClickListener {
 
             this.findNavController().popBackStack()
@@ -77,34 +81,16 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
 
     override fun onResume() {
         super.onResume()
-        settingChannels()
-    }
-
-    ///set channels
-    private fun settingChannels() {
-        val channelData: ChannelFragmentArgs by navArgs()
-        if (channelData.getEvent != null) {
-            bindingChannel?.eventNameChannel?.text = channelData.getEvent!!.name
-            setChannelAdapter(channelData.getEvent?.channels,currentNativeAd)
-
-        }
-    }
-
-    private fun setChannelAdapter(channels: List<Channel>?, currentNativeAd: NativeAd?) {
-
         viewModel?.dataModelList?.observe(viewLifecycleOwner)
         {
 
             if (!it.extra_3.isNullOrEmpty()) {
                 nativeFieldVal = it.extra_3!!
             }
+
             if (!it.app_ads.isNullOrEmpty()) {
                 adProviderName =
                     adManager?.checkProvider(it.app_ads!!, Constants.adBefore).toString()
-                nativeAdProviderName = adManager?.checkProvider(
-                    it.app_ads!!,
-                    Constants.nativeAdLocation
-                ).toString()
                 Constants.location2TopProvider = adManager?.checkProvider(
                     it.app_ads!!,
                     Constants.adLocation2top
@@ -138,6 +124,28 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
 
 
             }
+
+        }
+    }
+
+    ///set channels
+    private fun settingChannels() {
+        val channelData: ChannelFragmentArgs by navArgs()
+        if (channelData.getEvent != null) {
+            bindingChannel?.eventNameChannel?.text = channelData.getEvent!!.name
+            setChannelAdapter(channelData.getEvent?.channels,currentNativeAd)
+
+        }
+    }
+
+    private fun setChannelAdapter(channels: List<Channel>?, currentNativeAd: NativeAd?) {
+
+        viewModel?.dataModelList?.observe(viewLifecycleOwner)
+        {
+
+            if (!it.extra_3.isNullOrEmpty()) {
+                nativeFieldVal = it.extra_3!!
+            }
             val liveChannels: MutableList<Channel> =
                 ArrayList<Channel>()
             for (channel in channels!!) {
@@ -165,7 +173,7 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
                 val adapter = context?.let {
                     adManager?.let { it1 ->
                         ChannelAdapter(
-                            it, this, listWithAd, nativeAdProviderName,
+                            it, this, listWithAd, Constants.nativeAdProvider,
                             it1, nativeFieldVal, "channel")
                     }
                 }
@@ -187,7 +195,11 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
             navDirections = viewId
             if (adStatus) {
                 if (!adProviderName.equals("none", true)) {
+                    bindingChannel?.MainLottie?.visibility=View.VISIBLE
                     adManager?.showAds(adProviderName)
+                    requireActivity().window.setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 } else {
                     findNavController().navigate(viewId)
                 }
@@ -232,7 +244,10 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
     }
 
     override fun onAdFinish() {
-
+        if (bindingChannel?.MainLottie?.isVisible == true){
+            bindingChannel?.MainLottie?.visibility=View.GONE
+        }
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         if (navDirections != null) {
             findNavController().navigate(navDirections!!)
         }

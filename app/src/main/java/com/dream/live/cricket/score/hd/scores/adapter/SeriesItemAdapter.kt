@@ -15,6 +15,7 @@ import com.dream.live.cricket.score.hd.scores.model.SeriesScoresModel
 import com.dream.live.cricket.score.hd.scores.ui.fragments.BrowseFragmentDirections
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.scores.utility.Cons
+import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.selectedSeriesId
 import java.text.SimpleDateFormat
 import java.util.*
@@ -101,7 +102,7 @@ class SeriesItemAdapter(val context: Context, private val navigateData: Navigate
     override fun onBindViewHolder(holder: LiveSliderAdapterViewHolder, position: Int) {
 //        holder.setIsRecyclable(false)
         holder.bindSeriesData(currentList[position])
-        holder.itemView.setOnClickListener {
+        holder.itemView.setSafeOnClickListener {
 
             if (currentList[position].series_id!=null) {
                 selectedSeriesId = currentList[position].series_id!!

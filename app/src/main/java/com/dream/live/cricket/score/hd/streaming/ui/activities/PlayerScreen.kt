@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -20,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -55,11 +57,13 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.adLocat
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.adLocation2topPermanent
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.location2BottomProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.location2TopPermanentProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userLinkVal
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType3
 import com.dream.live.cricket.score.hd.streaming.utils.objects.DebugChecker
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Defamation
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
+import com.dream.live.cricket.score.hd.utils.InternetUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
@@ -149,7 +153,13 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
                 if (adStatus) {
                     if (!Constants.locationAfter.equals("none", true)) {
-                        adManager?.showAds(Constants.locationAfter)
+                        if (player != null) {
+                            player?.stop()
+                            player!!.release()
+                            player = null
+                        }
+                        adManager?.showAds(locationAfter)
+                        binding?.lottiePlayer2?.visibility = View.VISIBLE
                     }
                 } else {
                     Constants.videoFinish = true
@@ -1216,6 +1226,19 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
     override fun onResume() {
         super.onResume()
+        if (InternetUtil.isPrivateDnsSetup(this)) {
+            Toast.makeText(
+                this,
+                "Please turn off private dns,If not found then search dns in setting search",
+                Toast.LENGTH_LONG
+            ).show()
+            try {
+                startActivityForResult(Intent(Settings.ACTION_SETTINGS), 0)
+            } catch (e: Exception) {
+                Log.d("Exception", "msg")
+            }
+        }
+
         hideSystemUI()
         if (mCastSession != null) {
             mCastContext?.sessionManager?.addSessionManagerListener(
@@ -1448,6 +1471,9 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
     override fun onAdFinish() {
+        if (binding?.lottiePlayer2?.isVisible == true) {
+            binding?.lottiePlayer2?.visibility = View.GONE
+        }
         Constants.videoFinish = true
         finish()
 

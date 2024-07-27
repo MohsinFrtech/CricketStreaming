@@ -12,9 +12,12 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.FirebaseApp
@@ -28,37 +31,37 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.CustomDialogue
 import com.dream.live.cricket.score.hd.streaming.utils.objects.DebugChecker
 import com.dream.live.cricket.score.hd.streaming.utils.objects.SharedPreference
 import com.dream.live.cricket.score.hd.utils.InternetUtil
+import com.dream.live.cricket.score.hd.utils.InternetUtil.isPrivateDnsSetup
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 
 ///Home Screen ....
-class HomeScreen: AppCompatActivity(), DialogListener {
+class HomeScreen : AppCompatActivity(), DialogListener {
 
-    private var bindingHome: ActivitySplashBinding?=null
-    private var permissionCount= 0
+    private var bindingHome: ActivitySplashBinding? = null
+    private var permissionCount = 0
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
 
-                bindingHome?.notificationLayout?.visibility= View.GONE
+                bindingHome?.notificationLayout?.visibility = View.GONE
                 // Permission is granted. Continue the action or workflow in your
                 subscribeOrUnSubscribeTopic()
 
             } else {
-                bindingHome?.notificationLayout?.visibility= View.VISIBLE
+                bindingHome?.notificationLayout?.visibility = View.VISIBLE
 
             }
         }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindingHome= DataBindingUtil.setContentView(this, R.layout.activity_splash)
+        bindingHome = DataBindingUtil.setContentView(this, R.layout.activity_splash)
         //Initialize firebase instance...
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
@@ -67,24 +70,40 @@ class HomeScreen: AppCompatActivity(), DialogListener {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.noChange)
 
         FirebaseApp.initializeApp(this)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (bindingHome?.notificationLayout?.isVisible == true || bindingHome?.noInternetMainLayout?.isVisible == true) {
+                    finishAffinity()
+                } else {
+
+                }
+            }
+        })
 
         bindingHome?.retry?.setOnClickListener {
-            if (!DebugChecker.checkDebugging(this))
-            {
-                emulatorCheck()
+            bindingHome?.homeAnimLayout?.visibility = View.VISIBLE
+            if (InternetUtil.isInternetOn(this)) {
+                bindingHome?.noInternetMainLayout?.visibility = View.GONE
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (!DebugChecker.checkDebugging(this)) {
+                        emulatorCheck()
+                    }
+                }, 2000)
+            } else {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    bindingHome?.homeAnimLayout?.visibility = View.GONE
+                }, 2000)
             }
-
-
         }
 
-        bindingHome?.yesBtn?.setOnClickListener{
-            bindingHome?.notificationLayout?.visibility= View.GONE
+        bindingHome?.yesBtn?.setOnClickListener {
+            bindingHome?.notificationLayout?.visibility = View.GONE
             makePermission()
         }
-        bindingHome?.skipBtn?.setOnClickListener{
+        bindingHome?.skipBtn?.setOnClickListener {
 
 //            requestPermissionLauncher.unregister()
-            bindingHome?.notificationLayout?.visibility= View.GONE
+            bindingHome?.notificationLayout?.visibility = View.GONE
             navigationToNextScreen()
         }
     }
@@ -102,11 +121,13 @@ class HomeScreen: AppCompatActivity(), DialogListener {
                     subscribeOrUnSubscribeTopic()
 
                 }
+
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
                 -> {
-                    bindingHome?.notificationLayout?.visibility= View.VISIBLE
+                    bindingHome?.notificationLayout?.visibility = View.VISIBLE
 
                 }
+
                 else -> {
                     // You can directly ask for the permission.
                     // The registered ActivityResultCallback gets the result of this request.
@@ -115,9 +136,7 @@ class HomeScreen: AppCompatActivity(), DialogListener {
                 }
 
             }
-        }
-        else
-        {
+        } else {
             subscribeOrUnSubscribeTopic()
         }
 
@@ -127,16 +146,13 @@ class HomeScreen: AppCompatActivity(), DialogListener {
     private fun makePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
-            if (permissionCount>3)
-            {
-                bindingHome?.notificationLayout?.visibility= View.GONE
+            if (permissionCount > 3) {
+                bindingHome?.notificationLayout?.visibility = View.GONE
 
-               navigationToNextScreen()
+                navigationToNextScreen()
 
-            }
-            else if (permissionCount==2)
-            {
-                bindingHome?.notificationLayout?.visibility= View.GONE
+            } else if (permissionCount == 2) {
+                bindingHome?.notificationLayout?.visibility = View.GONE
 
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 val uri = Uri.fromParts(
@@ -145,9 +161,7 @@ class HomeScreen: AppCompatActivity(), DialogListener {
                 )
                 intent.data = uri
                 startActivity(intent)
-            }
-            else
-            {
+            } else {
                 requestPermissionLauncher.launch(
                     Manifest.permission.POST_NOTIFICATIONS
                 )
@@ -159,34 +173,30 @@ class HomeScreen: AppCompatActivity(), DialogListener {
     }
 
 
-
     private fun subscribeOrUnSubscribeTopic() {
-        val preference= SharedPreference(this)
-        val getStatus=preference.getBool(Constants.preferenceKey)
+        val preference = SharedPreference(this)
+        val getStatus = preference.getBool(Constants.preferenceKey)
 
-        val modeValue=preference.getString(Constants.preferenceMode)
+        val modeValue = preference.getString(Constants.preferenceMode)
 
-        if (modeValue.equals("dark",true)) {
+        if (modeValue.equals("dark", true)) {
 
-            Constants.modeCheckValue="dark"
+            Constants.modeCheckValue = "dark"
         } else {
-            Constants.modeCheckValue="light"
+            Constants.modeCheckValue = "light"
 
         }
-        if (getStatus == true)
-        {
+        if (getStatus == true) {
             navigationToNextScreen()
             ///means already subscribe to topic...
-        }
-        else
-        {
+        } else {
 
 
             FirebaseMessaging.getInstance().subscribeToTopic("event")
                 .addOnCompleteListener { task ->
                     if (task.isComplete) {
                         //
-                        preference.saveBool(Constants.preferenceKey,true)
+                        preference.saveBool(Constants.preferenceKey, true)
 
                     }
                 }
@@ -199,14 +209,27 @@ class HomeScreen: AppCompatActivity(), DialogListener {
 
     override fun onResume() {
         super.onResume()
-
-
-        if (!DebugChecker.checkDebugging(this))
-        {
+        if (!DebugChecker.checkDebugging(this)) {
             Handler(Looper.getMainLooper()).postDelayed(
                 {
-                    emulatorCheck()
-
+                    if(isPrivateDnsSetup(this))
+                    {
+                        Toast.makeText(
+                            this,
+                            "Please turn off private dns,If not found then search dns in setting search",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        try {
+                            startActivityForResult(Intent(Settings.ACTION_SETTINGS), 0)
+                        }
+                        catch (e:Exception){
+                            Log.d("Exception","msg")
+                        }
+                    }
+                    else
+                    {
+                        emulatorCheck()
+                    }
                 },
                 2000
             )
@@ -262,47 +285,38 @@ class HomeScreen: AppCompatActivity(), DialogListener {
         if (state) {
 
             CustomDialogue(this).showDialog(
-                this,"Alert!","Please use application on real device",
-                "","Ok","baseValue"
+                this, "Alert!", "Please use application on real device",
+                "", "Ok", "baseValue"
             )
         } else {
             checkNotificationPermission()
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         requestPermissionLauncher.unregister()
     }
+
     ///Navigation to next Screen
     private fun navigationToNextScreen() {
-        if (InternetUtil.isInternetOn(this))
-        {
-            bindingHome?.lottieAnimLayout?.visibility= View.GONE
-            bindingHome?.noInternetText?.visibility= View.GONE
-            bindingHome?.retry?.visibility= View.GONE
+        if (InternetUtil.isInternetOn(this)) {
+            bindingHome?.noInternetMainLayout?.visibility = View.GONE
             moveToMainScreen()
-        }
-        else
-        {
-            bindingHome?.lottieAnimLayout?.visibility= View.VISIBLE
-            bindingHome?.noInternetText?.visibility= View.VISIBLE
-            bindingHome?.retry?.visibility= View.VISIBLE
-            bindingHome?.homeAnimLayout?.visibility= View.GONE
-
-
+        } else {
+            bindingHome?.noInternetMainLayout?.visibility = View.VISIBLE
+            bindingHome?.homeAnimLayout?.visibility = View.GONE
         }
     }
 
     private fun moveToMainScreen() {
-        bindingHome?.homeAnimLayout?.visibility= View.GONE
-        if (isDeviceRooted())
-        {
+        bindingHome?.homeAnimLayout?.visibility = View.GONE
+        if (isDeviceRooted()) {
             CustomDialogue(this).showDialog(
-                this,"Alert!","Please use application on real device",
-                "","Ok","baseValue"
+                this, "Alert!", "Please use application on real device",
+                "", "Ok", "baseValue"
             )
-        }
-        else {
+        } else {
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -417,11 +431,6 @@ class HomeScreen: AppCompatActivity(), DialogListener {
 
         }
     }
-
-
-
-
-
 
 
 }

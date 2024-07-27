@@ -14,6 +14,7 @@ import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
 import com.dream.live.cricket.score.hd.streaming.models.Event
 import com.dream.live.cricket.score.hd.streaming.ui.fragments.StreamingFragmentDirections
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
+import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 
 class EventAdapter(val context: Context, private val navigateData: NavigateData, val list: List<Event?>,
                    private val adType:String, private val adManager: AdManager
@@ -67,7 +68,7 @@ class EventAdapter(val context: Context, private val navigateData: NavigateData,
         }
 
 
-        holder.itemView.setOnClickListener {
+        holder.itemView.setSafeOnClickListener {
 
             val direction= StreamingFragmentDirections.actionStreamingToChannel(currentList[position])
             navigateData.navigation(direction)
