@@ -46,7 +46,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:textStyle="bold"
             android:visibility="gone"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             android:textSize="@dimen/_20sdp"
             android:gravity="center_horizontal"

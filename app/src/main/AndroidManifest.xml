@@ -62,6 +62,7 @@
         <activity
             android:name=".tv.activities.TvHomeActivity"
             android:exported="true"
+            android:theme="@style/TvTheme"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

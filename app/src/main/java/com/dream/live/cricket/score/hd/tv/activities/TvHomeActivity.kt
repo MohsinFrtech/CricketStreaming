@@ -137,6 +137,9 @@ class TvHomeActivity : FragmentActivity() {
         else
         {
             binding?.internetLay?.visibility=View.VISIBLE
+            Handler(Looper.getMainLooper()).postDelayed({
+               finish()
+            }, 5000)
         }
 
     }
