@@ -6,7 +6,10 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -21,6 +24,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -138,6 +142,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
     private var time = "0"
     private var navigationTap = 0
     private var showNavigationAd = 2
+    private var booleanVpn: Boolean? = false
 
     private var itemView: BottomNavigationItemView? = null
     private var itemView2: BottomNavigationItemView? = null
@@ -1001,7 +1006,41 @@ class MainActivity : AppCompatActivity(), DialogListener,
         } else {
             ratingGiven = false
         }
+
+        checkVpn()
     }
+
+    private fun checkVpn() {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        connectivityManager?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                it.getNetworkCapabilities(connectivityManager.activeNetwork)?.apply {
+                    val booleanVpnCheck = hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+                    booleanVpn = booleanVpnCheck == true
+                }
+            } else {
+                booleanVpn = false
+            }
+        }
+
+        if (booleanVpn != null) {
+            if (booleanVpn!!) {
+                if (binding?.adblockLayout?.isVisible!!) {
+                    /////////
+
+                } else {
+                    binding?.adblockLayout?.visibility = View.VISIBLE
+
+                }
+            } else {
+                binding?.adblockLayout?.visibility = View.GONE
+
+            }
+        }
+
+    }
+
 
 
     override fun onNegativeDialogText(key: String) {

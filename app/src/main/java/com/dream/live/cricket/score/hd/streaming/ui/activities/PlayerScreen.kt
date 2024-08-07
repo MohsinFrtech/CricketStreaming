@@ -5,6 +5,9 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.media.AudioManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -124,6 +127,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     enum class PlaybackState {
         PLAYING, IDLE
     }
+    private var booleanVpn: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -222,6 +226,36 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             Log.d("Exception", "message : ${e.cause}")
         }
 
+
+    }
+    private fun checkVpn() {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        connectivityManager?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                it.getNetworkCapabilities(connectivityManager.activeNetwork)?.apply {
+                    val booleanVpnCheck = hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+                    booleanVpn = booleanVpnCheck == true
+                }
+            } else {
+                booleanVpn = false
+            }
+        }
+
+        if (booleanVpn != null) {
+            if (booleanVpn!!) {
+                if (binding?.adblockLayout?.isVisible!!) {
+                    /////////
+
+                } else {
+                    binding?.adblockLayout?.visibility = View.VISIBLE
+
+                }
+            } else {
+                binding?.adblockLayout?.visibility = View.GONE
+
+            }
+        }
 
     }
 
@@ -1283,6 +1317,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             }
         }
 
+        checkVpn()
     }
 
 
