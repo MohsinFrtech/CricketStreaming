@@ -1317,7 +1317,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             }
         }
 
-        checkVpn()
+//        checkVpn()
     }
 
 

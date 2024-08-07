@@ -1007,7 +1007,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
             ratingGiven = false
         }
 
-        checkVpn()
+//        checkVpn()
     }
 
     private fun checkVpn() {
