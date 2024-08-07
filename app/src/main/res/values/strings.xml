@@ -53,7 +53,7 @@
 
     <!--    home fragment-->
 
-    <string name="adblock">We detected ad blocker running on your device.Please disable adblocker and then use our app.</string>
+    <string name="adblock">We detected ad blocker or vpn running on your device.Please disable adblocker and then use our app.</string>
     <string name="ad_blocker">adblocker</string>
 
 <!--    live scores layout-->
