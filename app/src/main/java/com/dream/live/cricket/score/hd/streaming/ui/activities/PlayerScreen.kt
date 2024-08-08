@@ -1323,8 +1323,6 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
     /////Media builder function
     private fun buildMediaInfo(): MediaInfo {
-
-
         return path.let {
             MediaInfo.Builder(it)
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)

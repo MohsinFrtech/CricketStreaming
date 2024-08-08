@@ -122,21 +122,28 @@ class MatchesCategoryFragment : Fragment(), NavigateData ,AdManagerListener{
 
     private fun setAdapter2(liveScores: List<LiveScoresModel?>) {
         try {
-            val listWithAd: List<LiveScoresModel?> =
-                if (checkNativeAdProvider != "none") {
-                    MyNativeAd.checkNativeAd(liveScores)
-                } else {
-                    liveScores
+            var tFormatList: MutableList<LiveScoresModel?> = liveScores.toMutableList()
+            if(!tFormatList.isNullOrEmpty()) {
+                tFormatList.sortBy {
+                    it?.id
                 }
-            val listAdapter = adManager?.let {
-                RecentMatchesAdapter(requireContext(), this, "recent",listWithAd, checkNativeAdProvider,
-                    it,null
-                )
+                val listWithAd: List<LiveScoresModel?> =
+                    if (checkNativeAdProvider != "none") {
+                        MyNativeAd.checkNativeAd(tFormatList)
+                    } else {
+                        tFormatList
+                    }
+                val listAdapter = adManager?.let {
+                    RecentMatchesAdapter(requireContext(), this, "recent",listWithAd, checkNativeAdProvider,
+                        it,null
+                    )
+                }
+                binding?.rvMatches?.layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                binding?.rvMatches?.adapter = listAdapter
+                listAdapter?.submitList(listWithAd)
             }
-            binding?.rvMatches?.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            binding?.rvMatches?.adapter = listAdapter
-            listAdapter?.submitList(liveScores)
+
 
         } catch (e: Exception) {
             e.printStackTrace()

@@ -123,23 +123,30 @@ class UpcomingMatchesFragment:Fragment() , NavigateData,AdManagerListener {
 
     private fun setAdapter2(liveScores: List<LiveScoresModel?>) {
         try {
-            val listWithAd: List<LiveScoresModel?> =
-                if (checkNativeAdProvider != "none") {
-                    MyNativeAd.checkNativeAd(liveScores)
-                } else {
-                    liveScores
+            var tFormatList: MutableList<LiveScoresModel?> = liveScores.toMutableList()
+            if(!tFormatList.isNullOrEmpty()) {
+                tFormatList.sortBy {
+                    it?.id
                 }
-//            binding?.progressBar?.visibility=View.GONE
-            val listAdapter = adManager?.let {
-                RecentMatchesAdapter(requireContext(),this,"recent",listWithAd, checkNativeAdProvider,
-                    it,null
-                )
-            }
-            bindingUpcomingMatches?.rvMatches?.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            bindingUpcomingMatches?.rvMatches?.adapter = listAdapter
-            listAdapter?.submitList(liveScores)
 
+                val listWithAd: List<LiveScoresModel?> =
+                    if (checkNativeAdProvider != "none") {
+                        MyNativeAd.checkNativeAd(tFormatList)
+                    } else {
+                        tFormatList
+                    }
+//            binding?.progressBar?.visibility=View.GONE
+                val listAdapter = adManager?.let {
+                    RecentMatchesAdapter(requireContext(),this,"recent",listWithAd, checkNativeAdProvider,
+                        it,null
+                    )
+                }
+                bindingUpcomingMatches?.rvMatches?.layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                bindingUpcomingMatches?.rvMatches?.adapter = listAdapter
+                listAdapter?.submitList(listWithAd)
+
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

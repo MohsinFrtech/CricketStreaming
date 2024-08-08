@@ -259,23 +259,35 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
 
     private fun setAdapter2(liveScores: List<LiveScoresModel?>) {
         try {
-//            binding?.progressBar?.visibility=View.GONE
-            val listAdapter = LiveSliderAdapter(requireContext(), this, "main")
-            binding?.recyclerviewSlider?.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            binding?.recyclerviewSlider?.adapter = listAdapter
-            listAdapter.submitList(liveScores)
 
-            ////////////////////////////////////////////////
-            binding?.viewDots?.attachToRecyclerView(binding!!.recyclerviewSlider)
-            if (binding?.recyclerviewSlider?.onFlingListener == null)
-                LinearSnapHelper().attachToRecyclerView(binding?.recyclerviewSlider)
-            val animator: DefaultItemAnimator = object : DefaultItemAnimator() {
-                override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
-                    return true
+            var tFormatList: MutableList<LiveScoresModel?> = liveScores.toMutableList()
+            if(!tFormatList.isNullOrEmpty()) {
+                tFormatList.sortBy {
+                    it?.id
                 }
+                val listAdapter = LiveSliderAdapter(requireContext(), this, "main")
+                binding?.recyclerviewSlider?.layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                binding?.recyclerviewSlider?.adapter = listAdapter
+                listAdapter.submitList(tFormatList)
+
+                ////////////////////////////////////////////////
+                binding?.viewDots?.attachToRecyclerView(binding!!.recyclerviewSlider)
+                if (binding?.recyclerviewSlider?.onFlingListener == null)
+                    LinearSnapHelper().attachToRecyclerView(binding?.recyclerviewSlider)
+                val animator: DefaultItemAnimator = object : DefaultItemAnimator() {
+                    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+                        return true
+                    }
+                }
+                binding?.recyclerviewSlider?.itemAnimator = animator
             }
-            binding?.recyclerviewSlider?.itemAnimator = animator
+
+//            tFormatList.sortBy {
+//                it?.id
+//            }
+//            binding?.progressBar?.visibility=View.GONE
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
