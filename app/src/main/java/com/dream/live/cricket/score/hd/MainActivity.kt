@@ -47,6 +47,7 @@ import com.dream.live.cricket.score.hd.scores.utility.Cons.currentNativeAd
 import com.dream.live.cricket.score.hd.scores.utility.listeners.ApiResponseListener
 import com.dream.live.cricket.score.hd.scores.viewmodel.LiveViewModel
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
+import com.dream.live.cricket.score.hd.streaming.adsData.GoogleMobileAdsConsentManager
 import com.dream.live.cricket.score.hd.streaming.date.ScreenUtil
 import com.dream.live.cricket.score.hd.streaming.models.ApplicationConfiguration
 import com.dream.live.cricket.score.hd.streaming.models.DataModel
@@ -149,6 +150,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
     private var itemView3: BottomNavigationItemView? = null
     private var itemView4: BottomNavigationItemView? = null
     private var itemView5: BottomNavigationItemView? = null
+    private  var googleMobileAdsConsentManager: GoogleMobileAdsConsentManager?=null
 
     private val liveViewModel by lazy {
         ViewModelProvider(this)[LiveViewModel::class.java]
@@ -208,6 +210,8 @@ class MainActivity : AppCompatActivity(), DialogListener,
             }
         })
         setUpNavigationGraph()
+        showConsentDialog()
+
     }
 
 
@@ -826,6 +830,24 @@ class MainActivity : AppCompatActivity(), DialogListener,
                     }
                 }
             }
+        }
+    }
+    private fun showConsentDialog() {
+        googleMobileAdsConsentManager = GoogleMobileAdsConsentManager.getInstance(this)
+        googleMobileAdsConsentManager?.gatherConsent(this) { consentError ->
+            if (consentError != null) {
+                // Consent not obtained in current session.
+                Log.d("ConsetDialog", "${consentError.errorCode}: ${consentError.message}")
+            }
+
+
+//            if (googleMobileAdsConsentManager?.canRequestAds == true) {
+////                initializeMobileAdsSdk()
+//            }
+//            if (googleMobileAdsConsentManager?.isPrivacyOptionsRequired == true) {
+//                // Regenerate the options menu to include a privacy setting.
+//                invalidateOptionsMenu()
+//            }
         }
     }
 

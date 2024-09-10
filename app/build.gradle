@@ -22,8 +22,8 @@ android {
         applicationId "com.dream.live.cricket.score.hd"
         minSdk 21
         targetSdk 34
-        versionCode 38
-        versionName "3.8"
+        versionCode 40
+        versionName "4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -171,5 +171,6 @@ dependencies {
     implementation 'com.github.angads25:toggle:1.1.0'
     implementation 'androidx.leanback:leanback:1.0.0'  //tvApp
 
-   
+    implementation("com.google.android.ump:user-messaging-platform:3.0.0")
+
 }
