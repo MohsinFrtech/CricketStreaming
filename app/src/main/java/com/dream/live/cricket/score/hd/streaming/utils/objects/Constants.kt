@@ -105,7 +105,7 @@ object Constants {
     //userData
     const val userType1 = "flussonic"
     const val userType2 = "cdn"
-    const val userType3 = "p2p"
+    const val userType3 = "p24"
     const val userType4 = "cdnp2p"
     const val phraseDel = "@"
     var userLink = ""

@@ -269,31 +269,29 @@ class ChannelAdapter(
                                 navigateData.navigation(channelDirection)
                             }
                         } else {
-                            if (currentList[position]?.url?.contains(sepUrl) == true
-                                && passphraseVal.isNotEmpty()
-                            ) {
+                            if (localVal.isNotEmpty()) {
+                                val processingFile = ProcessingFile()
+                                defaultString = processingFile.getChannelType(localVal)
+                            }
 
-                                val separatedPart =
-                                    currentList[position]?.url?.split(sepUrl)
+                            val token = currentList[position].url?.let { it1 ->
+                                Defamation.improveDeprecatedCode(it1)
+                            }
+                            val linkAppend = currentList[position].url + token
 
-                                channel_url_val = separatedPart?.get(1).toString()
-
-
-                                if (destination.equals("channel", true)) {
-                                    val channelDirection =
-                                        ChannelFragmentDirections.actionChannelToPlayer(
-                                            "baseLink",
-                                            "linkAppend", userType4
-                                        )
-                                    navigateData.navigation(channelDirection)
-                                } else {
-                                    val channelDirection =
-                                        MainFragmentDirections.actionHomeToPlayer(
-                                            "baseLink",
-                                            "linkAppend", userType4
-                                        )
-                                    navigateData.navigation(channelDirection)
-                                }
+                            if (destination.equals("channel", true)) {
+                                val channelDirection =
+                                    ChannelFragmentDirections.actionChannelToPlayer(
+                                        currentList[position].url, linkAppend,
+                                        userType1
+                                    )
+                                navigateData.navigation(channelDirection)
+                            } else {
+                                val channelDirection = MainFragmentDirections.actionHomeToPlayer(
+                                    currentList[position].url, linkAppend,
+                                    userType1
+                                )
+                                navigateData.navigation(channelDirection)
                             }
 
                         }

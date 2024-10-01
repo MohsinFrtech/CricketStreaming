@@ -161,7 +161,7 @@ class MoreFragment:Fragment() {
 
         binding?.layoutTerms ?.setOnClickListener {
             try {
-                val url = ""
+                val url = "https://www.freeprivacypolicy.com/live/4f2e2a52-67df-4f92-b849-c1f6a6a97965"
                 val i = Intent(Intent.ACTION_VIEW)
                 i.data = Uri.parse(url)
                 startActivity(i)
@@ -183,7 +183,7 @@ class MoreFragment:Fragment() {
         ///Privacy policy layout...
         binding?.layoutPP ?.setOnClickListener {
             try {
-                val url = ""
+                val url = "https://www.freeprivacypolicy.com/live/4f2e2a52-67df-4f92-b849-c1f6a6a97965"
                 val i = Intent(Intent.ACTION_VIEW)
                 i.data = Uri.parse(url)
                 startActivity(i)

@@ -243,7 +243,7 @@ class AdManager(
                 Constants.unityTestMode,
                 object : IUnityAdsInitializationListener {
                     override fun onInitializationComplete() {
-                        if (UnityAds.isInitialized()) {
+                        if (UnityAds.isInitialized) {
 
                             Constants.isUnitySdkInit = true
                             loadAdAtParticularLocation(
@@ -284,6 +284,10 @@ class AdManager(
 
             }
 
+            override fun onBannerShown(bannerAdView: BannerView?) {
+
+            }
+
             override fun onBannerFailedToLoad(
                 bannerAdView: BannerView,
                 errorInfo: BannerErrorInfo
@@ -317,6 +321,10 @@ class AdManager(
                 if (topBannerUnity != null) {
                     showBanner(relativeLayout, topBannerUnity!!)
                 }
+
+            }
+
+            override fun onBannerShown(bannerAdView: BannerView?) {
 
             }
 

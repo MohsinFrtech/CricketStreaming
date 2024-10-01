@@ -67,6 +67,10 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.DebugChecker
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Defamation
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.dream.live.cricket.score.hd.utils.InternetUtil
+import com.p2pengine.core.p2p.EngineExceptionListener
+import com.p2pengine.core.p2p.PlayerInteractor
+import com.p2pengine.core.utils.EngineException
+import com.p2pengine.sdk.P2pEngine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
@@ -207,19 +211,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                     }
                 }
             } else {
-                binding?.lottiePlayer?.visibility = View.VISIBLE
-                viewModel.getDemoData()
-                viewModel.userLinkStatus.observe(this) {
-                    if (it == true) {
-                        path = userLinkVal
-                        if (path.isNotEmpty()) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                setUpPlayerP2p(path)
-                            }
-                        }
-                    }
-                }
-
+                setUpPlayer(path)
             }
 
         } catch (e: Exception) {
@@ -337,144 +329,151 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
 
     private fun setUpPlayerP2p(link: String?) {
-        logger.printLog(
-            tAG, "setUpPlayer P2p" + link
-                    + " " + mLocation
-        )
-      //  val parsedUrl = P2pEngine.instance?.parseStreamUrl(link!!)   //Remove By Haris Abbas (p2p)
 
-        // Create LoadControl
-        val loadControl: LoadControl = DefaultLoadControl.Builder()
-            .setAllocator(DefaultAllocator(true, 16))
-            .setBufferDurationsMs(
-                VideoPlayerConfig.MIN_BUFFER_DURATION,
-                VideoPlayerConfig.MAX_BUFFER_DURATION,
-                VideoPlayerConfig.MIN_PLAYBACK_START_BUFFER,
-                VideoPlayerConfig.MIN_PLAYBACK_RESUME_BUFFER
-            )
-            .setTargetBufferBytes(-1)
-            .setPrioritizeTimeOverSizeThresholds(true)
-            .build()
+        try {
+            logger.printLog(tAG, "setUpPlayer P2p")
+            val parsedUrl = P2pEngine.getInstance()?.parseStreamUrl(link!!)
 
-        binding?.lottiePlayer?.visibility = View.GONE
-
-        val meter: BandwidthMeter = DefaultBandwidthMeter.Builder(this).build()
-        val trackSelector: TrackSelector = DefaultTrackSelector(this)
-        // 2. Create a default LoadControl
-        player = null
-        player = context?.let {
-            ExoPlayer.Builder(it)
-                //.setBandwidthMeter(meter)
-                //.setTrackSelector(trackSelector)
-                .setLoadControl(loadControl)
+            // Create LoadControl
+            val loadControl: LoadControl = DefaultLoadControl.Builder()
+                .setAllocator(DefaultAllocator(true, 16))
+                .setBufferDurationsMs(
+                    VideoPlayerConfig.MIN_BUFFER_DURATION,
+                    VideoPlayerConfig.MAX_BUFFER_DURATION,
+                    VideoPlayerConfig.MIN_PLAYBACK_START_BUFFER,
+                    VideoPlayerConfig.MIN_PLAYBACK_RESUME_BUFFER
+                )
+                .setTargetBufferBytes(-1)
+                .setPrioritizeTimeOverSizeThresholds(true)
                 .build()
-        }
-        binding?.playerView?.player = player
-        binding?.playerView?.keepScreenOn = true
-        //Initialize data source factory
-        val defaultDataSourceFactory = DefaultHttpDataSource.Factory()
-        val mediaItem2 = MediaItem.Builder()
-           // .setUri(parsedUrl)    Remove By Haris Abbas (p2p)
-            .setMimeType(MimeTypes.APPLICATION_M3U8)
-            .build()
 
-        //Initialize hlsMediaSource
-        val hlsMediaSource: HlsMediaSource =
-            HlsMediaSource.Factory(defaultDataSourceFactory).createMediaSource(mediaItem2)
-        val concatenatedSource = ConcatenatingMediaSource(hlsMediaSource)
+            binding?.lottiePlayer?.visibility = View.GONE
 
-        val orientation = resources.configuration.orientation
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-            bindingExoPlayback?.fullScreenIcon?.setImageDrawable(
-                context?.let {
-                    ContextCompat.getDrawable(
-                        it,
-                        R.drawable.ic_full_screen
-                    )
-                }
-            )
-            count = 1
-        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-        }
+            val meter: BandwidthMeter = DefaultBandwidthMeter.Builder(this).build()
+            val trackSelector: TrackSelector = DefaultTrackSelector(this)
+            // 2. Create a default LoadControl
+            player = null
+            player = context?.let {
+                ExoPlayer.Builder(it)
+                    //.setBandwidthMeter(meter)
+                    //.setTrackSelector(trackSelector)
+                    .setLoadControl(loadControl)
+                    .build()
+            }
+            binding?.playerView?.player = player
+            binding?.playerView?.keepScreenOn = true
+            //Initialize data source factory
+            val defaultDataSourceFactory = DefaultHttpDataSource.Factory()
+            val mediaItem2 = MediaItem.Builder()
+                .setUri(parsedUrl)
+                .setMimeType(MimeTypes.APPLICATION_M3U8)
+                .build()
 
-        when (mLocation) {
-            PlaybackLocation.LOCAL -> {
-                if (mCastSession != null && mCastSession?.remoteMediaClient != null) {
-                    mCastSession?.remoteMediaClient?.stop()
-                    mCastContext?.sessionManager?.endCurrentSession(true)
-                }
-                mPlaybackState =
-                    PlaybackState.IDLE
+            //Initialize hlsMediaSource
+            val hlsMediaSource: HlsMediaSource =
+                HlsMediaSource.Factory(defaultDataSourceFactory).createMediaSource(mediaItem2)
+            val concatenatedSource = ConcatenatingMediaSource(hlsMediaSource)
 
-                if (player != null) {
+            val orientation = resources.configuration.orientation
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                bindingExoPlayback?.fullScreenIcon?.setImageDrawable(
+                    context?.let {
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.ic_full_screen
+                        )
+                    }
+                )
+                count = 1
+            } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            }
 
-                    /*P2pEngine.instance?.setPlayerInteractor(object : PlayerInteractor() {
-                        override fun onBufferedDuration(): Long {
-                            return if (player != null) {
-                                player!!.bufferedPosition - player!!.currentPosition
-                            } else {
-                                -1
+            when (mLocation) {
+                PlaybackLocation.LOCAL -> {
+                    if (mCastSession != null && mCastSession?.remoteMediaClient != null) {
+                        mCastSession?.remoteMediaClient?.stop()
+                        mCastContext?.sessionManager?.endCurrentSession(true)
+                    }
+                    mPlaybackState =
+                        PlaybackState.IDLE
+
+                    if (player != null) {
+
+                        P2pEngine.getInstance()?.setPlayerInteractor(object : PlayerInteractor() {
+                            override fun onBufferedDuration(): Long {
+                                return if (player != null) {
+                                    player!!.bufferedPosition - player!!.currentPosition
+                                } else {
+                                    -1
+                                }
                             }
-                        }
-                    })*/          //Remove By Haris Abbas (p2p)
+                        })
 
-                    /*P2pEngine.instance?.registerExceptionListener(object : EngineExceptionListener {
-                        override fun onTrackerException(e: EngineException) {
-                            // Tracker Exception
-                            logger.printLog(tAG, "P2pEngine onTrackerException : ${e.cause}")
-                            logger.printLog(
-                                tAG,
-                                "P2pEngine onTrackerException : ${e.localizedMessage}"
-                            )
-                        }
+                        P2pEngine.getInstance()?.registerExceptionListener(object :
+                            EngineExceptionListener {
+                            override fun onTrackerException(e: EngineException) {
+                                // Tracker Exception
+                                logger.printLog(tAG, "P2pEngine onTrackerException : ${e.cause}")
+                                logger.printLog(
+                                    tAG,
+                                    "P2pEngine onTrackerException : ${e.localizedMessage}"
+                                )
+                            }
 
-                        override fun onSignalException(e: EngineException) {
-                            // Signal Server Exception
-                            logger.printLog(tAG, "P2pEngine onSignalException : ${e.cause}")
-                            logger.printLog(
-                                tAG,
-                                "P2pEngine onSignalException : ${e.localizedMessage}"
-                            )
-                        }
+                            override fun onSignalException(e: EngineException) {
+                                // Signal Server Exception
+                                logger.printLog(tAG, "P2pEngine onSignalException : ${e.cause}")
+                                logger.printLog(
+                                    tAG,
+                                    "P2pEngine onSignalException : ${e.localizedMessage}"
+                                )
+                            }
 
-                        override fun onSchedulerException(e: EngineException) {
-                            // Scheduler Exception
-                            logger.printLog(tAG, "P2pEngine onSchedulerException : ${e.cause}")
-                            logger.printLog(
-                                tAG,
-                                "P2pEngine onSchedulerException : ${e.localizedMessage}"
-                            )
-                        }
+                            override fun onSchedulerException(e: EngineException) {
+                                // Scheduler Exception
+                                logger.printLog(tAG, "P2pEngine onSchedulerException : ${e.cause}")
+                                logger.printLog(
+                                    tAG,
+                                    "P2pEngine onSchedulerException : ${e.localizedMessage}"
+                                )
+                            }
 
-                        override fun onOtherException(e: EngineException) {
-                            // Other Exception
-                            logger.printLog(tAG, "P2pEngine onOtherException : ${e.cause}")
-                            logger.printLog(
-                                tAG,
-                                "P2pEngine onOtherException : ${e.localizedMessage}"
-                            )
-                        }
-                    })*/                  //Remove By Haris Abbas (p2p)
+                            override fun onOtherException(e: EngineException) {
+                                // Other Exception
+                                logger.printLog(tAG, "P2pEngine onOtherException : ${e.cause}")
+                                logger.printLog(
+                                    tAG,
+                                    "P2pEngine onOtherException : ${e.localizedMessage}"
+                                )
+                            }
+                        })
 
 
-                    player?.addListener(this)
-                    player?.setMediaSource(concatenatedSource)
-                    player?.prepare()
-                    binding?.playerView?.requestFocus()
-                    player?.playWhenReady = true
+                        player?.addListener(this)
+                        player?.setMediaSource(concatenatedSource)
+                        player?.prepare()
+                        binding?.playerView?.requestFocus()
+                        player?.playWhenReady = true
+                    }
+
                 }
-
-            }
-            PlaybackLocation.REMOTE -> {
-                mCastSession?.remoteMediaClient?.play()
-                mPlaybackState =
-                    PlaybackState.PLAYING
-            }
-            else -> {
+                PlaybackLocation.REMOTE -> {
+                    mCastSession?.remoteMediaClient?.play()
+                    mPlaybackState =
+                        PlaybackState.PLAYING
+                }
+                else -> {
+                }
             }
         }
+        catch (e:Exception)
+        {
+            Log.d("Exception","msg")
+        }
+
+
     }
 
 
@@ -567,9 +566,9 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         if (player != null) {
             player!!.release()
         }
-        /*if (P2pEngine.instance?.isConnected == true) {
-            P2pEngine.instance?.stopP2p()
-        }*/        //Remove By Haris Abbas (p2p)
+        if (P2pEngine.getInstance()?.isConnected == true) {
+            P2pEngine.getInstance()?.stopP2p()
+        }
     }
 
     ///
@@ -647,8 +646,9 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 path = baseUrl + token
                 setUpPlayerP2p(path)
             } else {
-                path = userLinkVal
-                setUpPlayerP2p(path)
+                val token = baseUrl.let { it1 -> Defamation.improveDeprecatedCode(it1) }
+                path = baseUrl + token
+                setUpPlayer(path)
             }
 
         } catch (e: Exception) {
@@ -1564,10 +1564,10 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         const val MIN_PLAYBACK_RESUME_BUFFER = 7000
     }
 
-    /*override fun onDetachedFromWindow() {
+    override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        if (P2pEngine.instance?.isConnected == true)
-            P2pEngine.instance?.stopP2p()
-    }*/                   //Remove By Haris Abbas (p2p)
+        if (P2pEngine.getInstance()?.isConnected == true)
+            P2pEngine.getInstance()?.stopP2p()
+    }
 
 }

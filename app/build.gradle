@@ -22,8 +22,8 @@ android {
         applicationId "com.dream.live.cricket.score.hd"
         minSdk 21
         targetSdk 34
-        versionCode 40
-        versionName "4.0"
+        versionCode 42
+        versionName "4.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -81,8 +81,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx'
 
     //Ads section
-    implementation "com.google.android.gms:play-services-ads:23.2.0"    //Admob
-    implementation 'com.facebook.android:audience-network-sdk:6.17.0'  //fbAd
+    implementation "com.google.android.gms:play-services-ads:23.4.0"    //Admob
+    implementation 'com.facebook.android:audience-network-sdk:6.18.0'  //fbAd
     implementation 'com.chartboost:chartboost-sdk:9.2.1'  //chartboost
     //implementation files('libs/unity-ads.aar')  //Unity Ads
 
@@ -112,9 +112,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
 
     // Moshi
-    implementation "com.squareup.moshi:moshi-kotlin:1.14.0"
-    implementation "com.squareup.moshi:moshi:1.14.0"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.14.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.15.0"
+    implementation "com.squareup.moshi:moshi:1.15.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.15.0"
     // Moshi
 
 
@@ -129,17 +129,11 @@ dependencies {
 
     implementation 'com.getkeepsafe.relinker:relinker:1.4.5' //linkCpp file
     implementation("androidx.multidex:multidex:2.0.1") //multidex
-    implementation 'com.google.guava:guava:31.1-jre'  //guava
+//    implementation 'com.google.guava:guava:31.1-jre'  //guava
+
+    implementation 'com.unity3d.ads:unity-ads:4.12.2'
 
     //Scarlet for Sockets
-    def version_scarlet = "0.1.12"
-    implementation "com.tinder.scarlet:scarlet:$version_scarlet"
-    implementation "com.tinder.scarlet:scarlet-core:$version_scarlet"
-    implementation "com.tinder.scarlet:websocket-okhttp:$version_scarlet"
-    implementation "com.tinder.scarlet:stream-adapter-rxjava2:$version_scarlet"
-    implementation "com.tinder.scarlet:stream-adapter-coroutines:$version_scarlet"
-    implementation "com.tinder.scarlet:message-adapter-moshi:$version_scarlet"
-    implementation "com.tinder.scarlet:lifecycle-android:$version_scarlet"
 
     //Paging
     implementation "android.arch.paging:runtime:1.0.1"
@@ -161,10 +155,9 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     //p2pLibrary
- /*   implementation("com.orhanobut:logger:2.2.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.orhanobut:logger:2.2.0")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation 'com.dafruits:webrtc:113.0.0'*/       //Remove By Haris Abbas (p2p)
-
 
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
 
