@@ -1,7 +1,10 @@
 package com.dream.live.cricket.score.hd.streaming.adapters
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,6 +41,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userTyp
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType2
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType3
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType4
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType5
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Defamation
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
@@ -268,7 +272,22 @@ class ChannelAdapter(
                                 )
                                 navigateData.navigation(channelDirection)
                             }
-                        } else {
+                        }
+                        else if (currentList[position]?.channel_type.equals(
+                                userType5, true)){
+                            val urlToPlay = currentList[position]?.url
+                            if (!urlToPlay.isNullOrEmpty()){
+                                try {
+                                    val url = urlToPlay
+                                    val i = Intent(Intent.ACTION_VIEW)
+                                    i.data = Uri.parse(url)
+                                    context?.startActivity(i)
+                                } catch (e: ActivityNotFoundException) {
+//                                    logger.printLog(tags, "exception : ${e.localizedMessage}")
+                                }
+                            }
+                        }
+                        else {
                             if (localVal.isNotEmpty()) {
                                 val processingFile = ProcessingFile()
                                 defaultString = processingFile.getChannelType(localVal)

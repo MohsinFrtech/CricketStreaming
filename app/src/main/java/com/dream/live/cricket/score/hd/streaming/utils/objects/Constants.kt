@@ -128,6 +128,7 @@ object Constants {
     const val t20Format = "T20"
     var selectedSeriesId = 1
 
+    const val userType5 = "app"
 
     //splash
     var updateScreenStatus = false

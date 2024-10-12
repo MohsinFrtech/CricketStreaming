@@ -31,7 +31,7 @@ class MyApp : Application() {
                 .insertTimeOffsetTag(0.0)
                 .build()
             P2pEngine.init(applicationContext, "WUAlHM1Vg", config)
-            P2pEngine.getInstance()?.setHlsSegmentIdGenerator(StrictHlsSegmentIdGenerator())
+//            P2pEngine.getInstance()?.setHlsSegmentIdGenerator(StrictHlsSegmentIdGenerator())
 
             P2pEngine.getInstance()?.registerExceptionListener(object : EngineExceptionListener {
                 override fun onOtherException(e: EngineException) {
