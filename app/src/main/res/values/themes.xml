@@ -14,6 +14,12 @@
         <item name="colorAccent">@color/noChange</item>
     </style>
 
+    <style name="AppSplashTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
     <style name="TvTheme" parent="@style/Theme.Leanback">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryDark</item>

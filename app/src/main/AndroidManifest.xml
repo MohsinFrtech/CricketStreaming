@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -24,24 +25,24 @@
         android:required="false" />
 
     <application
+        android:name=".MyApp"
         android:allowBackup="false"
+        android:banner="@mipmap/appbanner"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/appicon"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/appicon"
         android:supportsRtl="true"
-        android:name=".MyApp"
-        android:banner="@mipmap/appbanner"
-        android:usesCleartextTraffic="true"
-        android:largeHeap="true"
         android:theme="@style/TvTheme"
+        android:usesCleartextTraffic="true"
         tools:targetApi="33">
         <activity
-            android:name=".streaming.ui.activities.HomeScreen"
-            android:theme="@style/HomeScreenTheme"
+            android:name=".streaming.ui.activities.EntryClass"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:exported="true">
+            android:theme="@style/AppSplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,6 +52,14 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+        </activity>
+
+        <activity
+            android:name=".streaming.ui.activities.HomeScreen"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/HomeScreenTheme">
+
         </activity>
         <activity
             android:name=".tv.activities.TvMainActivity"
@@ -62,8 +71,8 @@
         <activity
             android:name=".tv.activities.TvHomeActivity"
             android:exported="true"
-            android:theme="@style/TvTheme"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:theme="@style/TvTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
@@ -90,17 +99,21 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-        <activity android:name=".MainActivity"
+
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ExpendedTheme">
 
         </activity>
-        <activity android:name=".streaming.ui.activities.PlayerScreen"
-            android:theme="@style/PlayerTheme"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode">
+        <activity
+            android:name=".streaming.ui.activities.PlayerScreen"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/PlayerTheme">
 
         </activity>
 
@@ -109,9 +122,9 @@
             android:value="ca-app-pub-3634409289872167~5788220205" />
         <activity
             android:name=".streaming.ui.activities.ExpendedActivity"
-            android:theme="@style/ExpendedTheme"
+            android:exported="true"
             android:launchMode="singleInstance"
-            android:exported="true">
+            android:theme="@style/ExpendedTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -121,7 +134,8 @@
                 android:value=".streaming.ui.activities.PlayerScreen" />
         </activity>
 
-        <service android:name=".FirebaseService"
+        <service
+            android:name=".FirebaseService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

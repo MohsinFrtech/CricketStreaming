@@ -67,6 +67,8 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.DebugChecker
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Defamation
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.dream.live.cricket.score.hd.utils.InternetUtil
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.p2pengine.core.p2p.EngineExceptionListener
 import com.p2pengine.core.p2p.PlayerInteractor
 import com.p2pengine.core.utils.EngineException
@@ -151,7 +153,9 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //        swipeVolumeFeature()
         changeOrientation()
 //        swipeBrightnessFeature()
-        initializeCastSdk()
+        if (isGooglePlayServicesAvailable(this)) {
+            initializeCastSdk()
+        }
         getNavValues()
         checkForAds()
         screenModeController()
@@ -177,6 +181,17 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
             }
         })
+    }
+
+    private fun isGooglePlayServicesAvailable(context: Context): Boolean {
+        try {
+            val googleApiAvailability = GoogleApiAvailability.getInstance()
+            val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
+            return resultCode == ConnectionResult.SUCCESS
+        }
+        catch (e:Exception){
+            return false
+        }
 
     }
 
@@ -498,16 +513,17 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             mCastContextTask = context?.let { it ->
                 CastContext.getSharedInstance(it, castExecutor)
                     .addOnCompleteListener {
-                        runOnUiThread(Runnable {
-                            if (it.isComplete)
-                            {
-                                mCastContext = mCastContextTask?.result
+                        if (it.isComplete)
+                        {
+                            mCastContext = mCastContextTask?.result
+                            runOnUiThread {
                                 setupCastListener()
                                 mCastContext?.sessionManager?.addSessionManagerListener(
                                     this, CastSession::class.java
                                 )
                             }
-                        })
+
+                        }
                     }
             }
         } catch (e: Exception) {

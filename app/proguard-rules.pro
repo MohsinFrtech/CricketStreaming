@@ -21,6 +21,7 @@
 #-renamesourcefileattribute SourceFile
 -dontshrink
 -dontoptimize
+-ignorewarnings
 -keep class  com.dream.live.cricket.score.hd.streaming.models.** { *; }
 -keep class  com.dream.live.cricket.score.hd.scores.model.** { *; }
 

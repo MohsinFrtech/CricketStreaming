@@ -12,7 +12,7 @@
 
         <action
             android:id="@+id/action_live_to_details"
-            app:destination="@id/live_details" />
+            app:destination="@id/live_details"/>
         <action
             android:id="@+id/action_home_to_player"
             app:destination="@id/player" />

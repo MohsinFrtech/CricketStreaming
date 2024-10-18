@@ -53,6 +53,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
     private var nativeFieldVal = ""
     private var fbNativeAd: NativeAd? = null
 
+
     private var listWithAd: List<Channel?> =
         ArrayList<Channel?>()
 
@@ -61,14 +62,15 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_event, container, false)
-        binding = DataBindingUtil.bind(view)
+        val contentView = inflater.inflate(R.layout.fragment_event, container, false)
+        binding = DataBindingUtil.bind(contentView)
         binding?.lifecycleOwner = this
         binding?.model = modelEvent
         binding?.viewModel = liveViewModel
 
+        Log.d("Main Fragment", "yes")
         adManager = activity?.let { AdManager(requireContext(), it, this) }
-        return view
+        return contentView
     }
 
 
@@ -122,10 +124,11 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                         adManager?.checkProvider(it.app_ads!!, Constants.nativeAdLocation)
                             .toString()
                     nativeAdProvider = nativeAdProviderName
-                    if(nativeAdProvider!="none")
-                    {
-                        adManager?.loadAdProvider(nativeAdProvider,Constants.nativeAdLocation,null,
-                            null,null,null)
+                    if (nativeAdProvider != "none") {
+                        adManager?.loadAdProvider(
+                            nativeAdProvider, Constants.nativeAdLocation, null,
+                            null, null, null
+                        )
                     }
                     checkNativeAdProvider = nativeAdProviderName
 
@@ -137,8 +140,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                                     it
                                 )
                             }
-                        }
-                        else {
+                        } else {
                             binding?.adLoadLay?.visibility = View.VISIBLE
                             binding?.nativeAdView?.let {
                                 adManager?.loadAdmobNativeAd(
@@ -157,8 +159,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                                     Cons.currentNativeAdFacebook!!, it
                                 )
                             }
-                        }
-                        else {
+                        } else {
                             fbNativeAd = NativeAd(context, nativeFacebook)
                             binding?.adLoadLay2?.visibility = View.VISIBLE
                             binding?.fbNativeAdContainer?.let {
@@ -261,7 +262,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
         try {
 
             var tFormatList: MutableList<LiveScoresModel?> = liveScores.toMutableList()
-            if(!tFormatList.isNullOrEmpty()) {
+            if (!tFormatList.isNullOrEmpty()) {
                 tFormatList.sortBy {
                     it?.id
                 }
@@ -356,7 +357,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
             navDirections = viewId
             if (adStatus) {
                 if (!adProviderName.equals("none", true)) {
-                    binding?.MainLottie?.visibility=View.VISIBLE
+                    binding?.MainLottie?.visibility = View.VISIBLE
                     adManager?.showAds(adProviderName)
                 } else {
                     findNavController().navigate(viewId)
@@ -374,8 +375,8 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
     }
 
     override fun onAdFinish() {
-        if(binding?.MainLottie?.isVisible == true){
-            binding?.MainLottie?.visibility=View.GONE
+        if (binding?.MainLottie?.isVisible == true) {
+            binding?.MainLottie?.visibility = View.GONE
         }
         if (navDirections != null) {
             findNavController().navigate(navDirections!!)

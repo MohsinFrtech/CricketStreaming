@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -338,18 +339,23 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.d("Exception","msg")
             }
 
-
-            if (item.itemId == navController!!.currentDestination?.id) {
-                // If it is, do nothing or handle the reselection as desired
-                // In this case, we are not performing any action
-            } else {
-                // Navigate to the selected item using NavigationUI
-                NavigationUI.onNavDestinationSelected(item, navController!!)
+            Log.d("idMenuee","id"+item.itemId+" "+"sep"+navController?.currentDestination?.id)
+            if (item.itemId!= navController?.currentDestination?.id){
+                navController?.navigate(item.itemId,null,NavOptions.Builder().setLaunchSingleTop(true).build())
             }
-            false
+
+//            if (item.itemId != navController!!.currentDestination?.id) {
+//                // If it is, do nothing or handle the reselection as desired
+//                // In this case, we are not performing any action
+//                navController?.navigate(item)
+//            } else {
+//                // Navigate to the selected item using NavigationUI
+//                NavigationUI.onNavDestinationSelected(item, navController!!)
+//            }
+            true
         }
 
 
@@ -947,11 +953,17 @@ class MainActivity : AppCompatActivity(), DialogListener,
                 "android.intent.action.VIEW",
                 Uri.parse("https://play.google.com/store/apps/details?id=${this.packageName}")
             )
-            if (viewIntent.resolveActivity(packageManager) != null) {
-                startActivity(viewIntent)
-            } else {
-                Log.d("CricketStreaming", "Intent not resolved")
+            try {
+                if (viewIntent.resolveActivity(packageManager) != null) {
+                    startActivity(viewIntent)
+                } else {
+                    Log.d("CricketStreaming", "Intent not resolved")
+                }
             }
+            catch (e:SecurityException){
+                Log.d("Exception","msg")
+            }
+
             preference?.saveRateUsBool(rateUsKey, true)
 
         } catch (e: ActivityNotFoundException) {

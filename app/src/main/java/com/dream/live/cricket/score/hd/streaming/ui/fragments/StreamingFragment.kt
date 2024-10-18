@@ -52,6 +52,8 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
 
     override fun onResume() {
         super.onResume()
+        Constants.positionClick=-1
+        Constants.previousClick=-1
 
     }
     private fun setUpViewModel() {
@@ -169,11 +171,12 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
 
     override fun navigation(viewId: NavDirections) {
         try {
+            Constants.positionClick=-1
+            Constants.previousClick=-1
             navDirections=viewId
             if (adStatus)
             {
-                Constants.positionClick=-1
-                Constants.previousClick=-1
+
                 if (!adProviderName.equals("none",true)) {
                     binding?.MainLottie?.visibility=View.VISIBLE
                     adManager?.showAds(adProviderName)
