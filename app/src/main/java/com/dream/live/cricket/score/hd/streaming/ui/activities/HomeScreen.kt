@@ -25,6 +25,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.dream.live.cricket.score.hd.MainActivity
 import com.dream.live.cricket.score.hd.R
 import com.dream.live.cricket.score.hd.databinding.ActivitySplashBinding
+import com.dream.live.cricket.score.hd.streaming.adsData.GoogleMobileAdsConsentManager
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.DialogListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.CustomDialogue
@@ -41,6 +42,9 @@ import java.io.InputStreamReader
 class HomeScreen : AppCompatActivity(), DialogListener {
 
     private var bindingHome: ActivitySplashBinding? = null
+    private var preference: SharedPreference? = null
+    private var googleMobileAdsConsentManager: GoogleMobileAdsConsentManager? = null
+
     private var permissionCount = 0
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -68,7 +72,7 @@ class HomeScreen : AppCompatActivity(), DialogListener {
             WindowManager.LayoutParams.FLAG_SECURE
         )
         window.navigationBarColor = ContextCompat.getColor(this, R.color.noChange)
-
+        preference = SharedPreference(this)
         FirebaseApp.initializeApp(this)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -148,7 +152,6 @@ class HomeScreen : AppCompatActivity(), DialogListener {
 
             if (permissionCount > 3) {
                 bindingHome?.notificationLayout?.visibility = View.GONE
-
                 navigationToNextScreen()
 
             } else if (permissionCount == 2) {
@@ -174,10 +177,10 @@ class HomeScreen : AppCompatActivity(), DialogListener {
 
 
     private fun subscribeOrUnSubscribeTopic() {
-        val preference = SharedPreference(this)
-        val getStatus = preference.getBool(Constants.preferenceKey)
 
-        val modeValue = preference.getString(Constants.preferenceMode)
+        val getStatus = preference?.getBool(Constants.preferenceKey)
+
+        val modeValue = preference?.getString(Constants.preferenceMode)
 
         if (modeValue.equals("dark", true)) {
 
@@ -196,7 +199,7 @@ class HomeScreen : AppCompatActivity(), DialogListener {
                 .addOnCompleteListener { task ->
                     if (task.isComplete) {
                         //
-                        preference.saveBool(Constants.preferenceKey, true)
+                        preference?.saveBool(Constants.preferenceKey, true)
 
                     }
                 }
@@ -209,11 +212,54 @@ class HomeScreen : AppCompatActivity(), DialogListener {
 
     override fun onResume() {
         super.onResume()
+        showConsentDialog()
+    }
+
+    private fun showConsentDialog() {
+        val getConsentStatus = preference?.getConsentStatus(Constants.consentKey)
+        if (getConsentStatus == true) {
+            checkNecessities()
+        } else {
+            googleMobileAdsConsentManager = GoogleMobileAdsConsentManager.getInstance(this)
+            googleMobileAdsConsentManager?.gatherConsent(this) { consentError ->
+                if (consentError != null) {
+                    preference?.saveConsent(Constants.consentKey, true)
+                    checkNecessities()
+                    Log.d("UmpDataCollected", "ump" + consentError.message)
+                }
+
+                if (googleMobileAdsConsentManager?.canRequestAds == true) {
+                    preference?.saveConsent(Constants.consentKey, true)
+                    Log.d("UmpDataCollected", "yes")
+                    checkNecessities()
+//                initializeMobileAdsSdk()
+                } else {
+                    //
+                    checkNecessities()
+                    Log.d("UmpDataCollected", "yes")
+                }
+//            if (googleMobileAdsConsentManager?.isPrivacyOptionsRequired == true) {
+//                // Regenerate the options menu to include a privacy setting.
+//                invalidateOptionsMenu()
+//            }
+            }
+
+            // This sample attempts to load ads using consent obtained in the previous session.
+            if (googleMobileAdsConsentManager != null) {
+                if (googleMobileAdsConsentManager!!.canRequestAds) {
+//                checkNecessities()
+                }
+            }
+
+        }
+
+    }
+
+    private fun checkNecessities() {
         if (!DebugChecker.checkDebugging(this)) {
             Handler(Looper.getMainLooper()).postDelayed(
                 {
-                    if(isPrivateDnsSetup(this))
-                    {
+                    if (isPrivateDnsSetup(this)) {
                         Toast.makeText(
                             this,
                             "Please turn off private dns,If not found then search dns in setting search",
@@ -221,13 +267,10 @@ class HomeScreen : AppCompatActivity(), DialogListener {
                         ).show()
                         try {
                             startActivityForResult(Intent(Settings.ACTION_SETTINGS), 0)
+                        } catch (e: Exception) {
+                            Log.d("Exception", "msg")
                         }
-                        catch (e:Exception){
-                            Log.d("Exception","msg")
-                        }
-                    }
-                    else
-                    {
+                    } else {
                         emulatorCheck()
                     }
                 },
@@ -235,8 +278,8 @@ class HomeScreen : AppCompatActivity(), DialogListener {
             )
 
         }
-
     }
+
 
     private fun emulatorCheck() {
         lifecycleScope.launch {

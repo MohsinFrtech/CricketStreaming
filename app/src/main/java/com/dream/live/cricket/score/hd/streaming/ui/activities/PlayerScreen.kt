@@ -1,5 +1,6 @@
 package com.dream.live.cricket.score.hd.streaming.ui.activities
 
+import android.app.UiModeManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -143,7 +144,9 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
-
+        if (isGooglePlayServicesAvailable(this)) {
+            initializeCastSdk()
+        }
         val exoView: ConstraintLayout? = binding?.playerView?.findViewById(R.id.exoControlView)
         bindingExoPlayback = exoView?.let { ExoPlaybackControlViewBinding.bind(it) }
         mLocation = PlaybackLocation.LOCAL
@@ -153,9 +156,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //        swipeVolumeFeature()
         changeOrientation()
 //        swipeBrightnessFeature()
-        if (isGooglePlayServicesAvailable(this)) {
-            initializeCastSdk()
-        }
+
         getNavValues()
         checkForAds()
         screenModeController()
@@ -504,30 +505,21 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
         bindingExoPlayback?.seekProgress?.visibility = value
         bindingExoPlayback?.exoPlayPause?.visibility = value
-
+        bindingExoPlayback?.liveTxt?.visibility=value
+        bindingExoPlayback?.liveShape?.visibility=value
     }
 
 
     private fun initializeCastSdk() {
         try {
-            mCastContextTask = context?.let { it ->
-                CastContext.getSharedInstance(it, castExecutor)
-                    .addOnCompleteListener {
-                        if (it.isComplete)
-                        {
-                            mCastContext = mCastContextTask?.result
-                            runOnUiThread {
-                                setupCastListener()
-                                mCastContext?.sessionManager?.addSessionManagerListener(
-                                    this, CastSession::class.java
-                                )
-                            }
-
-                        }
-                    }
-            }
+            mCastContext = CastContext.getSharedInstance(this)
+            mCastSession = mCastContext!!.sessionManager.currentCastSession
+            setupCastListener()
+            mCastContext?.sessionManager?.addSessionManagerListener(
+                mSessionManagerListener!!, CastSession::class.java
+            )
         } catch (e: Exception) {
-
+            Log.d("CastSdk","msg")
         }
     }
 
@@ -1292,7 +1284,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         hideSystemUI()
         if (mCastSession != null) {
             mCastContext?.sessionManager?.addSessionManagerListener(
-                this, CastSession::class.java
+                mSessionManagerListener!!, CastSession::class.java
             )
             if (mCastSession != null && mCastSession!!.isConnected) {
 
@@ -1318,7 +1310,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 }
             } else {
 
-                updatePlaybackLocation()
+                updatePlaybackLocation(PlaybackLocation.LOCAL)
             }
         } else {
             if (player != null) {
@@ -1420,58 +1412,93 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        try {
+            mCastContext!!.sessionManager.removeSessionManagerListener(
+                mSessionManagerListener!!, CastSession::class.java)
+            orientationEventListener?.disable()
+            if (player != null) {
+                P2pEngine.getInstance()?.stopP2p()
+                player?.stop()
+                player!!.release()
+                player = null
+            }
+        }
+        catch (e:Exception){
+            Log.d("Exception","msg")
+        }
+    }
 
     ////Listener for castSession manager
     private fun setupCastListener() {
-//        if (mSessionManagerListener == null) {
-//            mSessionManagerListener = object : SessionManagerListener<CastSession> {
-//                override fun onSessionStarting(castSession: CastSession) {
-//
-//                }
-//
-//                override fun onSessionStarted(castSession: CastSession, s: String) {
-//                    onApplicationConnected(castSession)
-//                }
-//
-//                override fun onSessionStartFailed(castSession: CastSession, i: Int) {
-////                    Log.d("player_error", "" + "failed1")
-//                    onApplicationDisconnected()
-//                }
-//
-//                override fun onSessionEnding(castSession: CastSession) {
-//
-//                }
-//
-//                override fun onSessionEnded(castSession: CastSession, i: Int) {
-//                    onApplicationDisconnected()
-////                    Log.d("player_error", "" + "failed2")
-//                }
-//
-//                override fun onSessionResuming(castSession: CastSession, s: String) {}
-//                override fun onSessionResumed(castSession: CastSession, b: Boolean) {
-//                    onApplicationConnected(castSession)
-//                }
-//
-//                override fun onSessionResumeFailed(castSession: CastSession, i: Int) {
-////                    Log.d("player_error", "" + "failed3")
-//                    onApplicationDisconnected()
-//                }
-//
-//                override fun onSessionSuspended(castSession: CastSession, i: Int) {
-//
-//                }
-//
-//
-//            }
-//        }
+        if (mSessionManagerListener == null) {
 
+            mSessionManagerListener = object : SessionManagerListener<CastSession> {
 
+                override fun onSessionStarting(castSession: CastSession) {
+                }
+
+                override fun onSessionStarted(castSession: CastSession, s: String) {
+
+                    onApplicationConnected(castSession)
+                }
+
+                override fun onSessionStartFailed(castSession: CastSession, i: Int) {
+                    logger.printLog(tAG, "playback")
+
+                    onApplicationDisconnected()
+                }
+
+                override fun onSessionEnding(castSession: CastSession) {
+
+                }
+
+                override fun onSessionEnded(castSession: CastSession, i: Int) {
+                    onApplicationDisconnected()
+                }
+
+                override fun onSessionResuming(castSession: CastSession, s: String) {}
+                override fun onSessionResumed(castSession: CastSession, b: Boolean) {
+//                    invalidateOptionsMenu()
+//                    onApplicationConnected(castSession)
+                }
+
+                override fun onSessionResumeFailed(castSession: CastSession, i: Int) {
+                    onApplicationDisconnected()
+                }
+
+                override fun onSessionSuspended(castSession: CastSession, i: Int) {
+
+                }
+
+                private fun onApplicationConnected(castSession: CastSession) {
+                    mCastSession = castSession
+                    if (mPlaybackState != PlaybackState.PLAYING) {
+                        player?.pause()
+                        loadRemoteMedia()
+                        return
+                    } else {
+                        mPlaybackState = PlaybackState.IDLE
+                        updatePlaybackLocation(PlaybackLocation.REMOTE)
+                    }
+                    invalidateOptionsMenu()
+                }
+
+                private fun onApplicationDisconnected() {
+                    updatePlaybackLocation(PlaybackLocation.LOCAL)
+                    mPlaybackState = PlaybackState.IDLE
+                    mLocation = PlaybackLocation.LOCAL
+                    invalidateOptionsMenu()
+                }
+
+            }
+        }
     }
 
 
-    private fun updatePlaybackLocation() {
-
-        mLocation = PlaybackLocation.LOCAL
+    private fun updatePlaybackLocation(location: PlaybackLocation) {
+        mLocation = location
     }
 
     private fun onApplicationConnected(castSession: CastSession) {
@@ -1489,7 +1516,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
     private fun onApplicationDisconnected() {
-        updatePlaybackLocation()
+        updatePlaybackLocation(PlaybackLocation.LOCAL)
         mPlaybackState = PlaybackState.IDLE
         mLocation = PlaybackLocation.LOCAL
         invalidateOptionsMenu()

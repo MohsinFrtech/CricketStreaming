@@ -2,10 +2,12 @@ package com.dream.live.cricket.score.hd.streaming.adsData
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowMetrics
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
@@ -15,6 +17,7 @@ import com.chartboost.sdk.Chartboost
 import com.chartboost.sdk.ads.Interstitial
 import com.chartboost.sdk.callbacks.InterstitialCallback
 import com.chartboost.sdk.events.*
+import com.chartboost.sdk.impl.c
 import com.chartboost.sdk.privacy.model.CCPA
 import com.chartboost.sdk.privacy.model.COPPA
 import com.chartboost.sdk.privacy.model.GDPR
@@ -47,6 +50,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.Logger
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.admobInterstitial
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.googleAdMangerInterstitial
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeAdmob
 import com.google.android.gms.ads.AdView
 
@@ -75,6 +79,7 @@ class AdManager(
     private var facebookinterstitial: InterstitialAd? = null
     private var currentNativeAd: com.google.android.gms.ads.nativead.NativeAd? = null
     private var adProvider = ""
+    private var mAdManagerInterstitialAd: AdManagerInterstitialAd? = null
 
     ///function will return provider
     fun checkProvider(list: List<AppAd>, location: String): String {
@@ -100,6 +105,10 @@ class AdManager(
                                 adProvider = Constants.startApp
                                 checkAdValue(adLocation.title, listItem.ad_key, adProvider)
                             }
+                            else if (listItem.ad_provider.equals(Constants.adManagerAds, true)) {
+                                adProvider = Constants.adManagerAds
+                                checkAdValue(adLocation.title, listItem.ad_key, adProvider)
+                            }
 
                         }
 
@@ -116,6 +125,122 @@ class AdManager(
         ////If provider exist then initialize sdk of the particular provider
         return adProvider
     }
+    //Function to load adx interstitial....
+    private fun loadAdmobInterstitialAdx(){
+        val adRequest = AdManagerAdRequest.Builder().build()
+        AdManagerInterstitialAd.load(context, googleAdMangerInterstitial, adRequest, object : AdManagerInterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d("AdxLoaded","error"+adError?.message)
+                mAdManagerInterstitialAd = null
+                adManagerListener.onAdLoad("failed")
+            }
+
+            override fun onAdLoaded(interstitialAd: AdManagerInterstitialAd) {
+                Log.d("AdxLoaded","loaded")
+                mAdManagerInterstitialAd = interstitialAd
+                adManagerListener.onAdLoad("success")
+            }
+        })
+    }
+
+    private fun showAdmobInterstitialAdx(){
+        mAdManagerInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdClicked() {
+                // Called when a click is recorded for an ad.
+
+            }
+
+            override fun onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                mAdManagerInterstitialAd = null
+                adManagerListener.onAdFinish()
+            }
+
+            override fun onAdFailedToShowFullScreenContent(p0: com.google.android.gms.ads.AdError) {
+                // Called when ad fails to show.
+                mAdManagerInterstitialAd = null
+                adManagerListener.onAdFinish()
+            }
+
+            override fun onAdImpression() {
+                // Called when an impression is recorded for an ad.
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+            }
+        }
+        if (mAdManagerInterstitialAd != null) {
+            mAdManagerInterstitialAd?.show(activity)
+        } else {
+            adManagerListener.onAdFinish()
+            Log.d("TAG", "The interstitial ad wasn't ready yet.")
+        }
+    }
+
+    fun getSize(): com.google.android.gms.ads.AdSize {
+        val displayMetrics = context.resources.displayMetrics
+        val adWidthPixels =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowMetrics: WindowMetrics = activity.windowManager.currentWindowMetrics
+                windowMetrics.bounds.width()
+            } else {
+                displayMetrics.widthPixels
+            }
+        val density = displayMetrics.density
+        val adWidth = (adWidthPixels / density).toInt()
+        return com.google.android.gms.ads.AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
+    }
+
+    fun loadAdmobBannerAdx(adViewLayout: LinearLayout?)
+    {
+        val adSize = getSize()
+        val adView = AdManagerAdView(context)
+        adView.adUnitId = "/23209641482/Newbanneradds"
+        adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER)
+//        this.adView = adView
+        adViewLayout?.removeAllViews()
+        adViewLayout?.addView(adView)
+        // Replace ad container with new ad view.
+//        binding.adViewContainer.removeAllViews()
+//        binding.adViewContainer.addView(adView)
+
+        adView.adListener = object: AdListener() {
+            override fun onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+            }
+
+            override fun onAdFailedToLoad(adError : LoadAdError) {
+                // Code to be executed when an ad request fails.
+                Log.d("AdmobAdx","banner "+adError?.message+" "+Constants.googleAdMangerBanner)
+            }
+
+            override fun onAdImpression() {
+                // Code to be executed when an impression is recorded
+                // for an ad.
+            }
+
+            override fun onAdLoaded() {
+                Log.d("AdmobAdx","load")
+
+                // Code to be executed when an ad finishes loading.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+        }
+        // Start loading the ad in the background.
+        val adRequest = AdManagerAdRequest.Builder().build()
+        adView.loadAd(adRequest)
+    }
+
 
     private fun checkAdValue(adLocation: String?, adKey: String?, provider: String) {
 
@@ -143,6 +268,9 @@ class AdManager(
             } else if (provider.equals(Constants.unity, true)) {
                 Constants.unityGameID = interstitialAdValue
             }
+            else if (provider.equals(Constants.adManagerAds, true)) {
+                Constants.googleAdMangerInterstitial = interstitialAdValue
+            }
 
         } else if (adLocation.equals(Constants.nativeAdLocation, true)) {
             nativeAdValue = adKey.toString()
@@ -152,6 +280,9 @@ class AdManager(
 
             } else if (provider.equals(Constants.facebook, true)) {
                 Constants.nativeFacebook = nativeAdValue
+            }
+            else if (provider.equals(Constants.adManagerAds, true)) {
+                Constants.googleAdMangerNative = nativeAdValue
             }
 
         } else if (adLocation.equals(Constants.adLocation1, true)
@@ -169,7 +300,9 @@ class AdManager(
 
             } else if (provider.equals(Constants.startApp, true)) {
                 Constants.startAppId = bannerAdValue
-
+            }
+            else if (provider.equals(Constants.adManagerAds, true)) {
+                Constants.googleAdMangerBanner = bannerAdValue
             }
 
 
@@ -193,7 +326,17 @@ class AdManager(
                 relativeLayout,
                 startAppBanner
             )
-        } else if (provider.equals(Constants.facebook, true)) {
+        }
+        if (provider.equals(Constants.adManagerAds, true)) {
+            adMobSdkInitializationOrAdmobAdWithManager(
+                adLocation,
+                adView,
+                linearLayout,
+                relativeLayout,
+                startAppBanner
+            )
+        }
+        else if (provider.equals(Constants.facebook, true)) {
             facebookSdkInitialization(
                 adLocation,
                 adView,
@@ -379,6 +522,31 @@ class AdManager(
 
     }
 
+    private fun adMobSdkInitializationOrAdmobAdWithManager(
+        locationName: String,
+        adView: LinearLayout?,
+        linearLayout: LinearLayout?,
+        relativeLayout: RelativeLayout?,
+        banner: Banner?
+    ) {
+        if (Constants.isInitAdmobSdk) {
+            loadAdAtParticularLocation(
+                locationName,
+                Constants.adManagerAds, adView, linearLayout, relativeLayout, banner
+            )
+        } else {
+            MobileAds.initialize(context) { p0 ->
+                Constants.isInitAdmobSdk = true
+                loadAdAtParticularLocation(
+                    locationName,
+                    Constants.adManagerAds, adView, linearLayout, relativeLayout, banner
+                )
+            }
+        }
+
+
+    }
+
 
     fun showAds(adProviderShow: String) {
         if (adProviderShow.equals(Constants.admob, true)) {
@@ -392,6 +560,10 @@ class AdManager(
         } else if (adProviderShow.equals(Constants.startApp, true)) {
 
             showStartAppAd()
+        }
+        else if (adProviderShow.equals(Constants.adManagerAds, true)) {
+
+            showAdmobInterstitialAdx()
         }
 
     }
@@ -453,7 +625,11 @@ class AdManager(
                 loadAdmobBanner(adView)
             } else if (adProviderName.equals(Constants.facebook, true)) {
                 loadFaceBookBannerAd(context, linearLayout)
-            } else if (adProviderName.equals(Constants.unity, true)) {
+            }
+            else if (adProviderName.equals(Constants.adManagerAds, true)) {
+                loadAdmobBannerAdx(adView)
+            }
+            else if (adProviderName.equals(Constants.unity, true)) {
 
                 if (locationName.equals(Constants.adLocation1, true)) {
                     setUpUnityBanner(relativeLayout)
@@ -482,7 +658,11 @@ class AdManager(
                 loadAdmobInterstitialAd()
             } else if (adProviderName.equals(Constants.unity, true)) {
                 loadUnityAdInterstitial()
-            } else if (adProviderName.equals(Constants.chartBoost, true)) {
+            }
+            else if (adProviderName.equals(Constants.adManagerAds, true)) {
+                loadAdmobInterstitialAdx()
+            }
+            else if (adProviderName.equals(Constants.chartBoost, true)) {
                 loadChartBoost()
             } else if (adProviderName.equals(Constants.facebook, true)) {
                 loadFacebookInterstitialAd()
@@ -742,7 +922,6 @@ class AdManager(
     private fun loadAdmobBanner(adViewLayout: LinearLayout?) {
 
         adViewLayout?.removeAllViews()
-
         val adView = AdView(context)
         adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER)
         adView.adUnitId = Constants.admobBannerId
@@ -1006,6 +1185,63 @@ class AdManager(
         )
     }
 
+    fun loadAdmobNativeAdWithManager(
+        view_holder: RecyclerView.ViewHolder?, nativeAdView: NativeAdView,
+        adLayout: ConstraintLayout?
+    ) {
+        val builder = AdLoader.Builder(context, Constants.googleAdMangerNative)
+        builder.forNativeAd { nativeAd ->
+
+            currentNativeAd?.destroy()
+            currentNativeAd = nativeAd
+
+        }
+
+        val videoOptions = VideoOptions.Builder()
+            .setStartMuted(true)
+            .build()
+
+        val adOptions = NativeAdOptions.Builder()
+            .setVideoOptions(videoOptions)
+            .build()
+
+        builder.withNativeAdOptions(adOptions)
+
+        val adLoader = builder.withAdListener(object : AdListener() {
+            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                Log.d("AdmobAdx","native "+loadAdError.message+" "+Constants.googleAdMangerNative)
+
+                logger.printLog(taG, "Admob Native $loadAdError")
+                nativeAdView.visibility = View.GONE
+                adLayout?.visibility = View.GONE
+            }
+
+            override fun onAdLoaded() {
+                if (view_holder!=null) {
+                    adView = view_holder?.itemView?.findViewById(R.id.native_ad_view)
+                }else
+                {
+                    adView =nativeAdView
+                }
+                adLayout?.visibility = View.INVISIBLE
+                android.os.Handler(Looper.getMainLooper()).postDelayed({
+                    adView?.let {
+                        currentNativeAd?.let { it1 ->
+                            populateNativeAdView(
+                                it1,
+                                it
+                            )
+                        }
+                    }
+
+                }, 100)
+            }
+        }).build()
+
+        adLoader.loadAd(AdRequest.Builder().build())
+
+    }
+    //////
     fun loadAdmobNativeAd(
         view_holder: RecyclerView.ViewHolder?, nativeAdView: NativeAdView,
         adLayout: ConstraintLayout?
@@ -1061,6 +1297,8 @@ class AdManager(
         adLoader.loadAd(AdRequest.Builder().build())
 
     }
+
+
     fun populateNativeAdView(
         nativeAd: com.google.android.gms.ads.nativead.NativeAd,
         adView: NativeAdView
@@ -1207,7 +1445,7 @@ class AdManager(
     }
 
     private fun loadAdmobNativeAdWithoutPopulate() {
-        val builder = AdLoader.Builder(context, Constants.nativeAdmob)
+        val builder = AdLoader.Builder(context, nativeAdmob)
         builder.forNativeAd { nativeAd ->
 
             Cons.currentNativeAd?.destroy()

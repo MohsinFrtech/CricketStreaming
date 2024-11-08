@@ -24,8 +24,8 @@ android {
         applicationId "com.dream.live.cricket.score.hd"
         minSdk 21
         targetSdk 34
-        versionCode 46
-        versionName "4.6"
+        versionCode 50
+        versionName "5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -80,7 +80,7 @@ dependencies {
 //    implementation 'com.google.firebase:firebase-database-ktx'
 
     //Ads section
-    implementation "com.google.android.gms:play-services-ads:23.4.0"    //Admob
+    implementation "com.google.android.gms:play-services-ads:23.5.0"    //Admob
     implementation 'com.facebook.android:audience-network-sdk:6.18.0'  //fbAd
     implementation 'com.chartboost:chartboost-sdk:9.2.1'  //chartboost
     //implementation files('libs/unity-ads.aar')  //Unity Ads
@@ -157,7 +157,7 @@ dependencies {
     implementation 'com.github.angads25:toggle:1.1.0'
     implementation 'androidx.leanback:leanback:1.0.0'  //tvApp
 
-    implementation("com.google.android.ump:user-messaging-platform:3.0.0")
+    implementation("com.google.android.ump:user-messaging-platform:3.1.0")
 
     implementation "androidx.core:core-splashscreen:1.0.1"
 

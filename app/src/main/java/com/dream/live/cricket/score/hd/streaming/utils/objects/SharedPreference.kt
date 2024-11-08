@@ -51,4 +51,13 @@ class SharedPreference(context: Context?) {
         return mPref?.getString(key, "nothing")
     }
 
+    fun saveConsent(key: String, value: Boolean) {
+        mEditor?.putBoolean(key, value)
+        mEditor?.commit()
+    }
+
+    fun getConsentStatus(key: String):Boolean? {
+        return mPref?.getBoolean(key, false)
+    }
+
 }

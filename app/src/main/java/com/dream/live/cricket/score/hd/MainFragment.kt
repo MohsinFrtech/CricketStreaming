@@ -85,7 +85,6 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
     private fun setUpViewModel() {
         // Observe Live Data for updating Data in slider
         liveViewModel.sliderList.observe(viewLifecycleOwner) {
-
             if (it != null) {
                 setAdapter2(it)
             }
@@ -97,6 +96,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                 if (!it.extra_3.isNullOrEmpty()) {
                     nativeFieldVal = it.extra_3!!
                 }
+
                 if (!it.app_ads.isNullOrEmpty()) {
                     adProviderName =
                         adManager?.checkProvider(it.app_ads!!, Constants.adBefore).toString()
@@ -107,7 +107,6 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                                 adProviderName,
                                 Constants.adBefore, null, null, null, null
                             )
-
                         }
                     } else {
                         adManager?.loadAdProvider(
@@ -116,9 +115,6 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                         )
 
                     }
-
-//                    adManager?.loadAdProvider(adProviderName,Constants.adBefore,binding?.adView,
-//                    binding?.fbAdView,binding?.unityBannerView,binding?.startAppBanner)
 
                     nativeAdProviderName =
                         adManager?.checkProvider(it.app_ads!!, Constants.nativeAdLocation)
@@ -151,7 +147,17 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                             }
                         }
 
-                    } else if (nativeAdProviderName.equals(Constants.facebook, true)) {
+                    }else if (nativeAdProviderName.equals(Constants.adManagerAds, true)) {
+                        binding?.adLoadLay?.visibility = View.VISIBLE
+                        binding?.nativeAdView?.let {
+                            adManager?.loadAdmobNativeAdWithManager(
+                                null,
+                                it,
+                                binding?.adLoadLay
+                            )
+                        }
+                    }
+                    else if (nativeAdProviderName.equals(Constants.facebook, true)) {
 
                         if (Cons.currentNativeAdFacebook != null) {
                             binding?.fbNativeAdContainer?.let {

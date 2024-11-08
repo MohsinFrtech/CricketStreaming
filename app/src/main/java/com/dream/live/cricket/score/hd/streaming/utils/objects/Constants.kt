@@ -8,6 +8,7 @@ object Constants {
     //Ads
     const val unityTestMode = false
     const val admob = "admob"
+    const val adManagerAds = "admanager"
     const val facebook = "facebook"
     const val chartBoost = "chartboost"
     const val unity = "unity"
@@ -15,8 +16,12 @@ object Constants {
     var checkNativeAdProvider = "none"
     var middleAdProvider = "none"
 
-
+    const val consentKey="Consent"
     var admobInterstitial = ""
+    var googleAdMangerInterstitial = ""
+    var googleAdMangerBanner = ""
+    var googleAdMangerNative = ""
+
     const val adUnitId = "Interstitial_Android"
     var facebookPlacementIdInterstitial = ""
     var fbPlacementIdBanner = ""

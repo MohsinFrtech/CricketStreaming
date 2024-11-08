@@ -42,22 +42,22 @@ class GoogleMobileAdsConsentManager private constructor(context: Context) {
         onConsentGatheringCompleteListener: OnConsentGatheringCompleteListener
     ) {
         // For testing purposes, you can force a DebugGeography of EEA or NOT_EEA.
-        val debugSettings =
-            ConsentDebugSettings.Builder(activity)
-                // .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-                // Check your logcat output for the hashed device ID e.g.
-                // "Use new ConsentDebugSettings.Builder().addTestDeviceHashedId("ABCDEF012345")" to use
-                // the debug functionality.
-                .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-                .addTestDeviceHashedId("890CE0083E0D133594E4E763481D1140")
-                .build()
-
-        val params =
-            ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).build()
-//        val params = ConsentRequestParameters
-//            .Builder()
-//            .setTagForUnderAgeOfConsent(false)
-//            .build()
+//        val debugSettings =
+//            ConsentDebugSettings.Builder(activity)
+//                // .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+//                // Check your logcat output for the hashed device ID e.g.
+//                // "Use new ConsentDebugSettings.Builder().addTestDeviceHashedId("ABCDEF012345")" to use
+//                // the debug functionality.
+//                .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+//                .addTestDeviceHashedId("890CE0083E0D133594E4E763481D1140")
+//                .build()
+//
+//        val params =
+//            ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).build()
+        val params = ConsentRequestParameters
+            .Builder()
+            .setTagForUnderAgeOfConsent(false)
+            .build()
 
         // Requesting an update to consent information should be called on every app launch.
         consentInformation.requestConsentInfoUpdate(

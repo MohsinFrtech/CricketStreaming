@@ -64,7 +64,7 @@ class AppOpenManager(myApplication: MyApp?) : Application.ActivityLifecycleCallb
             val request = AdRequest.Builder().build()
             AppOpenAd.load(
                 context,
-                "ca-app-pub-3634409289872167/3723400508",
+                "/23209641482/appopenadds",
                 request,
                 object : AppOpenAd.AppOpenAdLoadCallback() {
 

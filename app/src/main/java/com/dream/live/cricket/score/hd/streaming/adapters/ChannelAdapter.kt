@@ -129,7 +129,18 @@ class ChannelAdapter(
                             )
                         }
                     }
-                } else if (adType.equals(Constants.admob, true)) {
+                }
+                else if (adType.equals(Constants.adManagerAds, true)) {
+                    binding2?.adLoadLay?.visibility = View.VISIBLE
+                    binding2?.nativeAdView?.let {
+                        adManager.loadAdmobNativeAdWithManager(
+                            viewHolder,
+                            it,
+                            binding2?.adLoadLay
+                        )
+                    }
+                }
+                else if (adType.equals(Constants.admob, true)) {
 
                     if (Cons.currentNativeAd != null) {
                         binding2?.nativeAdView?.let {

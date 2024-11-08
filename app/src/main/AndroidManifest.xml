@@ -119,7 +119,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3634409289872167~5788220205" />
+            android:value="ca-app-pub-8898920215032011~3046625922" />
         <activity
             android:name=".streaming.ui.activities.ExpendedActivity"
             android:exported="true"

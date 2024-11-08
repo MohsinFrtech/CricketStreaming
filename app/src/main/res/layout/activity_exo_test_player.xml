@@ -41,7 +41,7 @@
             android:id="@+id/startAppBannerBottom"
             android:layout_width="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_120sdp"
+            android:layout_marginBottom="@dimen/_92sdp"
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -73,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_120sdp"
+            android:layout_marginBottom="@dimen/_85sdp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_120sdp"
+            android:layout_marginBottom="@dimen/_92sdp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -114,7 +114,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_120sdp"
+            android:layout_marginBottom="@dimen/_92sdp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
