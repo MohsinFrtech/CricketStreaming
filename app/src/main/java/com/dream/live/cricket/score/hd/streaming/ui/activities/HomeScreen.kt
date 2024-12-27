@@ -19,31 +19,102 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.dream.live.cricket.score.hd.BuildConfig
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.dream.live.cricket.score.hd.MainActivity
 import com.dream.live.cricket.score.hd.R
 import com.dream.live.cricket.score.hd.databinding.ActivitySplashBinding
+import com.dream.live.cricket.score.hd.scores.utility.Cons
+import com.dream.live.cricket.score.hd.scores.utility.Cons.base_url_scores
+import com.dream.live.cricket.score.hd.scores.utility.listeners.ApiResponseListener
 import com.dream.live.cricket.score.hd.streaming.adsData.GoogleMobileAdsConsentManager
+import com.dream.live.cricket.score.hd.streaming.adsData.NewAdManager
+import com.dream.live.cricket.score.hd.streaming.date.ScreenRotation
+import com.dream.live.cricket.score.hd.streaming.date.ScreenUtil
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.DialogListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.authToken
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.baseUrlChannel
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementData
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementMainData
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementMainType
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementType
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.emptyCheck
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationBeforeProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.middleAdProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.passVal
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.rateShown
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.splash_status
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.tapPositionProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.CustomDialogue
 import com.dream.live.cricket.score.hd.streaming.utils.objects.DebugChecker
 import com.dream.live.cricket.score.hd.streaming.utils.objects.SharedPreference
+import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.dream.live.cricket.score.hd.utils.InternetUtil
 import com.dream.live.cricket.score.hd.utils.InternetUtil.isPrivateDnsSetup
+import com.getkeepsafe.relinker.ReLinker
+import com.teamd2.live.football.tv.utils.AppContextProvider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 
 ///Home Screen ....
-class HomeScreen : AppCompatActivity(), DialogListener {
-
+class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
+    private external fun getStringArray1(): Array<String?>?
+    private external fun getStringArray2(): Array<String?>?
+    private external fun getStringArray3(): Array<String?>?
+    private external fun getStringArray4(): Array<String?>?
+    private external fun getStringArray5(): Array<String?>?
+    private external fun getStringArray6(): Array<String?>?
+    private external fun getStringArray7(): Array<String?>?
+    private external fun getStringArray8(): Array<String?>?
+    private external fun getStringArray9(): Array<String?>?
+    private external fun getStringArray10(): Array<String?>?
+    private external fun getStringArray11(): Array<String?>?
+    private external fun getStringArray12(): Array<String?>?
+    private external fun getStringArray13(): Array<String?>?
+    private external fun getStringArray14(): Array<String?>?
+    private external fun getStringArray15(): Array<String?>?
+    private external fun getStringArray16(): Array<String?>?
+    private external fun getStringArray17(): Array<String?>?
+    private external fun getStringArray18(): Array<String?>?
+    private external fun getStringArray19(): Array<String?>?
+    private external fun getStringArray20(): Array<String?>?
+    private external fun getStringArray21(): Array<String?>?
+    private external fun getStringArray22(): Array<String?>?
+    private external fun getStringArray23(): Array<String?>?
+    private external fun getStringArray24(): Array<String?>?
+    private external fun getStringArray25(): Array<String?>?
+    private external fun getStringArray26(): Array<String?>?
+    private external fun getStringArray27(): Array<String?>?
+    private external fun getStringArray28(): Array<String?>?
+    private external fun getStringArray29(): Array<String?>?
+    private external fun getStringArray30(): Array<String?>?
+    private external fun getStringArray31(): Array<String?>?
+    private external fun getStringArray32(): Array<String?>?
+    private external fun getStringArray33(): Array<String?>?
+    private external fun getStringArray34(): Array<String?>?
+    private external fun getStringArray35(): Array<String?>?
+    private external fun getStringArray36(): Array<String?>?
+    private external fun getStringArray37(): Array<String?>?
+    private external fun getStringArray38(): Array<String?>?
+    private external fun getStringArray39(): Array<String?>?
+    private external fun getStringArray40(): Array<String?>?
     private var bindingHome: ActivitySplashBinding? = null
     private var preference: SharedPreference? = null
     private var googleMobileAdsConsentManager: GoogleMobileAdsConsentManager? = null
+    private var replaceChar = "mint"
+    private val screenUtil = ScreenUtil()
+    private val viewModel by lazy {
+        ViewModelProvider(this)[OneViewModel::class.java]
+    }
+    private var ifPermissionGrantedThenNotResume=false
 
     private var permissionCount = 0
     private val requestPermissionLauncher =
@@ -51,14 +122,14 @@ class HomeScreen : AppCompatActivity(), DialogListener {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-
+                ifPermissionGrantedThenNotResume=true
                 bindingHome?.notificationLayout?.visibility = View.GONE
                 // Permission is granted. Continue the action or workflow in your
                 subscribeOrUnSubscribeTopic()
 
             } else {
+                ifPermissionGrantedThenNotResume=true
                 bindingHome?.notificationLayout?.visibility = View.VISIBLE
-
             }
         }
 
@@ -83,7 +154,11 @@ class HomeScreen : AppCompatActivity(), DialogListener {
                 }
             }
         })
-
+        Constants.app_update_dialog=false
+        splash_status =false
+        rateShown =false
+        ifPermissionGrantedThenNotResume=false
+        viewModel?.apiResponseListener=this
         bindingHome?.retry?.setOnClickListener {
             bindingHome?.homeAnimLayout?.visibility = View.VISIBLE
             if (InternetUtil.isInternetOn(this)) {
@@ -212,7 +287,9 @@ class HomeScreen : AppCompatActivity(), DialogListener {
 
     override fun onResume() {
         super.onResume()
-        showConsentDialog()
+        if (!ifPermissionGrantedThenNotResume) {
+            showConsentDialog()
+        }
     }
 
     private fun showConsentDialog() {
@@ -360,12 +437,433 @@ class HomeScreen : AppCompatActivity(), DialogListener {
                 "", "Ok", "baseValue"
             )
         } else {
+            sliderRotation()
+        }
+    }
 
+    private fun sliderRotation() {
+        ReLinker.loadLibrary(this, "cricket", object : ReLinker.LoadListener {
+            override fun success() {
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val screenUtil = ScreenUtil()
+                    val numberFile = getProjectConcat(screenUtil.reMem())
+                    authToken = numberFile?.get(screenUtil.reMem2()).toString()
+                    passVal = numberFile?.get(screenUtil.reMem4()).toString()
+                    baseUrlChannel = numberFile?.get(screenUtil.reMem3()).toString()
+                    emptyCheck = numberFile?.get(screenUtil.reMem5()).toString()
+//                    baseUrlDemo = numberFile?.get(screenUtil.reMem6()).toString()
+                    base_url_scores = numberFile?.get(screenUtil.reMem7()).toString()
+                    Cons.s_token = numberFile?.get(screenUtil.reMem17()).toString()
+                    Cons.socketUrl = numberFile?.get(screenUtil.reMem16()).toString()
+                    Cons.socketAuth = numberFile?.get(screenUtil.reMem18()).toString()
+                    getIndexValue("chint")
+                }
+            }
+
+            override fun failure(t: Throwable) {
+                runOnUiThread {
+                    showFailedCppDialog()
+                }
+            }
+        })
+    }
+
+    private fun showFailedCppDialog() {
+        CustomDialogue(this).showDialog(
+            this, "title", getString(R.string.cpp_file_error),
+            "", "Exit", "eventValue"
+        )
+    }
+
+    private fun getIndexValue(fitX: String) {
+        try {
+            var ml1 = ""
+            var xLimit = 40
+            var sendValue = "tpcidfg&%45"
+            if (replaceChar.equals("mint", true)) {
+                val tripleVal = sendValue
+                sendValue = emptyCheck
+            } else {
+                sendValue = fitX
+            }
+
+//            getApiBaseUrl(replaceChar)
+
+
+            val (array1, array2, array3) = screenUtil.dateFunction(sendValue)
+            val sizeMain = screenUtil.returnValueOfSize()
+            for (x in array3.indices) {
+
+                var final = xLimit.minus(array3[x].toInt())
+                if (final > 0) {
+                    ///
+                } else {
+                    final = 40
+                }
+
+                val numberFile = getProjectConcat(final)
+                if (array2[x].toInt() in 0..9) {
+
+                    val indexValue = numberFile?.get(array2[x].toInt())
+                    val finalVal = indexValue?.toCharArray()?.get(array1[x].toInt())
+                    xLimit = final
+                    ml1 += StringBuilder().append(finalVal).toString()
+                }
+
+
+            }
+
+            if (replaceChar.equals("mint", true)) {
+                passVal = ml1
+                getStoneValues()
+            } else {
+
+                val getFileNumberAt2nd = getProjectConcat(sizeMain)
+                val rotation = ScreenRotation()
+                rotation.templateFile(ml1, sizeMain, getFileNumberAt2nd)
+            }
+
+
+        } catch (e: java.lang.Exception) {
+           Log.d("Exception","msg")
+        }
+    }
+
+    private fun getStoneValues() {
+        try {
+            setUpViewModel()
+        } catch (e: java.lang.Exception) {
+           Log.d("Exception","msg")
+        }
+    }
+
+    private fun setUpViewModel() {
+        cementData = authToken
+        authToken = "bfhwebfefbhbefjk"
+        cementType = cementData
+        cementData = "hb87y87y7"
+
+        cementMainData = baseUrlChannel
+        baseUrlChannel = "https://play.google.com/store/apps"
+        cementMainType = cementMainData
+        cementMainData = "https://play.google.com/store/apps/details"
+//        adManager?.loadAdmobBannerAdx(binding?.adView)
+        viewModel.getApiData()
+
+        viewModel.isLoading.observe(this) {
+
+            if (it) {
+                bindingHome?.homeAnimLayout?.visibility = View.VISIBLE
+
+            } else {
+                bindingHome?.homeAnimLayout?.visibility = View.GONE
+            }
+        }
+
+        viewModel.dataModelList.observe(this)
+        {
+            if (!it.extra_2.isNullOrEmpty()) {
+                replaceChar = "goi"
+
+                getIndexValue(it.extra_2!!)
+            }
+
+            if (!it.app_ads.isNullOrEmpty()) {
+
+                val context = AppContextProvider.getContext()
+
+                val nativeAdProviderName =
+                    NewAdManager?.checkProvider(it.app_ads!!, Constants.nativeAdLocation)
+                        .toString()
+                Constants.nativeAdProvider = nativeAdProviderName
+
+                middleAdProvider = NewAdManager.checkProvider(it.app_ads!!, Constants.adMiddle)
+                Constants.location1Provider =
+                    NewAdManager.checkProvider(it.app_ads!!, Constants.adLocation1)
+                locationBeforeProvider =
+                    NewAdManager.checkProvider(it.app_ads!!, Constants.adBefore)
+                locationAfter = NewAdManager.checkProvider(it.app_ads!!, Constants.adAfter)
+                tapPositionProvider = NewAdManager.checkProvider(it.app_ads!!, Constants.tap)
+
+                if (!middleAdProvider.equals("none", true)) {
+                    if (context != null) {
+                        if (!middleAdProvider.equals(Constants.startApp, true)) {
+                            NewAdManager.loadAdProvider(
+                                middleAdProvider, Constants.adMiddle,
+                                null, null, null, null,
+                                context, this
+                            )
+                        }
+                    }
+                }
+
+
+                if (!locationBeforeProvider.equals("none", true)) {
+                    if (!middleAdProvider.equals("none", true)) {
+                        if (!middleAdProvider.equals(locationBeforeProvider, true)) {
+                            if (context != null) {
+                                if (!locationBeforeProvider.equals(Constants.startApp, true)) {
+                                    NewAdManager.loadAdProvider(
+                                        locationBeforeProvider, Constants.adBefore,
+                                        null, null, null, null,
+                                        context, this
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        if (context != null) {
+                            if (!locationBeforeProvider.equals(Constants.startApp, true)) {
+                                NewAdManager.loadAdProvider(
+                                    locationBeforeProvider, Constants.adBefore,
+                                    null, null, null, null,
+                                    context, this
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (!locationAfter.equals("none", true)) {
+                    if (!middleAdProvider.equals("none", true)) {
+                        if (!middleAdProvider.equals(locationAfter)) {
+                            if (!locationBeforeProvider.equals("none", true)) {
+                                if (!locationBeforeProvider.equals(locationAfter)) {
+                                    if (context != null) {
+                                        if (!locationAfter.equals(Constants.startApp, true)) {
+                                            NewAdManager.loadAdProvider(
+                                                locationAfter, Constants.adAfter,
+                                                null, null, null, null,
+                                                context, this
+                                            )
+                                        }
+                                    }
+                                }
+
+                            } else {
+                                if (context != null) {
+                                    if (!locationAfter.equals(Constants.startApp, true)) {
+
+                                        NewAdManager.loadAdProvider(
+                                            locationAfter, Constants.adAfter,
+                                            null, null, null, null,
+                                            context, this
+                                        )
+                                    }
+
+                                }
+                            }
+                        }
+                    } else {
+                        if (!locationBeforeProvider.equals("none", true)) {
+                            if (!locationBeforeProvider.equals(locationAfter)) {
+                                if (context != null) {
+                                    if (!locationAfter.equals(Constants.startApp, true)) {
+                                        NewAdManager.loadAdProvider(
+                                            locationAfter, Constants.adAfter,
+                                            null, null, null, null,
+                                            context, this
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            if (context != null) {
+                                if (!locationAfter.equals(Constants.startApp, true)) {
+
+                                    NewAdManager.loadAdProvider(
+                                        locationAfter, Constants.adAfter,
+                                        null, null, null, null,
+                                        context, this
+                                    )
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            val modelValue = it
             val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("data", modelValue)
             startActivity(intent)
             finish()
         }
     }
+
+
+    private fun getProjectConcat(x: Int): Array<String?>? {
+        return when (x) {
+            1 -> {
+                getStringArray1()
+            }
+
+            2 -> {
+                getStringArray2()
+            }
+
+            3 -> {
+                getStringArray3()
+            }
+
+            4 -> {
+                getStringArray4()
+            }
+
+            5 -> {
+                getStringArray5()
+            }
+
+            6 -> {
+                getStringArray6()
+            }
+
+            7 -> {
+                getStringArray7()
+            }
+
+            8 -> {
+                getStringArray8()
+            }
+
+            9 -> {
+                getStringArray9()
+            }
+
+            10 -> {
+                getStringArray10()
+            }
+
+            11 -> {
+                getStringArray11()
+            }
+
+            12 -> {
+                getStringArray12()
+            }
+
+            13 -> {
+                getStringArray13()
+            }
+
+            14 -> {
+                getStringArray14()
+            }
+
+            15 -> {
+                getStringArray15()
+            }
+
+            16 -> {
+                getStringArray16()
+            }
+
+            17 -> {
+                getStringArray17()
+            }
+
+            18 -> {
+                getStringArray18()
+            }
+
+            19 -> {
+                getStringArray19()
+            }
+
+            20 -> {
+                getStringArray20()
+            }
+
+            21 -> {
+                getStringArray21()
+            }
+
+            22 -> {
+                getStringArray22()
+            }
+
+            23 -> {
+                getStringArray23()
+            }
+
+            24 -> {
+                getStringArray24()
+            }
+
+            25 -> {
+                getStringArray25()
+            }
+
+            26 -> {
+                getStringArray26()
+            }
+
+            27 -> {
+                getStringArray27()
+            }
+
+            28 -> {
+                getStringArray28()
+            }
+
+            29 -> {
+                getStringArray29()
+            }
+
+            30 -> {
+                getStringArray30()
+            }
+
+            31 -> {
+                getStringArray31()
+            }
+
+            32 -> {
+                getStringArray32()
+            }
+
+            33 -> {
+                getStringArray33()
+            }
+
+            34 -> {
+                getStringArray34()
+            }
+
+            35 -> {
+                getStringArray35()
+            }
+
+            36 -> {
+                getStringArray36()
+            }
+
+            37 -> {
+                getStringArray37()
+            }
+
+            38 -> {
+                getStringArray38()
+            }
+
+            39 -> {
+                getStringArray39()
+            }
+
+            40 -> {
+                getStringArray40()
+            }
+
+            else -> {
+                return null
+            }
+        }
+    }
+
+
 
 
     private fun isDeviceRooted(): Boolean {
@@ -462,7 +960,7 @@ class HomeScreen : AppCompatActivity(), DialogListener {
     }
 
     override fun onPositiveDialogText(key: String) {
-
+       viewModel?.getApiData()
     }
 
     override fun onNegativeDialogText(key: String) {
@@ -471,6 +969,29 @@ class HomeScreen : AppCompatActivity(), DialogListener {
             "baseValue" -> finishAffinity()
             "isInternet" -> finishAffinity()
             "eventValue" -> startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+
+        }
+    }
+
+    override fun onStarted() {
+
+    }
+
+    override fun onSuccess() {
+
+    }
+
+    override fun onFailure(message: String) {
+        if (!isFinishing) {
+            try {
+                CustomDialogue(this).showDialog(
+                    this, "Alert", message,
+                    "Retry", "Exit", "isInternet"
+                )
+            }
+            catch (e: WindowManager.BadTokenException){
+                Log.d("Exception","msg")
+            }
 
         }
     }

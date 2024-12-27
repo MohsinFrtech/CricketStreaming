@@ -31,6 +31,32 @@
             app:nullable="true"
             app:argType="com.dream.live.cricket.score.hd.scores.model.LiveScoresModel" />
 
+                <action
+                    android:id="@+id/action_live_details_to_newsDetailFragment"
+                    app:destination="@id/newsDetailFragment" />
+    </fragment>
+
+<!--    <fragment-->
+<!--        android:id="@+id/live_details"-->
+<!--        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.LiveScoreDetail"-->
+<!--        android:label="Live Details Fragment"-->
+<!--        tools:layout="@layout/fragment_live_detail">-->
+
+<!--        <argument-->
+<!--            android:name="getDetails"-->
+<!--            app:nullable="true"-->
+<!--            app:argType="com.dream.live.cricket.score.hd.model.LiveScoresModel" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_live_details_to_newsDetailFragment"-->
+<!--            app:destination="@id/newsDetailFragment" />-->
+
+<!--    </fragment>-->
+    <fragment
+        android:id="@+id/newsDetailFragment"
+        android:name="com.dream.live.cricket.score.hd.scores.ui.fragments.matchdetail.NewsDetailFragment"
+        android:label="News Detail"
+        tools:layout="@layout/news_detail">
+
     </fragment>
 
     <fragment
@@ -70,6 +96,10 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="abc" />
+        <argument
+            android:name="channel_time"
+            app:argType="long"
+            android:defaultValue="0L" />
     </activity>
     <fragment
         android:id="@+id/recentFragment"
@@ -198,6 +228,8 @@
             android:id="@+id/action_seriesMatchFragment_to_live_details"
             app:destination="@id/live_details" />
     </fragment>
+
+
 
 </navigation>
 

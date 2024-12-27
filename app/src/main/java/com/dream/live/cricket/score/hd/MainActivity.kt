@@ -49,6 +49,7 @@ import com.dream.live.cricket.score.hd.scores.utility.listeners.ApiResponseListe
 import com.dream.live.cricket.score.hd.scores.viewmodel.LiveViewModel
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
 import com.dream.live.cricket.score.hd.streaming.adsData.GoogleMobileAdsConsentManager
+import com.dream.live.cricket.score.hd.streaming.adsData.NewAdManager
 import com.dream.live.cricket.score.hd.streaming.date.ScreenUtil
 import com.dream.live.cricket.score.hd.streaming.models.ApplicationConfiguration
 import com.dream.live.cricket.score.hd.streaming.models.DataModel
@@ -82,6 +83,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.material.navigation.NavigationBarView
+import com.teamd2.live.football.tv.utils.AppContextProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -89,46 +91,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
     NavController.OnDestinationChangedListener, AdManagerListener, ApiResponseListener {
 
     private lateinit var binding: ActivityMainBinding
-    private external fun getStringArray1(): Array<String?>?
-    private external fun getStringArray2(): Array<String?>?
-    private external fun getStringArray3(): Array<String?>?
-    private external fun getStringArray4(): Array<String?>?
-    private external fun getStringArray5(): Array<String?>?
-    private external fun getStringArray6(): Array<String?>?
-    private external fun getStringArray7(): Array<String?>?
-    private external fun getStringArray8(): Array<String?>?
-    private external fun getStringArray9(): Array<String?>?
-    private external fun getStringArray10(): Array<String?>?
-    private external fun getStringArray11(): Array<String?>?
-    private external fun getStringArray12(): Array<String?>?
-    private external fun getStringArray13(): Array<String?>?
-    private external fun getStringArray14(): Array<String?>?
-    private external fun getStringArray15(): Array<String?>?
-    private external fun getStringArray16(): Array<String?>?
-    private external fun getStringArray17(): Array<String?>?
-    private external fun getStringArray18(): Array<String?>?
-    private external fun getStringArray19(): Array<String?>?
-    private external fun getStringArray20(): Array<String?>?
-    private external fun getStringArray21(): Array<String?>?
-    private external fun getStringArray22(): Array<String?>?
-    private external fun getStringArray23(): Array<String?>?
-    private external fun getStringArray24(): Array<String?>?
-    private external fun getStringArray25(): Array<String?>?
-    private external fun getStringArray26(): Array<String?>?
-    private external fun getStringArray27(): Array<String?>?
-    private external fun getStringArray28(): Array<String?>?
-    private external fun getStringArray29(): Array<String?>?
-    private external fun getStringArray30(): Array<String?>?
-    private external fun getStringArray31(): Array<String?>?
-    private external fun getStringArray32(): Array<String?>?
-    private external fun getStringArray33(): Array<String?>?
-    private external fun getStringArray34(): Array<String?>?
-    private external fun getStringArray35(): Array<String?>?
-    private external fun getStringArray36(): Array<String?>?
-    private external fun getStringArray37(): Array<String?>?
-    private external fun getStringArray38(): Array<String?>?
-    private external fun getStringArray39(): Array<String?>?
-    private external fun getStringArray40(): Array<String?>?
+
 
     var context: Context? = null
     private val tAG = "MainActivityClass"
@@ -136,7 +99,6 @@ class MainActivity : AppCompatActivity(), DialogListener,
     private val viewModel by lazy {
         ViewModelProvider(this)[OneViewModel::class.java]
     }
-    private var replaceChar = "mint"
     private val logger = Logger()
     private var navController: NavController? = null
     private var intentLink: String = ""
@@ -158,7 +120,6 @@ class MainActivity : AppCompatActivity(), DialogListener,
     private var adManager: AdManager? = null
     private var adStatus = false
     private var preference: SharedPreference? = null
-    private val screenUtil = ScreenUtil()
     private var adProviderName = "none"
     private var rateUsStatus: Boolean? = false
     private var ratingGiven: Boolean? = false
@@ -183,7 +144,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
-        AdSettings.addTestDevice("538c573f-f49a-4c57-8844-f23ddcd20d46")
+        AdSettings.addTestDevice("1fc9259a-88bf-4c7c-bcdc-0014d5b63674")
         window.navigationBarColor = ContextCompat.getColor(this, R.color.noChange)
         adManager = AdManager(this, this, this)
 //        adManager?.loadAdmobInterstitialAdx()
@@ -193,7 +154,6 @@ class MainActivity : AppCompatActivity(), DialogListener,
         binding.lifecycleOwner = this
         binding.modelData = viewModel
         viewModel?.apiResponseListener = this
-        sliderRotation()
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (backBoolean) {
@@ -211,39 +171,10 @@ class MainActivity : AppCompatActivity(), DialogListener,
         })
         setUpNavigationGraph()
 
+        setUpViewModel()
     }
 
 
-    private fun sliderRotation() {
-        ReLinker.loadLibrary(context, "cricket", object : ReLinker.LoadListener {
-            override fun success() {
-
-                lifecycleScope.launch(Dispatchers.Main) {
-                    val screenUtil = ScreenUtil()
-                    val numberFile = getProjectConcat(screenUtil.reMem())
-                    authToken = numberFile?.get(screenUtil.reMem2()).toString()
-                    passVal = numberFile?.get(screenUtil.reMem4()).toString()
-                    baseUrlChannel = numberFile?.get(screenUtil.reMem3()).toString()
-                    emptyCheck = numberFile?.get(screenUtil.reMem5()).toString()
-//                    baseUrlDemo = numberFile?.get(screenUtil.reMem6()).toString()
-                    base_url_scores = numberFile?.get(screenUtil.reMem7()).toString()
-                    Cons.s_token = numberFile?.get(screenUtil.reMem17()).toString()
-                    Cons.socketUrl = numberFile?.get(screenUtil.reMem16()).toString()
-                    Cons.socketAuth = numberFile?.get(screenUtil.reMem18()).toString()
-                    getIndexValue("chint")
-                }
-            }
-
-            override fun failure(t: Throwable) {
-
-                Handler(Looper.getMainLooper()).post {
-                    showFailedCppDialog()
-                }
-            }
-        })
-
-
-    }
 
 
     private fun setUpActionBar() {
@@ -313,28 +244,27 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
             try {
                 navigationTap += 1
-
                 if (navigationTap == showNavigationAd) {
-                    //showInterAd
 
-                    if (adProviderName.equals(Constants.startApp, true)) {
-                        adManager?.loadAdProvider(
-                            adProviderName, Constants.adTap,
-                            null, null, null, null
-                        )
-                    }
-
-                    if (adStatus) {
-                        if (!adProviderName.equals("none", true)) {
-                            adManager?.showAds(adProviderName)
+                    if (!Constants.tapPositionProvider.equals("none", true)) {
+                        if (!Constants.tapPositionProvider.equals(Constants.startApp,true)) {
                             navigationTap = 0
                             showNavigationAd += 1
+                            val local = AppContextProvider.getContext()
+                            local?.let { NewAdManager.showAds(Constants.tapPositionProvider, this, it) }
                         }
-
-                    } else {
-                        navigationTap = 0
+                        else{
+                            if (Constants.tapPositionProvider.equals(Constants.startApp, true)) {
+                                adManager?.loadAdProvider(
+                                    Constants.tapPositionProvider,
+                                    Constants.tap, null, null, null,null)
+                            }
+                        }
                     }
-
+                    else{
+                        navigationTap =0
+                    }
+                    //showInterAd
                 }
             } catch (e: Exception) {
                 Log.d("Exception","msg")
@@ -359,258 +289,42 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
     }
 
-    private fun getProjectConcat(x: Int): Array<String?>? {
-        return when (x) {
-            1 -> {
-                getStringArray1()
-            }
-
-            2 -> {
-                getStringArray2()
-            }
-
-            3 -> {
-                getStringArray3()
-            }
-
-            4 -> {
-                getStringArray4()
-            }
-
-            5 -> {
-                getStringArray5()
-            }
-
-            6 -> {
-                getStringArray6()
-            }
-
-            7 -> {
-                getStringArray7()
-            }
-
-            8 -> {
-                getStringArray8()
-            }
-
-            9 -> {
-                getStringArray9()
-            }
-
-            10 -> {
-                getStringArray10()
-            }
-
-            11 -> {
-                getStringArray11()
-            }
-
-            12 -> {
-                getStringArray12()
-            }
-
-            13 -> {
-                getStringArray13()
-            }
-
-            14 -> {
-                getStringArray14()
-            }
-
-            15 -> {
-                getStringArray15()
-            }
-
-            16 -> {
-                getStringArray16()
-            }
-
-            17 -> {
-                getStringArray17()
-            }
-
-            18 -> {
-                getStringArray18()
-            }
-
-            19 -> {
-                getStringArray19()
-            }
-
-            20 -> {
-                getStringArray20()
-            }
-
-            21 -> {
-                getStringArray21()
-            }
-
-            22 -> {
-                getStringArray22()
-            }
-
-            23 -> {
-                getStringArray23()
-            }
-
-            24 -> {
-                getStringArray24()
-            }
-
-            25 -> {
-                getStringArray25()
-            }
-
-            26 -> {
-                getStringArray26()
-            }
-
-            27 -> {
-                getStringArray27()
-            }
-
-            28 -> {
-                getStringArray28()
-            }
-
-            29 -> {
-                getStringArray29()
-            }
-
-            30 -> {
-                getStringArray30()
-            }
-
-            31 -> {
-                getStringArray31()
-            }
-
-            32 -> {
-                getStringArray32()
-            }
-
-            33 -> {
-                getStringArray33()
-            }
-
-            34 -> {
-                getStringArray34()
-            }
-
-            35 -> {
-                getStringArray35()
-            }
-
-            36 -> {
-                getStringArray36()
-            }
-
-            37 -> {
-                getStringArray37()
-            }
-
-            38 -> {
-                getStringArray38()
-            }
-
-            39 -> {
-                getStringArray39()
-            }
-
-            40 -> {
-                getStringArray40()
-            }
-
-            else -> {
-                return null
-            }
-        }
-    }
-
-    private fun showFailedCppDialog() {
-        CustomDialogue(this).showDialog(
-            this, "title", getString(R.string.cpp_file_error),
-            "", "Exit", "eventValue"
-        )
-    }
-
-    private fun getIndexValue(fitX: String) {
-        try {
-            var ml1 = ""
-            var xLimit = 40
-            var sendValue = "tpcidfg&%45"
-            if (replaceChar.equals("mint", true)) {
-                val tripleVal = sendValue
-                sendValue = emptyCheck
-            } else {
-                sendValue = fitX
-            }
-
-            getApiBaseUrl(replaceChar)
 
 
-            val (array1, array2, array3) = screenUtil.dateFunction(sendValue)
-            val sizeMain = screenUtil.returnValueOfSize()
-            for (x in array3.indices) {
-
-                var final = xLimit.minus(array3[x].toInt())
-                if (final > 0) {
-                    ///
-                } else {
-                    final = 40
-                }
-
-                val numberFile = getProjectConcat(final)
-                if (array2[x].toInt() in 0..9) {
-
-                    val indexValue = numberFile?.get(array2[x].toInt())
-                    val finalVal = indexValue?.toCharArray()?.get(array1[x].toInt())
-                    xLimit = final
-                    ml1 += StringBuilder().append(finalVal).toString()
-                }
 
 
-            }
 
-            if (replaceChar.equals("mint", true)) {
-                passVal = ml1
-                getStoneValues()
-            } else {
-
-                val getFileNumberAt2nd = getProjectConcat(sizeMain)
-                val rotation = ScreenRotation()
-                rotation.templateFile(ml1, sizeMain, getFileNumberAt2nd)
-            }
-
-
-        } catch (e: Exception) {
-            logger.printLog(tAG, "message" + e.message)
-        }
-
-
-    }
-
-    private fun getStoneValues() {
-        try {
-            setUpViewModel()
-        } catch (e: Exception) {
-            logger.printLog("Exception", "" + e.message)
-        }
-    }
 
 
     private fun setUpViewModel() {
-        cementData = authToken
-        authToken = "bfhwebfefbhbefjk"
-        cementType = cementData
-        cementData = "hb87y87y7"
-
-        cementMainData = baseUrlChannel
-        baseUrlChannel = "https://play.google.com/store/apps"
-        cementMainType = cementMainData
-        cementMainData = "https://play.google.com/store/apps/details"
+//        cementData = authToken
+//        authToken = "bfhwebfefbhbefjk"
+//        cementType = cementData
+//        cementData = "hb87y87y7"
+//
+//        cementMainData = baseUrlChannel
+//        baseUrlChannel = "https://play.google.com/store/apps"
+//        cementMainType = cementMainData
+//        cementMainData = "https://play.google.com/store/apps/details"
 //        adManager?.loadAdmobBannerAdx(binding?.adView)
-        viewModel.getApiData()
+//        viewModel.getApiData()
+
+        try {
+            val myParcelable: DataModel? =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra("data", DataModel::class.java)
+                } else {
+                    intent.getParcelableExtra<DataModel>("data")
+                }
+            if (myParcelable != null) {
+                viewModel.setUpMainData(myParcelable)
+            } else {
+                viewModel.setUpError("Something went wrong,please retry.")
+            }
+        } catch (e: java.lang.Exception) {
+            viewModel.setUpError("Something went wrong,please retry.")
+            Log.d("Exception", "null")
+        }
 
         if (Cons.s_token.isNotEmpty() && base_url_scores.isNotEmpty()) {
             liveViewModel.getsliderData()
@@ -620,21 +334,15 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
             if (it) {
                 binding.lottieHome.visibility = View.VISIBLE
-
             } else {
                 binding.lottieHome.visibility = View.GONE
-
             }
-
-
         }
 
         viewModel.dataModelList.observe(this)
         {
 
             if (!it.app_ads.isNullOrEmpty()) {
-                adProviderName =
-                    adManager?.checkProvider(it.app_ads!!, Constants.adTap).toString()
 
                 val nativeAdProvider =
                     adManager?.checkProvider(it.app_ads!!, Constants.nativeAdLocation)
@@ -645,11 +353,20 @@ class MainActivity : AppCompatActivity(), DialogListener,
                     )
                 }
 
-                Log.d("tapAdName", "provider" + adProviderName)
-                if (adProviderName != "none") {
-                    //interstitial Ad loading
-                    loadTapAd()
+                val context = AppContextProvider.getContext()
+                if (!Constants.tapPositionProvider.equals("none", true)) {
+                    if (context != null) {
+                        if (!Constants.tapPositionProvider.equals(Constants.startApp, true)) {
+                            NewAdManager.loadAdProvider(
+                                Constants.tapPositionProvider, Constants.tap,
+                                null, null, null, null,
+                                context, this
+                            )
+                        }
+                    }
                 }
+
+
                 val bannerProvider =
                     adManager?.checkProvider(it.app_ads!!, Constants.adLocation1)
 
@@ -664,14 +381,6 @@ class MainActivity : AppCompatActivity(), DialogListener,
                         binding?.fbAdView, binding?.unityBannerView, binding?.startAppBanner
                     )
                 }
-            }
-
-
-
-            if (!it.extra_2.isNullOrEmpty()) {
-                replaceChar = "goi"
-
-                getIndexValue(it.extra_2!!)
             }
 
             if (!it.app_version.isNullOrEmpty()) {
@@ -983,9 +692,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
     override fun onDestroy() {
         super.onDestroy()
         liveViewModel.stopWebSocket()
-        Constants.app_update_dialog=false
-        splash_status=false
-        rateShown=false
+
     }
 
     override fun onResume() {
@@ -1073,7 +780,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
         arguments: Bundle?
     ) {
 
-        if (destination.id == R.id.channel) {
+        if (destination.id == R.id.channel || destination.id == R.id.live_details) {
             binding.bottomNav.visibility = View.GONE
         } else {
             binding.bottomNav.visibility = View.VISIBLE

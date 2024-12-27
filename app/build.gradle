@@ -24,8 +24,8 @@ android {
         applicationId "com.dream.live.cricket.score.hd"
         minSdk 21
         targetSdk 34
-        versionCode 28
-        versionName "2.8"
+        versionCode 32
+        versionName "3.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -65,9 +65,9 @@ android {
 
 dependencies {
 //    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
 
     //firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
@@ -80,12 +80,12 @@ dependencies {
 //    implementation 'com.google.firebase:firebase-database-ktx'
 
     //Ads section
-    implementation "com.google.android.gms:play-services-ads:23.5.0"    //Admob
+    implementation "com.google.android.gms:play-services-ads:23.6.0"    //Admob
     implementation 'com.facebook.android:audience-network-sdk:6.18.0'  //fbAd
     implementation 'com.chartboost:chartboost-sdk:9.2.1'  //chartboost
     //implementation files('libs/unity-ads.aar')  //Unity Ads
 
-    implementation 'com.startapp:inapp-sdk:5.0.2' //startapp ad dependency
+    implementation 'com.startapp:inapp-sdk:5.1.0' //startapp ad dependency
     //for allLibs file
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
 
@@ -99,7 +99,12 @@ dependencies {
 
     ///Exoplayer and chromecast....
     implementation 'com.google.android.gms:play-services-cast-framework:21.5.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+//    implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
+    implementation("androidx.media3:media3-exoplayer-hls:1.4.1")
+    implementation("androidx.media3:media3-ui:1.4.1")
+    implementation("androidx.media3:media3-session:1.4.1")
+    implementation 'androidx.media3:media3-exoplayer-dash:1.4.1'
 
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -111,9 +116,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
 
     // Moshi
-    implementation "com.squareup.moshi:moshi-kotlin:1.15.0"
-    implementation "com.squareup.moshi:moshi:1.15.0"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.15.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.15.1"
+    implementation "com.squareup.moshi:moshi:1.15.1"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.15.1"
     // Moshi
 
 
@@ -121,16 +126,16 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:2.8.3"
 
     implementation 'com.github.simbiose:Encryption:2.0.1'  //Encryption and decryption
-    implementation 'com.airbnb.android:lottie:6.1.0'  //Lottie animation
+    implementation 'com.airbnb.android:lottie:6.6.0'  //Lottie animation
     implementation 'com.intuit.sdp:sdp-android:1.1.0'  //Scalable dp library
-    implementation 'com.github.bumptech.glide:glide:4.15.1'  //glide
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'  //glide
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
     implementation 'com.getkeepsafe.relinker:relinker:1.4.5' //linkCpp file
     implementation("androidx.multidex:multidex:2.0.1") //multidex
 //    implementation 'com.google.guava:guava:31.1-jre'  //guava
 
-    implementation 'com.unity3d.ads:unity-ads:4.12.2'
+    implementation 'com.unity3d.ads:unity-ads:4.12.4'
     //Scarlet for Socket
     //Paging
     implementation "android.arch.paging:runtime:1.0.1"
@@ -150,7 +155,7 @@ dependencies {
     //p2pLibrary
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.orhanobut:logger:2.2.0")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.11.0")
 
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
 

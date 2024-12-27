@@ -30,7 +30,9 @@ import com.dream.live.cricket.score.hd.streaming.ui.fragments.ChannelFragmentDir
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.USER_AGENT
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.channel_url_val
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.dash
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.defaultString
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeFacebook
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.passphraseVal
@@ -42,6 +44,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userTyp
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType3
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType4
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType5
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.xForwardedKey
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Defamation
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
@@ -191,7 +194,19 @@ class ChannelAdapter(
                         previousClick = positionClick
                     }
                     notifyItemChanged(positionClick)
+
+
                     try {
+
+                        Constants.positionClick2 = 0
+                        Constants.previousClick2 = -1
+//                        setSelected(position)
+
+                        val timeValue: Long = if (!currentList[position].date.isNullOrEmpty()) {
+                            getSelectedChannelTimeInMillis(currentList[position].date)
+                        } else {
+                            0
+                        }
 
                         if (currentList[position]?.channel_type.equals(
                                 userType1, true
@@ -212,13 +227,13 @@ class ChannelAdapter(
                                 val channelDirection =
                                     ChannelFragmentDirections.actionChannelToPlayer(
                                         currentList[position].url, linkAppend,
-                                        userType1
+                                        userType1,timeValue
                                     )
                                 navigateData.navigation(channelDirection)
                             } else {
                                 val channelDirection = MainFragmentDirections.actionHomeToPlayer(
                                     currentList[position].url, linkAppend,
-                                    userType1
+                                    userType1,timeValue
                                 )
                                 navigateData.navigation(channelDirection)
                             }
@@ -242,14 +257,14 @@ class ChannelAdapter(
                                     val channelDirection =
                                         ChannelFragmentDirections.actionChannelToPlayer(
                                             "baseLink",
-                                            "linkAppend", userType2
+                                            "linkAppend", userType2,timeValue
                                         )
                                     navigateData.navigation(channelDirection)
                                 } else {
                                     val channelDirection =
                                         MainFragmentDirections.actionHomeToPlayer(
                                             "baseLink",
-                                            "linkAppend", userType2
+                                            "linkAppend", userType2,timeValue
                                         )
                                     navigateData.navigation(channelDirection)
                                 }
@@ -272,14 +287,14 @@ class ChannelAdapter(
                                 val channelDirection =
                                     ChannelFragmentDirections.actionChannelToPlayer(
                                         currentList[position].url, linkAppend,
-                                        userType3
+                                        userType3,timeValue
                                     )
                                 navigateData.navigation(channelDirection)
                             } else {
 
                                 val channelDirection = MainFragmentDirections.actionHomeToPlayer(
                                     currentList[position].url, linkAppend,
-                                    userType3
+                                    userType3,timeValue
                                 )
                                 navigateData.navigation(channelDirection)
                             }
@@ -298,6 +313,42 @@ class ChannelAdapter(
                                 }
                             }
                         }
+                        else if (currentList[position]?.channel_type.equals(
+                                dash, true)){
+                            //for playing dash media...
+                            Constants.clearKeyKey =""
+                            USER_AGENT = "ExoPlayer-Drm"
+                            xForwardedKey =""
+                            ///Dash media source...
+                            if (!currentList[position]?.clear_key.isNullOrEmpty())
+                            {
+                                Constants.clearKeyKey = currentList[position]?.clear_key.toString()
+                            }
+
+                            //User Agent...
+                            if (!currentList[position]?.user_agent.isNullOrEmpty()){
+                                USER_AGENT = currentList[position]?.user_agent.toString()
+                            }
+
+                            if (!currentList[position]?.forwarded_for.isNullOrEmpty()){
+                                xForwardedKey = currentList[position]?.forwarded_for.toString()
+                            }
+                            /////
+                            if (destination.equals("channel", true)) {
+                                val channelDirection =
+                                    ChannelFragmentDirections.actionChannelToPlayer(
+                                        currentList[position].url, currentList[position].url,
+                                        dash,timeValue
+                                    )
+                                navigateData.navigation(channelDirection)
+                            } else {
+                                val channelDirection = MainFragmentDirections.actionHomeToPlayer(
+                                    currentList[position].url, currentList[position].url,
+                                    dash,timeValue
+                                )
+                                navigateData.navigation(channelDirection)
+                            }
+                        }
                         else {
                             if (localVal.isNotEmpty()) {
                                 val processingFile = ProcessingFile()
@@ -313,13 +364,13 @@ class ChannelAdapter(
                                 val channelDirection =
                                     ChannelFragmentDirections.actionChannelToPlayer(
                                         currentList[position].url, linkAppend,
-                                        userType1
+                                        userType1,timeValue
                                     )
                                 navigateData.navigation(channelDirection)
                             } else {
                                 val channelDirection = MainFragmentDirections.actionHomeToPlayer(
                                     currentList[position].url, linkAppend,
-                                    userType1
+                                    userType1,timeValue
                                 )
                                 navigateData.navigation(channelDirection)
                             }
@@ -338,6 +389,24 @@ class ChannelAdapter(
         }
 
     }
+    private fun getSelectedChannelTimeInMillis(channelDate: String?): Long {
+        try {
+            val df = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.ENGLISH)
+            df.timeZone = TimeZone.getTimeZone("UTC")
+            val date = channelDate?.let { df.parse(it) }
+            df.timeZone = TimeZone.getDefault()
+            val formattedDate = date?.let { df.format(it) }
+            val date2: Date? = formattedDate?.let { df.parse(it) }
+            val calendar = Calendar.getInstance()
+            if (date2 != null) {
+                calendar.time = date2
+            }
+            return calendar.timeInMillis
+        } catch (e: Exception) {
+            return 0
+        }
+    }
+
 
     private fun dateAndTime(channelDate: String?, viewHolder: ChannelAdapterViewHolder) {
         val df = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.ENGLISH)

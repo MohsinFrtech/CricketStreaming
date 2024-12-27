@@ -1,10 +1,25 @@
 package com.dream.live.cricket.score.hd.streaming.utils.objects
 
 import com.dream.live.cricket.score.hd.BuildConfig
+import com.dream.live.cricket.score.hd.streaming.models.FormatData
+import com.dream.live.cricket.score.hd.streaming.utils.interfaces.OnHomePressedListener
 
 
 object Constants {
+    const val dash = "dash"
+    var clearKeyKey=""
+    var clearKeyId =""
+    var USER_AGENT = "ExoPlayer-Drm"
+    var xForwardedKey =""
+    var mListener: OnHomePressedListener? = null
 
+    var playerActivityInPip=false
+    var location1Provider = "none"
+    var tapPositionProvider ="none"
+    const val tap = "Tap"
+
+    val dataFormats: MutableList<FormatData> =
+        java.util.ArrayList<FormatData>()
     //Ads
     const val unityTestMode = false
     const val admob = "admob"
@@ -15,7 +30,8 @@ object Constants {
     const val startApp = "startapp"
     var checkNativeAdProvider = "none"
     var middleAdProvider = "none"
-
+    var positionClick2 = 0
+    var previousClick2 = -1
     const val consentKey="Consent"
     var admobInterstitial = ""
     var googleAdMangerInterstitial = ""
@@ -52,6 +68,7 @@ object Constants {
     const val nativeAdLocation = "native"
     var location2TopProvider = "none"
     var adLocation1Provider = "none"
+    var locationBeforeProvider = "none"
 
     var location2BottomProvider = "none"
     var locationAfter = "none"

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_player_logo"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:src="@drawable/avatar_icon"
+            android:layout_margin="8sp"
+            android:layout_marginStart="8sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/avatar_icon" />
+
+        <TextView
+            android:layout_width="0sp"
+            android:id="@+id/playerName"
+            android:layout_marginTop="2sp"
+            android:textColor="@color/white"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:text="@string/app_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintTop_toTopOf="@+id/iv_player_logo"
+            app:layout_constraintStart_toEndOf="@+id/iv_player_logo"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="0sp"
+            android:id="@+id/playerRole"
+            android:textColor="@color/white"
+            android:layout_marginTop="5sp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:text="@string/app_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintTop_toBottomOf="@+id/playerName"
+            app:layout_constraintStart_toEndOf="@+id/iv_player_logo"
+            android:layout_height="wrap_content"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

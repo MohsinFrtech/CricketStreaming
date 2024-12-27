@@ -112,6 +112,8 @@
         </activity>
         <activity
             android:name=".streaming.ui.activities.PlayerScreen"
+            android:launchMode="singleTask"
+            android:supportsPictureInPicture="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/PlayerTheme">
 

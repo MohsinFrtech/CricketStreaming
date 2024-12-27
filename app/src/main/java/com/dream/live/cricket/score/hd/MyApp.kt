@@ -16,6 +16,7 @@ import com.p2pengine.core.segment.StrictHlsSegmentIdGenerator
 import com.p2pengine.core.tracking.TrackerZone
 import com.p2pengine.core.utils.EngineException
 import com.p2pengine.sdk.P2pEngine
+import com.teamd2.live.football.tv.utils.AppContextProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
         appOpenManager = AppOpenManager(this)
+        AppContextProvider.init(this)
 
 //        val testDeviceIds = Arrays.asList("890CE0083E0D133594E4E763481D1140")
 //        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()

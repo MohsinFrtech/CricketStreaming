@@ -6,7 +6,8 @@
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_com_dream_live_cricket_score_hd_MainActivity_getStringArray1(JNIEnv *env, jobject thiz) {
+Java_com_dream_live_cricket_score_hd_tv_activities_TvMainActivity_getStringArray1(JNIEnv *env,
+                                                                                  jobject thiz) {
     jobjectArray strarr = env->NewObjectArray(19, env->FindClass("java/lang/String"), nullptr);
     std::string vs1 = "I95JjzV16YHotJQLTw0kMD5QxKpQ5YlkQyRCyPTb";
     std::string KDa = "wnls9qbnlT4jEp2lIlLfVjtCs9PenXl7s8bL83Qy";
@@ -50,11 +51,12 @@ Java_com_dream_live_cricket_score_hd_MainActivity_getStringArray1(JNIEnv *env, j
     env->SetObjectArrayElement(strarr, 18, env->NewStringUTF(sMessage.c_str()));
 
     return strarr;
+
 }
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_com_dream_live_cricket_score_hd_tv_activities_TvMainActivity_getStringArray1(JNIEnv *env,
-                                                                                  jobject thiz) {
+Java_com_dream_live_cricket_score_hd_streaming_ui_activities_HomeScreen_getStringArray1(JNIEnv *env,
+                                                                                        jobject thiz) {
     jobjectArray strarr = env->NewObjectArray(19, env->FindClass("java/lang/String"), nullptr);
     std::string vs1 = "I95JjzV16YHotJQLTw0kMD5QxKpQ5YlkQyRCyPTb";
     std::string KDa = "wnls9qbnlT4jEp2lIlLfVjtCs9PenXl7s8bL83Qy";

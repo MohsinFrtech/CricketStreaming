@@ -57,9 +57,16 @@ class OneViewModel(application: Application?) : AndroidViewModel(application!!) 
         get() = _dataModelList
 
     init {
-        isLoading.value = true
         navigationCheck.value = "nothing"
         userLink.value = false
+    }
+
+    fun setUpMainData(model: DataModel){
+        _dataModelList.value = model
+    }
+
+    fun setUpError(value: String){
+        apiResponseListener?.onFailure(value)
     }
 
     fun onRefreshFixtures() {
@@ -133,16 +140,19 @@ class OneViewModel(application: Application?) : AndroidViewModel(application!!) 
                         }
 
                     } catch (e: Exception) {
-                        Log.d("Exception", "" + "coming34......" + e.localizedMessage)
+//                        Log.d("Exception", "" + "coming34......" + e.localizedMessage)
 
-                        withContext(Dispatchers.Main) {
-                            isLoading.value = false
-                            apiResponseListener?.onFailure("Something went wrong, Please try again")
-                        }
+
                         if (e is SocketTimeoutException || e is UnknownHostException){
                             withContext(Dispatchers.Main) {
                                 isLoading.value = false
                                 apiResponseListener?.onFailure("Server is taking too long to respond.")
+                            }
+                        }
+                        else{
+                            withContext(Dispatchers.Main) {
+                                isLoading.value = false
+                                apiResponseListener?.onFailure("Something went wrong, Please try again")
                             }
                         }
                     }

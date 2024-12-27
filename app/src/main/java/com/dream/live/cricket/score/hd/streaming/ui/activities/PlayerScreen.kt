@@ -1,24 +1,30 @@
 package com.dream.live.cricket.score.hd.streaming.ui.activities
 
-import android.app.UiModeManager
+import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Rect
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.Base64
 import android.util.Log
+import android.util.Rational
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -27,17 +33,42 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.Tracks
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.HttpDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.LoadControl
+import androidx.media3.exoplayer.dash.DashChunkSource
+import androidx.media3.exoplayer.dash.DashMediaSource
+import androidx.media3.exoplayer.dash.DefaultDashChunkSource
+import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
+import androidx.media3.exoplayer.drm.DrmSessionManager
+import androidx.media3.exoplayer.drm.FrameworkMediaDrm
+import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
+import androidx.media3.exoplayer.hls.HlsMediaSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource
+import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.exoplayer.trackselection.TrackSelector
+import androidx.media3.exoplayer.upstream.BandwidthMeter
+import androidx.media3.exoplayer.upstream.DefaultAllocator
+import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.navigation.navArgs
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.upstream.*
-import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadRequestData
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -54,26 +85,45 @@ import com.dream.live.cricket.score.hd.R
 import com.dream.live.cricket.score.hd.databinding.ActivityExoTestPlayerBinding
 import com.dream.live.cricket.score.hd.databinding.ExoPlaybackControlViewBinding
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
+import com.dream.live.cricket.score.hd.streaming.adsData.NewAdManager
+import com.dream.live.cricket.score.hd.streaming.models.DrmModel
+import com.dream.live.cricket.score.hd.streaming.models.FormatData
 import com.dream.live.cricket.score.hd.streaming.utils.Logger
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
+import com.dream.live.cricket.score.hd.streaming.utils.interfaces.OnHomePressedListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.adLocation2bottom
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.adLocation2topPermanent
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.location2BottomProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.location2TopPermanentProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.playerActivityInPip
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userLinkVal
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.userType3
 import com.dream.live.cricket.score.hd.streaming.utils.objects.DebugChecker
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Defamation
+import com.dream.live.cricket.score.hd.streaming.utils.playerutils.PlayerScreenBottomSheet
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.dream.live.cricket.score.hd.utils.InternetUtil
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.common.collect.ImmutableList
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.p2pengine.core.p2p.EngineExceptionListener
 import com.p2pengine.core.p2p.PlayerInteractor
 import com.p2pengine.core.utils.EngineException
 import com.p2pengine.sdk.P2pEngine
+import com.dream.live.cricket.score.hd.streaming.utils.HomeWatcher
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.adBefore
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.clearKeyKey
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.dash
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationBeforeProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.xForwardedKey
+import com.facebook.ads.AdSettings
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.teamd2.live.football.tv.utils.AppContextProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
@@ -134,7 +184,22 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     enum class PlaybackState {
         PLAYING, IDLE
     }
+
     private var booleanVpn: Boolean? = false
+
+    private var isShowingTrackSelectionDialog = false
+    private var isActivityResumed = false
+    private var isChromcast = false
+    private var isAdShowning = false
+    val SUPPORTED_TRACK_TYPES = ImmutableList.of(
+        C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_AUDIO, C.TRACK_TYPE_TEXT, C.TRACK_TYPE_IMAGE
+    )
+
+    val mHomeWatcher = HomeWatcher(this)
+    private var firebaseAnalytics: FirebaseAnalytics? = null
+
+    var compareValue: Long = 0
+    var timer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,9 +209,11 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
+        AdSettings.addTestDevice("1fc9259a-88bf-4c7c-bcdc-0014d5b63674")
         if (isGooglePlayServicesAvailable(this)) {
             initializeCastSdk()
         }
+        initializeFirebaseAnalytics()
         val exoView: ConstraintLayout? = binding?.playerView?.findViewById(R.id.exoControlView)
         bindingExoPlayback = exoView?.let { ExoPlaybackControlViewBinding.bind(it) }
         mLocation = PlaybackLocation.LOCAL
@@ -164,24 +231,279 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
 
-                if (adStatus) {
-                    if (!Constants.locationAfter.equals("none", true)) {
+                if (!locationAfter.equals("none", true)) {
+                    if (!locationAfter.equals(Constants.startApp, true)) {
                         if (player != null) {
                             player?.stop()
                             player!!.release()
                             player = null
                         }
-                        adManager?.showAds(locationAfter)
-                        binding?.lottiePlayer2?.visibility = View.VISIBLE
+                        isAdShowning = true
+                        val local = AppContextProvider.getContext()
+                        local?.let {
+                            NewAdManager.showAds(
+                                locationAfter,
+                                this@PlayerScreen,
+                                it
+                            )
+                        }
+                        binding?.lottiePlayer?.visibility = View.VISIBLE
+                    } else {
+                        Constants.videoFinish = true
+                        finish()
                     }
+
                 } else {
                     Constants.videoFinish = true
                     finish()
                 }
-
-
             }
         })
+        bindingExoPlayback?.moreOption?.setOnClickListener {
+            if (player != null) {
+                if (!isShowingTrackSelectionDialog
+                    && willHaveContent(player!!)
+                ) {
+                    getTracksPresentInsideUrl(player)
+                }
+            }
+        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+            checkHomeButton()
+        } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//
+//            }
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkHomeButton() {
+        try {
+            mHomeWatcher.setOnHomePressedListener(object : OnHomePressedListener {
+                override fun onHomePressed() {
+                    // do something here...
+                    if (!isInPictureInPictureMode) {
+                        if (lifecycle.currentState == Lifecycle.State.RESUMED) {
+                            try {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    val params = updatePictureInPictureParams()
+                                    if (!isFinishing) {
+                                        enterPictureInPictureMode(params)
+                                    }
+                                }
+                            } catch (e: java.lang.Exception) {
+                                val bundle = Bundle()
+                                bundle.putString("pipFinish", "not Resumed")
+                                firebaseAnalytics?.logEvent("pipFinish", bundle)
+                                Log.d("Exception", "msg")
+                            }
+                        } else {
+                            val bundle = Bundle()
+                            bundle.putString("resume", "not Resumed")
+                            firebaseAnalytics?.logEvent("resumeStatus", bundle)
+                            Log.d("Exception", "msg")
+                        }
+                    } else {
+                        val bundle = Bundle()
+                        bundle.putString("pipMode", "Already")
+                        firebaseAnalytics?.logEvent("pipMode", bundle)
+                    }
+                }
+
+                override fun onHomeLongPressed() {
+                    if (!isInPictureInPictureMode) {
+                        if (isActivityResumed) {
+                            if (lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                try {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        val params = updatePictureInPictureParams()
+                                        if (!isFinishing) {
+                                            enterPictureInPictureMode(params)
+                                        }
+                                    }
+                                } catch (e: java.lang.Exception) {
+                                    val bundle = Bundle()
+                                    bundle.putString("pipFinish", "not Resumed")
+                                    firebaseAnalytics?.logEvent("pipFinish", bundle)
+                                    Log.d("Exception", "msg")
+                                }
+                            } else {
+                                val bundle = Bundle()
+                                bundle.putString("resume", "not Resumed")
+                                firebaseAnalytics?.logEvent("resumeStatus", bundle)
+                                Log.d("Exception", "msg")
+                            }
+                        }
+                    }
+                }
+            })
+            mHomeWatcher.startWatch()
+        } catch (e: java.lang.Exception) {
+            val bundle = Bundle()
+            bundle.putString("exception", "error" + e?.message)
+            firebaseAnalytics?.logEvent("resumeStatus", bundle)
+            Log.d("Exception", "msg")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updatePictureInPictureParams(): PictureInPictureParams {
+        // Calculate the aspect ratio of the PiP screen.
+        val bundle = Bundle()
+        bundle.putString("PipMode", "okay")
+        firebaseAnalytics?.logEvent("pipMode", bundle)
+        // Calculate the aspect ratio of the PiP screen.
+        var aspectRatio: Rational? = null
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            aspectRatio = binding?.minView?.width?.let {
+//                binding?.minView?.height?.let { it1 ->
+//                    Rational(
+//                        it,
+//                        it1
+//                    )
+//                }
+//            }
+            aspectRatio = binding?.minView?.width?.let {
+                binding?.minView?.height?.let { it1 ->
+                    clampAspectRatio(
+                        it,
+                        it1
+                    )
+                }
+            }
+        } else {
+//            aspectRatio =
+//                binding?.playerView?.width?.let {
+//                binding?.playerView?.height?.let { it1 ->
+//                    Rational(
+//                        it,
+//                        it1
+//                    )
+//                }
+//            }
+            aspectRatio = binding?.playerView?.width?.let {
+                binding?.playerView?.height?.let { it1 ->
+                    clampAspectRatio(
+                        it,
+                        it1
+                    )
+                }
+            }
+        }
+
+        binding?.myToolbar?.visibility = View.GONE
+        bindingExoPlayback?.exoControlView?.visibility = View.GONE
+        playerActivityInPip = true
+        removeAllAdsViews()
+        binding?.topAdLay?.visibility = View.GONE
+        binding?.bottomAdLay?.visibility = View.GONE
+        // The  view turns into the picture-in-picture mode.
+        val visibleRect = Rect()
+        binding?.playerView?.getGlobalVisibleRect(visibleRect)
+        val params = PictureInPictureParams.Builder()
+            .setAspectRatio(aspectRatio)
+            // Specify the portion of the screen that turns into the picture-in-picture mode.
+            // This makes the transition animation smoother.
+            .setSourceRectHint(visibleRect)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // The screen automatically turns into the picture-in-picture mode when it is hidden
+            // by the "Home" button.
+            params.setAutoEnterEnabled(true)
+        }
+        return params.build().also {
+            if (!isFinishing) {
+                setPictureInPictureParams(it)
+            }
+        }
+    }
+
+    fun removeAllAdsViews() {
+        binding?.adViewTop?.invalidate()
+        binding?.fbAdViewTop?.invalidate()
+        binding?.unityBannerView?.invalidate()
+        binding?.adViewTopPermanent?.invalidate()
+        binding?.adViewBottom?.invalidate()
+        binding?.fbAdViewBottom?.invalidate()
+        binding?.unityBannerViewBottom?.invalidate()
+        if (binding?.mainTimerLay?.isVisible == true) {
+            binding?.countDownTimerAd?.removeAllViews()
+        }
+    }
+
+
+    fun clampAspectRatio(width: Int, height: Int): Rational {
+        val aspectRatio = width.toFloat() / height
+        return when {
+            aspectRatio < 0.418410 -> Rational(41841, 100000) // Minimum allowed aspect ratio
+            aspectRatio > 2.390000 -> Rational(239000, 100000) // Maximum allowed aspect ratio
+            else -> Rational(width, height)
+        }
+    }
+
+
+    private fun initializeFirebaseAnalytics() {
+        try {
+            firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
+        } catch (e: java.lang.Exception) {
+            Log.d("Exception", "msg")
+        }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun getTracksPresentInsideUrl(player: ExoPlayer?) {
+
+        if (player?.currentTracks != null) {
+            if (!player.currentTracks.isEmpty) {
+                Constants.dataFormats.clear()
+                val tracks = player.currentTracks
+                val videoTracks = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
+                Constants.dataFormats.add(FormatData(null, null))
+                videoTracks.forEach { trackGroup ->
+                    (0 until trackGroup.length).forEach { i ->
+                        val track = trackGroup.getTrackFormat(i)
+                        val format = track.height
+                        val width = track.width
+                        Constants.dataFormats.add(FormatData(track, trackGroup))
+                    }
+                }
+
+
+                if (!Constants.dataFormats.isNullOrEmpty()) {
+                    val fullscreenModal =
+                        PlayerScreenBottomSheet(player, Constants.dataFormats.size)
+                    supportFragmentManager.let {
+                        fullscreenModal.show(
+                            it,
+                            "FullscreenModalBottomSheetDialog"
+                        )
+                    }
+                }
+
+            }
+        }
+
+        /////
+
+    }
+
+
+    fun willHaveContent(player: Player): Boolean {
+        return willHaveContent(player.currentTracks)
+    }
+
+    fun willHaveContent(tracks: Tracks): Boolean {
+        for (trackGroup in tracks.groups) {
+            if (SUPPORTED_TRACK_TYPES.contains(trackGroup.type)) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun isGooglePlayServicesAvailable(context: Context): Boolean {
@@ -189,8 +511,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             val googleApiAvailability = GoogleApiAvailability.getInstance()
             val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
             return resultCode == ConnectionResult.SUCCESS
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             return false
         }
 
@@ -203,39 +524,410 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             path = channelData.linkAppend.toString()
             channel_Type = channelData.channleType.toString()
 
-
-            if (channel_Type.equals(Constants.userType1, true)) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    setUpPlayer(path)
-                }
-            } else if (channel_Type.equals(Constants.userType2, true)) {
-                binding?.lottiePlayer?.visibility = View.VISIBLE
-
-                viewModel.getDemoData()
-                viewModel.userLinkStatus.observe(this) {
-                    if (it == true) {
-                        path = userLinkVal
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            setUpPlayer(path)
-                        }
-                    }
-                }
-            } else if (channel_Type.equals(userType3, true)) {
-                if (path.isNotEmpty()) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        setUpPlayerP2p(path)
-                    }
+            val channelTime = channelData.channelTime
+            if (channelTime != null) {
+                if (channelTime != compareValue) {
+                    checkTimeValueAndStartTimer(channelTime)
+                } else {
+                    hideTimerLayout()
+                    getChannelTyppeAndPlay()
                 }
             } else {
-                setUpPlayer(path)
+                hideTimerLayout()
+                getChannelTyppeAndPlay()
             }
+            /////////
+
+
 
         } catch (e: Exception) {
             Log.d("Exception", "message : ${e.cause}")
         }
+    }
 
+    private fun checkTimeValueAndStartTimer(selectedChannelTimeInMillis: Long) {
+//        dialogFragment = CountDownDialogFragment(selectedChannelTimeInMillis)
+//        dialogFragment?.show(supportFragmentManager, "Count Down Fragment")
+        lifecycleScope.launch(Dispatchers.Main) {
+            val timerValue = Defamation.calculateDifferenceBetweenDates(selectedChannelTimeInMillis)
+            val hoursMat = timerValue / (60 * 60 * 1000)
+            val minutesMat = (timerValue % (60 * 60 * 1000)) / (60 * 1000)
+            Log.d("Difference", "$hoursMat $minutesMat  second(s) remaining")
+
+            if (hoursMat == compareValue && minutesMat <= 15) {
+                hideTimerLayout()
+                timerFinishAndPlayAgain()
+            } else {
+                if (timerValue > 0) {
+                    showTimerLay()
+                    timer = object : CountDownTimer(Math.abs(timerValue), 1000) {
+                        // Callback fired on regular interval.
+                        override fun onTick(millisUntilFinished: Long) {
+                            val hours = millisUntilFinished / (60 * 60 * 1000)
+                            val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                            val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                            if (hours == compareValue && minutes <= 15) {
+                                hideTimerLayout()
+                                timerFinishAndPlayAgain()
+                            } else {
+                                binding?.timeValue?.text = "$hours : $minutes : $seconds"
+                            }
+
+                            Log.d("Difference", "$hours $minutes $seconds second(s) remaining")
+                        }
+
+                        // Callback fired when the time is up.
+                        override fun onFinish() {
+                            hideTimerLayout()
+                            timerFinishAndPlayAgain()
+                            Log.d("Difference", "Done!!!")
+                        }
+                    }.start() // Start the countdown timer
+                } else {
+                    hideTimerLayout()
+                    timerFinishAndPlayAgain()
+                }
+            }
+        }
+    }
+
+    private fun hideTimerLayout() {
+        binding?.playerView?.visibility = View.VISIBLE
+        timer?.cancel()
+        binding?.mainTimerLay?.visibility = View.GONE
+    }
+
+
+    private fun timerFinishAndPlayAgain() {
+        getChannelTyppeAndPlay()
+    }
+
+    private fun showTimerLay() {
+        binding?.mainTimerLay?.visibility = View.VISIBLE
+        if (binding?.mainTimerLay?.isVisible == true) {
+            loadLocation2TopAtTimerScreen()
+        }
+    }
+
+    private fun loadLocation2TopAtTimerScreen() {
+        if (!location2TopPermanentProvider.equals("none", true)) {
+            adManager?.loadAdProvider(
+                location2TopPermanentProvider, adLocation2topPermanent,
+                binding?.countDownTimerAd, null, null,null
+            )
+        }
 
     }
+
+    private fun getChannelTyppeAndPlay() {
+
+        if (channel_Type.equals(Constants.userType1, true)) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                setUpPlayer(path)
+            }
+        } else if (channel_Type.equals(Constants.userType2, true)) {
+            binding?.lottiePlayer?.visibility = View.VISIBLE
+
+            viewModel.getDemoData()
+            viewModel.userLinkStatus.observe(this) {
+                if (it == true) {
+                    path = userLinkVal
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        setUpPlayer(path)
+                    }
+                }
+            }
+        }
+        else if (channel_Type.equals(dash, true)) {
+            if (path.isNotEmpty()) {
+                setUpPlayerDashWithAgent(path)
+            }
+        }
+        else if (channel_Type.equals(userType3, true)) {
+            if (path.isNotEmpty()) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    setUpPlayerP2p(path)
+                }
+            }
+        } else {
+            setUpPlayer(path)
+        }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun setUpPlayerDashWithAgent(path: String) {
+
+        binding?.lottiePlayer?.visibility = View.GONE
+        val listDrmModel: MutableList<DrmModel> = mutableListOf()
+
+        val drmKey = clearKeyKey
+        var drmBody = ""
+
+        if (drmKey.contains(":")) {
+            val elementsKey = drmKey.split(":") // Split the string by commas
+//            val elementsKeyId = drmKeyId.split(",") // Split the string by commas
+
+            var length = elementsKey.size + 1
+            var finalLen = length / 2
+
+            var count = 0
+            for (element in 0 until finalLen) {
+
+                val drmKeyIdBytes =
+                    elementsKey[count].chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+                val encodedDrmKeyId = Base64.encodeToString(
+                    drmKeyIdBytes,
+                    Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+                )
+
+                count += 1
+
+                val drmKeyBytes =
+                    elementsKey[count].chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+                val encodedDrmKey = Base64.encodeToString(
+                    drmKeyBytes,
+                    Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+                )
+
+                count += 1
+
+
+
+                listDrmModel.add(DrmModel("oct", encodedDrmKey, encodedDrmKeyId))
+            }
+
+            val jsonObject = JsonObject()
+            val jsonArray = JsonArray()
+
+            for (keyData in listDrmModel) {
+                val keyJsonObject = JsonObject()
+                keyJsonObject.addProperty("kty", keyData.ktyString)
+                keyJsonObject.addProperty("k", keyData.drmKey)
+                keyJsonObject.addProperty("kid", keyData.drmKeyId)
+                jsonArray.add(keyJsonObject)
+            }
+
+            jsonObject.add("keys", jsonArray)
+            jsonObject.addProperty("type", "temporary")
+
+            val gson = Gson()
+            val jsonString = gson.toJson(jsonObject)
+
+            drmBody = jsonString
+
+//            Log.d(
+//                "DrmBoday", "body" +drmBody
+//            )
+        } else {
+//            val drmKeyBytes =
+//                drmKey.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+//            val encodedDrmKey = Base64.encodeToString(
+//                drmKeyBytes,
+//                Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+//            )
+//
+//            val drmKeyIdBytes = drmKeyId.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+//            val encodedDrmKeyId = Base64.encodeToString(
+//                drmKeyIdBytes,
+//                Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+//            )
+//            drmBody =
+//                "{\"keys\":[{\"kty\":\"oct\",\"k\":\"${encodedDrmKey}\",\"kid\":\"${encodedDrmKeyId}\"}],\"type\":\"temporary\"}"
+        }
+
+
+//        val drmKeyIdBytes = drmKeyId.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+//        val encodedDrmKeyId = Base64.encodeToString(
+//            drmKeyIdBytes,
+//            Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+//        )
+
+
+        val dashMediaItem = MediaItem.Builder()
+            .setUri(path)
+            .setMimeType(MimeTypes.APPLICATION_MPD)
+            .setMediaMetadata(MediaMetadata.Builder().setTitle("Cricket Streaming").build())
+            .build()
+
+        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
+        val trackSelector = DefaultTrackSelector(this, videoTrackSelectionFactory)
+        trackSelector.setParameters(
+            trackSelector.buildUponParameters().setPreferredVideoMimeType(MimeTypes.VIDEO_H264)
+        )
+        /////////
+//        val trackSelector = DefaultTrackSelector(this)
+        val loadControl = DefaultLoadControl()
+
+        val drmCallback = LocalMediaDrmCallback(drmBody.toByteArray())
+        val drmSessionManager = DefaultDrmSessionManager.Builder()
+            .setPlayClearSamplesWithoutKeys(true)
+            .setMultiSession(false)
+            .setKeyRequestParameters(HashMap())
+            .setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
+            .build(drmCallback)
+
+        val customDrmSessionManager: DrmSessionManager = drmSessionManager
+        ///////////////
+        val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+            .setUserAgent(Constants.USER_AGENT)
+            .setTransferListener(
+                DefaultBandwidthMeter.Builder(this)
+                    .setResetOnNetworkTypeChange(false)
+                    .build()
+            )
+
+
+        val dashChunkSourceFactory: DashChunkSource.Factory = DefaultDashChunkSource.Factory(
+            defaultHttpDataSourceFactory
+        )
+        val manifestDataSourceFactory =
+            DefaultHttpDataSource.Factory().setUserAgent(Constants.USER_AGENT)
+        var dataSourceFactory: DataSource.Factory?=null
+
+//        xForwardedKey =""
+
+        if (xForwardedKey != null) {
+            if (xForwardedKey.isNotEmpty()) {
+                dataSourceFactory =
+                    DefaultDataSource.Factory(
+                        this,
+                        CustomHttpDataSourceFactoryWithHeader()
+                    )
+
+            } else {
+                dataSourceFactory =
+                    DefaultDataSource.Factory(
+                        this,
+                        CustomHttpDataSourceFactory(Constants.USER_AGENT)
+                    )
+            }
+        }
+        else{
+            dataSourceFactory =
+                DefaultDataSource.Factory(
+                    this,
+                    CustomHttpDataSourceFactory(Constants.USER_AGENT)
+                )
+        }
+
+//        val headersMap = HashMap<String, String>()
+//        headersMap.put("User-Agent", Constants.USER_AGENT)
+//        headersMap.put("x-forwarded-for", "49.50.223.255")
+
+
+        val dashMediaSource =
+            dataSourceFactory?.let {
+                DashMediaSource.Factory(it)
+                    .setDrmSessionManagerProvider { customDrmSessionManager }
+                    .createMediaSource(dashMediaItem)
+            }
+        //        DataSource.Factory dataSourceFactory = DemoUtil.getDataSourceFactory(PlayerActivity.this,headersMap);
+
+        ///////////////
+
+
+        //////////////
+//        val mediaSourceFactory = DefaultMediaSourceFactory(this)
+//            .setDrmSessionManagerProvider { customDrmSessionManager }
+//            .createMediaSource(dashMediaItem)
+
+        val renderersFactory = DefaultRenderersFactory(this)
+            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+
+        ////////
+        val renderersFactory2 = DefaultRenderersFactory(this)
+            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+            .setEnableDecoderFallback(true)
+
+        player = ExoPlayer.Builder(this, renderersFactory2)
+            .setTrackSelector(trackSelector)
+            .setLoadControl(loadControl)
+//            .setSeekForwardIncrementMs(10000L)
+//            .setSeekBackIncrementMs(10000L)
+            .build()
+
+        binding?.playerView?.player = player
+        binding?.playerView?.keepScreenOn = true
+
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            bindingExoPlayback?.fullScreenIcon?.setImageDrawable(
+                context?.let {
+                    ContextCompat.getDrawable(
+                        it,
+                        R.drawable.ic_full_screen
+                    )
+                }
+            )
+            count = 1
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+        }
+
+        when (mLocation) {
+            PlaybackLocation.LOCAL -> {
+                if (mCastSession != null && mCastSession?.remoteMediaClient != null) {
+                    mCastSession?.remoteMediaClient?.stop()
+                    mCastContext?.sessionManager?.endCurrentSession(true)
+                }
+                mPlaybackState =
+                    PlaybackState.IDLE
+
+                if (player != null) {
+                    player?.addListener(this)
+                    dashMediaSource?.let { player?.setMediaSource(it, true) }
+                    player?.prepare()
+                    binding?.playerView?.requestFocus()
+                    player?.playWhenReady = true
+                }
+
+            }
+
+            PlaybackLocation.REMOTE -> {
+                mCastSession?.remoteMediaClient?.play()
+                mPlaybackState =
+                    PlaybackState.PLAYING
+            }
+
+            else -> {
+            }
+        }
+        ////////////
+//        setOnGestureListeners()
+    }
+
+    @UnstableApi
+    class CustomHttpDataSourceFactoryWithHeader(
+    ) : HttpDataSource.Factory {
+        override fun createDataSource(): HttpDataSource {
+            val dataSource = DefaultHttpDataSource.Factory().createDataSource()
+            dataSource.setRequestProperty("X-Forwarded-For", xForwardedKey)
+            return dataSource
+        }
+
+        override fun setDefaultRequestProperties(defaultRequestProperties: MutableMap<String, String>): HttpDataSource.Factory {
+            TODO("Not yet implemented")
+        }
+    }
+
+
+    @UnstableApi
+    class CustomHttpDataSourceFactory(
+        private val userAgent: String,
+    ) : HttpDataSource.Factory {
+        override fun createDataSource(): HttpDataSource {
+            val dataSource = DefaultHttpDataSource.Factory().createDataSource()
+            dataSource.setRequestProperty("User-Agent", userAgent)
+            return dataSource
+        }
+
+        override fun setDefaultRequestProperties(defaultRequestProperties: MutableMap<String, String>): HttpDataSource.Factory {
+            TODO("Not yet implemented")
+        }
+    }
+
+
     private fun checkVpn() {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
@@ -270,14 +962,16 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     private fun checkForAds() {
         adManager = context?.let { AdManager(it, this, this) }
 
-        //interstitial Ad loading
-        adManager?.loadAdProvider(
-            Constants.locationAfter, Constants.adAfter,
-            null, null, null, null
-        )
-
-        loadLocation2TopPermanentProvider()
-        loadLocation2BottomProvider()
+        if (locationBeforeProvider.equals(Constants.startApp, true)) {
+            adManager?.loadAdProvider(
+                locationBeforeProvider, adBefore,
+                null, null, null, null
+            )
+        }
+        if (binding?.mainTimerLay?.isVisible != true) {
+            loadLocation2TopPermanentProvider()
+            loadLocation2BottomProvider()
+        }
     }
 
     private fun loadLocation2BottomProvider() {
@@ -286,7 +980,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 binding?.fbAdViewBottom?.let { it2 ->
                     adManager?.loadAdProvider(
                         location2BottomProvider, adLocation2bottom,
-                        it1, it2, binding?.unityBannerViewBottom,binding?.startAppBannerBottom
+                        it1, it2, binding?.unityBannerViewBottom, binding?.startAppBannerBottom
                     )
                 }
             }
@@ -305,6 +999,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             }
         }
     }
+
     private fun screenModeController() {
         bindingExoPlayback?.fullScreenIcon?.setOnClickListener {
             when (count) {
@@ -313,14 +1008,17 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                     setImageViewListener("Fit", R.drawable.fit_mode)
 
                 }
+
                 2 -> {
                     setImageViewListener("Fill", R.drawable.full_mode)
 
                 }
+
                 3 -> {
                     setImageViewListener("Stretch", R.drawable.stretch)
 
                 }
+
                 4 -> {
                     setImageViewListener("Original", R.drawable.ic_full_screen)
 
@@ -344,6 +1042,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
 
+    @OptIn(UnstableApi::class)
     private fun setUpPlayerP2p(link: String?) {
 
         try {
@@ -475,18 +1174,18 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                     }
 
                 }
+
                 PlaybackLocation.REMOTE -> {
                     mCastSession?.remoteMediaClient?.play()
                     mPlaybackState =
                         PlaybackState.PLAYING
                 }
+
                 else -> {
                 }
             }
-        }
-        catch (e:Exception)
-        {
-            Log.d("Exception","msg")
+        } catch (e: Exception) {
+            Log.d("Exception", "msg")
         }
 
 
@@ -505,8 +1204,8 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
         bindingExoPlayback?.seekProgress?.visibility = value
         bindingExoPlayback?.exoPlayPause?.visibility = value
-        bindingExoPlayback?.liveTxt?.visibility=value
-        bindingExoPlayback?.liveShape?.visibility=value
+        bindingExoPlayback?.liveTxt?.visibility = value
+        bindingExoPlayback?.liveShape?.visibility = value
     }
 
 
@@ -519,7 +1218,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 mSessionManagerListener!!, CastSession::class.java
             )
         } catch (e: Exception) {
-            Log.d("CastSdk","msg")
+            Log.d("CastSdk", "msg")
         }
     }
 
@@ -549,9 +1248,8 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
                                     }
                                 }
-                            }
-                            catch (e:Exception){
-                                Log.d("Exception","message")
+                            } catch (e: Exception) {
+                                Log.d("Exception", "message")
                             }
                         }
 
@@ -570,16 +1268,35 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
     override fun onDestroy() {
         super.onDestroy()
-        orientationEventListener?.disable()
-        if (player != null) {
-            player!!.release()
-        }
-        if (P2pEngine.getInstance()?.isConnected == true) {
-            P2pEngine.getInstance()?.stopP2p()
+        playerActivityInPip = false
+        try {
+            mCastContext!!.sessionManager.removeSessionManagerListener(
+                mSessionManagerListener!!, CastSession::class.java
+            )
+            orientationEventListener?.disable()
+            if (player != null) {
+                player!!.release()
+                player = null
+                if (P2pEngine.getInstance()?.isConnected == true) {
+                    P2pEngine.getInstance()?.stopP2p()
+                }
+            }
+            val bundle = Bundle()
+            bundle.putString("Destroy", "yes")
+            firebaseAnalytics?.logEvent("onDestroy", bundle)
+            mHomeWatcher?.stopWatch()
+            timer?.cancel()
+            finish()
+        } catch (e: java.lang.Exception) {
+            val bundle = Bundle()
+            bundle.putString("Destroy", "Exception")
+            firebaseAnalytics?.logEvent("onDestroy", bundle)
+            Log.d("Exception", "msg")
         }
     }
 
     ///
+    @OptIn(UnstableApi::class)
     private fun setImageViewListener(string: String, id: Int) {
         if (binding?.playerView != null) {
 
@@ -597,17 +1314,20 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                     count++
 
                 }
+
                 "Fill" -> {
                     binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
                     player?.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
                     count++
                 }
+
                 "Stretch" -> {
                     binding?.playerView?.resizeMode =
                         AspectRatioFrameLayout.RESIZE_MODE_ZOOM
                     player?.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
                     count++
                 }
+
                 else -> {
                     binding?.playerView?.resizeMode =
                         AspectRatioFrameLayout.RESIZE_MODE_FIT
@@ -653,7 +1373,13 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 val token = baseUrl.let { it1 -> Defamation.improveDeprecatedCode(it1) }
                 path = baseUrl + token
                 setUpPlayerP2p(path)
-            } else {
+            }
+            else if (channel_Type.equals(dash, true)) {
+                if (path.isNotEmpty()) {
+                    setUpPlayerDashWithAgent(path)
+                }
+            }
+            else {
                 val token = baseUrl.let { it1 -> Defamation.improveDeprecatedCode(it1) }
                 path = baseUrl + token
                 setUpPlayer(path)
@@ -701,6 +1427,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
                             return true
                         }
+
                         MotionEvent.ACTION_MOVE -> {
                             counter++
                             if (counter < 15) {
@@ -839,6 +1566,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
                             return true
                         }
+
                         MotionEvent.ACTION_UP -> {
                             counter = 0
                             mActivePointerBrightId = MotionEvent.INVALID_POINTER_ID
@@ -892,6 +1620,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                             mActivePointerId = p1.getPointerId(0)
                             return true
                         }
+
                         MotionEvent.ACTION_MOVE -> {
                             counter++
                             if (counter < 15) {
@@ -1039,6 +1768,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                             return true
 
                         }
+
                         MotionEvent.ACTION_UP -> {
                             counter = 0
                             mActivePointerId = MotionEvent.INVALID_POINTER_ID
@@ -1156,6 +1886,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
 
+    @OptIn(UnstableApi::class)
     private fun setUpPlayer(link: String?) {
         binding?.lottiePlayer?.visibility = View.GONE
 
@@ -1219,11 +1950,13 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 }
 
             }
+
             PlaybackLocation.REMOTE -> {
                 mCastSession?.remoteMediaClient?.play()
                 mPlaybackState =
                     PlaybackState.PLAYING
             }
+
             else -> {
             }
         }
@@ -1238,8 +1971,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         val remoteMediaClient = mCastSession!!.remoteMediaClient ?: return
         remoteMediaClient.registerCallback(object : RemoteMediaClient.Callback() {
             override fun onStatusUpdated() {
-
-
+                isChromcast = true
                 val intent =
                     Intent(context, ExpendedActivity::class.java)
                 startActivity(intent)
@@ -1259,15 +1991,46 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
     override fun onPause() {
         super.onPause()
-        if (player != null) {
-            player?.playWhenReady = false
+        try {
+            isActivityResumed = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (!isInPictureInPictureMode) {
+                        if (player != null) {
+                            player!!.playWhenReady = false
+                        }
+                    } else {
+//                removeAllAdsViews()
+                        binding?.myToolbar?.visibility = View.GONE
+                        bindingExoPlayback?.exoControlView?.visibility = View.GONE
+                    }
+                } else {
+                    if (player != null) {
+                        player!!.playWhenReady = false
+                    }
+                }
 
+            } else {
+                if (player != null) {
+                    player!!.playWhenReady = false
+                }
+            }
+        } catch (e: java.lang.Exception) {
+            Log.d("Exception", "msg")
         }
-//        Chartboost.onPause(this)
     }
 
     override fun onResume() {
         super.onResume()
+        isActivityResumed = true
+        playerActivityInPip = false
+        isAdShowning = false
+        NewAdManager.setAdManager(this)
+        isChromcast = false
+        binding?.myToolbar?.visibility = View.VISIBLE
+        bindingExoPlayback?.exoControlView?.visibility = View.VISIBLE
+        binding?.topAdLay?.visibility = View.VISIBLE
+        binding?.bottomAdLay?.visibility = View.VISIBLE
         if (InternetUtil.isPrivateDnsSetup(this)) {
             Toast.makeText(
                 this,
@@ -1352,40 +2115,116 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         }
     }
 
+    @OptIn(UnstableApi::class)
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: Configuration
+    ) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        try {
+            if (isInPictureInPictureMode) {
+                // Hide the controls in picture-in-picture mode.
+//            binding?.playerView?.hideController()
+                binding?.myToolbar?.visibility = View.GONE
+//            removeAllAdsViews()
 
+            } else {
+                // Show the video controls if the video is not playing
+//            binding?.playerView?.showController()
+                binding?.topAdLay?.visibility = View.VISIBLE
+                binding?.bottomAdLay?.visibility = View.VISIBLE
+                val orientation = resources.configuration.orientation
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    againFillAdViewsIfPortrait()
+                }
+                if (binding?.mainTimerLay?.isVisible == true) {
+                    loadLocation2TopAtTimerScreen()
+                }
+                binding?.myToolbar?.visibility = View.VISIBLE
+                bindingExoPlayback?.exoControlView?.visibility = View.VISIBLE
+            }
+        } catch (e: java.lang.Exception) {
+            Log.d("Exception", "msg")
+        }
+    }
+
+    private fun againFillAdViewsIfPortrait() {
+        loadLocation2TopPermanentProvider()
+        loadLocation2BottomProvider()
+    }
+
+
+    @OptIn(UnstableApi::class)
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (binding?.playerView != null) {
             val orientation = newConfig.orientation
 
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                binding?.adViewTop?.removeAllViews()
-                binding?.fbAdViewTop?.removeAllViews()
-                binding?.unityBannerView?.removeAllViews()
-                binding?.startAppBannerTop?.removeAllViews()
+                if (binding?.mainTimerLay?.isVisible == true) {
+                    binding?.mainTimerLay?.background =
+                        ContextCompat.getDrawable(this, R.drawable.count_down)
+                    val params =
+                        binding?.timeValue?.layoutParams as ViewGroup.MarginLayoutParams // Cast to MarginLayoutParams
 
-                loadLocation2TopPermanentProvider()
-                loadLocation2BottomProvider()
+                    params.setMargins(
+                        0,
+                        0,
+                        0,
+                        700
+                    ) // Set margins (left, top, right, bottom) in pixels
+                    binding?.timeValue?.layoutParams = params
+                }
+
+                if (binding?.mainTimerLay?.isVisible != true) {
+                    binding?.adViewTop?.removeAllViews()
+                    binding?.fbAdViewTop?.removeAllViews()
+                    binding?.unityBannerView?.removeAllViews()
+                    binding?.startAppBannerTop?.removeAllViews()
+
+                    loadLocation2TopPermanentProvider()
+                    loadLocation2BottomProvider()
+                }
+
                 bindingExoPlayback?.fullScreenIcon?.visibility = View.GONE
 
                 binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                binding?.adViewTopPermanent?.removeAllViews()
-                binding?.adViewBottom?.removeAllViews()
-                binding?.fbAdViewBottom?.removeAllViews()
-                binding?.unityBannerViewBottom?.removeAllViews()
-                binding?.startAppBannerBottom?.removeAllViews()
+                if (binding?.mainTimerLay?.isVisible == true) {
+                    binding?.mainTimerLay?.background =
+                        ContextCompat.getDrawable(this, R.drawable.count_down_land)
+                    val params =
+                        binding?.timeValue?.layoutParams as ViewGroup.MarginLayoutParams // Cast to MarginLayoutParams
 
-                if (!Constants.location2TopProvider.equals("none", true)) {
-                    binding?.adViewTop?.let { it1 ->
-                        binding?.fbAdViewTop?.let { it2 ->
-                            adManager?.loadAdProvider(
-                                Constants.location2TopProvider, Constants.adLocation2top,
-                                it1, it2, binding?.unityBannerView,binding?.startAppBannerTop
-                            )
+                    params.setMargins(
+                        0,
+                        0,
+                        0,
+                        230
+                    ) // Set margins (left, top, right, bottom) in pixels
+                    binding?.timeValue?.layoutParams = params
+                }
+                //
+                if (binding?.mainTimerLay?.isVisible != true) {
+                    binding?.adViewTopPermanent?.removeAllViews()
+                    binding?.adViewBottom?.removeAllViews()
+                    binding?.fbAdViewBottom?.removeAllViews()
+                    binding?.unityBannerViewBottom?.removeAllViews()
+                    binding?.startAppBannerBottom?.removeAllViews()
+
+                    if (!Constants.location2TopProvider.equals("none", true)) {
+                        binding?.adViewTop?.let { it1 ->
+                            binding?.fbAdViewTop?.let { it2 ->
+                                adManager?.loadAdProvider(
+                                    Constants.location2TopProvider, Constants.adLocation2top,
+                                    it1, it2, binding?.unityBannerView, binding?.startAppBannerTop
+                                )
+                            }
                         }
                     }
                 }
+
                 if (bindingExoPlayback?.lockAffect?.visibility == View.VISIBLE) {
                     //
                     bindingExoPlayback?.fullScreenIcon?.visibility = View.GONE
@@ -1415,18 +2254,63 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     override fun onStop() {
         super.onStop()
         try {
-            mCastContext!!.sessionManager.removeSessionManagerListener(
-                mSessionManagerListener!!, CastSession::class.java)
-            orientationEventListener?.disable()
-            if (player != null) {
-                P2pEngine.getInstance()?.stopP2p()
-                player?.stop()
-                player!!.release()
-                player = null
+            playerActivityInPip = false
+//            Log.d("ReleaseVersion","val"+android.os.Build.VERSION.SDK_INT)
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+                val bundle = Bundle()
+                bundle.putString("onStop", "Api level above 12")
+                firebaseAnalytics?.logEvent("onStop", bundle)
+
+                mCastContext?.sessionManager?.removeSessionManagerListener(
+                    mSessionManagerListener!!, CastSession::class.java
+                )
+                if (player != null) {
+                    P2pEngine.getInstance()?.stopP2p()
+                    player?.stop()
+                    player?.release()
+                    player = null
+                }
+                if (isChromcast) {
+                    val bundle = Bundle()
+                    bundle.putString("Chromcast", "yes")
+                    firebaseAnalytics?.logEvent("onStop", bundle)
+                } else {
+                    if (!isAdShowning) {
+                        mHomeWatcher?.stopWatch()
+                        val bundle = Bundle()
+                        bundle.putString("Chromcast", "false")
+                        firebaseAnalytics?.logEvent("onStop", bundle)
+                        if (binding?.mainTimerLay?.isVisible == true) {
+                            timer?.cancel()
+                        }
+                        orientationEventListener?.disable()
+                        finish()
+                    } else {
+                        val bundle = Bundle()
+                        bundle.putString("AdShowing", "yes")
+                        firebaseAnalytics?.logEvent("onStop", bundle)
+                    }
+                }
+                ///if api level is
+            } else {
+                val bundle = Bundle()
+                bundle.putString("onStop", "Api level below 12")
+                firebaseAnalytics?.logEvent("onStop", bundle)
+
+                mCastContext?.sessionManager?.removeSessionManagerListener(
+                    mSessionManagerListener!!, CastSession::class.java
+                )
+                if (player != null) {
+                    P2pEngine.getInstance()?.stopP2p()
+//                    player?.stop()
+                }
             }
-        }
-        catch (e:Exception){
-            Log.d("Exception","msg")
+            ///////////////////
+        } catch (e: java.lang.Exception) {
+            val bundle = Bundle()
+            bundle.putString("onStop", "Exception")
+            firebaseAnalytics?.logEvent("onStop", bundle)
+            Log.d("Exception", "msg")
         }
     }
 
@@ -1522,6 +2406,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         invalidateOptionsMenu()
     }
 
+    @OptIn(UnstableApi::class)
     private fun setOnGestureListeners() {
 
         binding?.playerView?.setOnClickListener {

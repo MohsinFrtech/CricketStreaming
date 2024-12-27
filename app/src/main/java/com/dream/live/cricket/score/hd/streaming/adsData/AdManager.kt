@@ -53,6 +53,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.admobIn
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.googleAdMangerInterstitial
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeAdmob
 import com.google.android.gms.ads.AdView
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class AdManager(
     private val context: Context,
@@ -80,6 +81,7 @@ class AdManager(
     private var currentNativeAd: com.google.android.gms.ads.nativead.NativeAd? = null
     private var adProvider = ""
     private var mAdManagerInterstitialAd: AdManagerInterstitialAd? = null
+    private val interstitialAdFlow = MutableStateFlow<Pair<StartAppAd?, com.startapp.sdk.adsbase.Ad.AdState>?>(null)
 
     ///function will return provider
     fun checkProvider(list: List<AppAd>, location: String): String {
@@ -104,8 +106,7 @@ class AdManager(
                             } else if (listItem.ad_provider.equals(Constants.startApp, true)) {
                                 adProvider = Constants.startApp
                                 checkAdValue(adLocation.title, listItem.ad_key, adProvider)
-                            }
-                            else if (listItem.ad_provider.equals(Constants.adManagerAds, true)) {
+                            } else if (listItem.ad_provider.equals(Constants.adManagerAds, true)) {
                                 adProvider = Constants.adManagerAds
                                 checkAdValue(adLocation.title, listItem.ad_key, adProvider)
                             }
@@ -125,26 +126,31 @@ class AdManager(
         ////If provider exist then initialize sdk of the particular provider
         return adProvider
     }
-    //Function to load adx interstitial....
-    private fun loadAdmobInterstitialAdx(){
-        val adRequest = AdManagerAdRequest.Builder().build()
-        AdManagerInterstitialAd.load(context, googleAdMangerInterstitial, adRequest, object : AdManagerInterstitialAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("AdxLoaded","error"+adError?.message)
-                mAdManagerInterstitialAd = null
-                adManagerListener.onAdLoad("failed")
-            }
 
-            override fun onAdLoaded(interstitialAd: AdManagerInterstitialAd) {
-                Log.d("AdxLoaded","loaded")
-                mAdManagerInterstitialAd = interstitialAd
-                adManagerListener.onAdLoad("success")
-            }
-        })
+    //Function to load adx interstitial....
+    private fun loadAdmobInterstitialAdx() {
+        val adRequest = AdManagerAdRequest.Builder().build()
+        AdManagerInterstitialAd.load(
+            context,
+            googleAdMangerInterstitial,
+            adRequest,
+            object : AdManagerInterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("AdxLoaded", "error" + adError?.message)
+                    mAdManagerInterstitialAd = null
+                    adManagerListener.onAdLoad("failed")
+                }
+
+                override fun onAdLoaded(interstitialAd: AdManagerInterstitialAd) {
+                    Log.d("AdxLoaded", "loaded")
+                    mAdManagerInterstitialAd = interstitialAd
+                    adManagerListener.onAdLoad("success")
+                }
+            })
     }
 
-    private fun showAdmobInterstitialAdx(){
-        mAdManagerInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+    private fun showAdmobInterstitialAdx() {
+        mAdManagerInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdClicked() {
                 // Called when a click is recorded for an ad.
 
@@ -189,14 +195,16 @@ class AdManager(
             }
         val density = displayMetrics.density
         val adWidth = (adWidthPixels / density).toInt()
-        return com.google.android.gms.ads.AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
+        return com.google.android.gms.ads.AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+            context,
+            adWidth
+        )
     }
 
-    fun loadAdmobBannerAdx(adViewLayout: LinearLayout?)
-    {
+    fun loadAdmobBannerAdx(adViewLayout: LinearLayout?) {
         val adSize = getSize()
         val adView = AdManagerAdView(context)
-        adView.adUnitId = "/23209641482/Newbanneradds"
+        adView.adUnitId = Constants.googleAdMangerBanner
         adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER)
 //        this.adView = adView
         adViewLayout?.removeAllViews()
@@ -205,7 +213,7 @@ class AdManager(
 //        binding.adViewContainer.removeAllViews()
 //        binding.adViewContainer.addView(adView)
 
-        adView.adListener = object: AdListener() {
+        adView.adListener = object : AdListener() {
             override fun onAdClicked() {
                 // Code to be executed when the user clicks on an ad.
             }
@@ -215,9 +223,12 @@ class AdManager(
                 // to the app after tapping on an ad.
             }
 
-            override fun onAdFailedToLoad(adError : LoadAdError) {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
                 // Code to be executed when an ad request fails.
-                Log.d("AdmobAdx","banner "+adError?.message+" "+Constants.googleAdMangerBanner)
+                Log.d(
+                    "AdmobAdx",
+                    "banner " + adError?.message + " " + Constants.googleAdMangerBanner
+                )
             }
 
             override fun onAdImpression() {
@@ -226,7 +237,7 @@ class AdManager(
             }
 
             override fun onAdLoaded() {
-                Log.d("AdmobAdx","load")
+                Log.d("AdmobAdx", "load")
 
                 // Code to be executed when an ad finishes loading.
             }
@@ -267,8 +278,7 @@ class AdManager(
                 Constants.startAppId = interstitialAdValue
             } else if (provider.equals(Constants.unity, true)) {
                 Constants.unityGameID = interstitialAdValue
-            }
-            else if (provider.equals(Constants.adManagerAds, true)) {
+            } else if (provider.equals(Constants.adManagerAds, true)) {
                 Constants.googleAdMangerInterstitial = interstitialAdValue
             }
 
@@ -280,8 +290,7 @@ class AdManager(
 
             } else if (provider.equals(Constants.facebook, true)) {
                 Constants.nativeFacebook = nativeAdValue
-            }
-            else if (provider.equals(Constants.adManagerAds, true)) {
+            } else if (provider.equals(Constants.adManagerAds, true)) {
                 Constants.googleAdMangerNative = nativeAdValue
             }
 
@@ -300,8 +309,7 @@ class AdManager(
 
             } else if (provider.equals(Constants.startApp, true)) {
                 Constants.startAppId = bannerAdValue
-            }
-            else if (provider.equals(Constants.adManagerAds, true)) {
+            } else if (provider.equals(Constants.adManagerAds, true)) {
                 Constants.googleAdMangerBanner = bannerAdValue
             }
 
@@ -335,8 +343,7 @@ class AdManager(
                 relativeLayout,
                 startAppBanner
             )
-        }
-        else if (provider.equals(Constants.facebook, true)) {
+        } else if (provider.equals(Constants.facebook, true)) {
             facebookSdkInitialization(
                 adLocation,
                 adView,
@@ -558,10 +565,8 @@ class AdManager(
         } else if (adProviderShow.equals(Constants.facebook, true)) {
             showFacebookAdInterstitial()
         } else if (adProviderShow.equals(Constants.startApp, true)) {
-
             showStartAppAd()
-        }
-        else if (adProviderShow.equals(Constants.adManagerAds, true)) {
+        } else if (adProviderShow.equals(Constants.adManagerAds, true)) {
 
             showAdmobInterstitialAdx()
         }
@@ -625,11 +630,9 @@ class AdManager(
                 loadAdmobBanner(adView)
             } else if (adProviderName.equals(Constants.facebook, true)) {
                 loadFaceBookBannerAd(context, linearLayout)
-            }
-            else if (adProviderName.equals(Constants.adManagerAds, true)) {
+            } else if (adProviderName.equals(Constants.adManagerAds, true)) {
                 loadAdmobBannerAdx(adView)
-            }
-            else if (adProviderName.equals(Constants.unity, true)) {
+            } else if (adProviderName.equals(Constants.unity, true)) {
 
                 if (locationName.equals(Constants.adLocation1, true)) {
                     setUpUnityBanner(relativeLayout)
@@ -658,11 +661,9 @@ class AdManager(
                 loadAdmobInterstitialAd()
             } else if (adProviderName.equals(Constants.unity, true)) {
                 loadUnityAdInterstitial()
-            }
-            else if (adProviderName.equals(Constants.adManagerAds, true)) {
+            } else if (adProviderName.equals(Constants.adManagerAds, true)) {
                 loadAdmobInterstitialAdx()
-            }
-            else if (adProviderName.equals(Constants.chartBoost, true)) {
+            } else if (adProviderName.equals(Constants.chartBoost, true)) {
                 loadChartBoost()
             } else if (adProviderName.equals(Constants.facebook, true)) {
                 loadFacebookInterstitialAd()
@@ -677,18 +678,62 @@ class AdManager(
 
     private fun loadStartAppAd() {
         startAppAd = StartAppAd(context)
-        startAppAd?.loadAd(object : AdEventListener {
+//        startAppAd?.loadAd(object : AdEventListener {
+//
+//            override fun onReceiveAd(p0: com.startapp.sdk.adsbase.Ad) {
+//                Log.d("StartAppAd","msg")
+//                showStartAppAd()
+//
+//            }
+//
+//            override fun onFailedToReceiveAd(p0: com.startapp.sdk.adsbase.Ad?) {
+//                Log.d("StartAppAd","msg"+p0?.errorMessage)
+//            }
+//        })
+        StartAppAd(context).let {
+            interstitialAd ->
+            interstitialAd.loadAd(object : AdEventListener {
 
-            override fun onReceiveAd(p0: com.startapp.sdk.adsbase.Ad) {
 
-                showStartAppAd()
+                override fun onReceiveAd(p0: com.startapp.sdk.adsbase.Ad) {
 
-            }
+//                    interstitialAdFlow.value = Pair(interstitialAd, com.startapp.sdk.adsbase.Ad.AdState.READY)
+                    showInterstitial(interstitialAd)
+                    Log.d("StartAppAd", "msg")
+                }
 
-            override fun onFailedToReceiveAd(p0: com.startapp.sdk.adsbase.Ad?) {
+                override fun onFailedToReceiveAd(p0: com.startapp.sdk.adsbase.Ad?) {
+                    Log.d("StartAppAd", "msg" + p0?.errorMessage)
+                }
+            })
+        }
+    }
 
-            }
-        })
+    private fun showInterstitial(ad: StartAppAd?) {
+        ad?.let {
+//            interstitialAdFlow.value = null
+
+            it.showAd(object : AdDisplayListener {
+
+                override fun adHidden(p0: com.startapp.sdk.adsbase.Ad?) {
+
+                }
+
+                override fun adDisplayed(p0: com.startapp.sdk.adsbase.Ad?) {
+
+                }
+
+                override fun adClicked(p0: com.startapp.sdk.adsbase.Ad?) {
+
+                }
+
+                override fun adNotDisplayed(p0: com.startapp.sdk.adsbase.Ad?) {
+
+                }
+            })
+        } ?: run {
+            Toast.makeText(context, "Interstitial is not ready", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -831,10 +876,19 @@ class AdManager(
             )
         } else {
             try {
-                StartAppSDK.init(context, Constants.startAppId, false)
-                StartAppAd.disableSplash()
+//                StartAppSDK.init(context, Constants.startAppId, false)
+//                StartAppAd.disableSplash()
 //                StartAppSDK.setTestAdsEnabled(true)
-                Constants.isStartAppSdkInit = true
+
+                ///////////////////////////////////
+//                StartAppSDK.setTestAdsEnabled(true)
+                StartAppAd.disableSplash()
+                // NOTE for the testing purposes you can use demo App ID: 205489527
+                StartAppSDK.initParams(context, Constants.startAppId)
+                    .setReturnAdsEnabled(false)
+                    .setCallback { Constants.isStartAppSdkInit = true }
+                    .init()
+
                 loadAdAtParticularLocation(
                     adLocation,
                     Constants.startApp, adView, linearLayout, relativeLayout, banner
@@ -1209,7 +1263,10 @@ class AdManager(
 
         val adLoader = builder.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                Log.d("AdmobAdx","native "+loadAdError.message+" "+Constants.googleAdMangerNative)
+                Log.d(
+                    "AdmobAdx",
+                    "native " + loadAdError.message + " " + Constants.googleAdMangerNative
+                )
 
                 logger.printLog(taG, "Admob Native $loadAdError")
                 nativeAdView.visibility = View.GONE
@@ -1217,11 +1274,10 @@ class AdManager(
             }
 
             override fun onAdLoaded() {
-                if (view_holder!=null) {
+                if (view_holder != null) {
                     adView = view_holder?.itemView?.findViewById(R.id.native_ad_view)
-                }else
-                {
-                    adView =nativeAdView
+                } else {
+                    adView = nativeAdView
                 }
                 adLayout?.visibility = View.INVISIBLE
                 android.os.Handler(Looper.getMainLooper()).postDelayed({
@@ -1241,6 +1297,7 @@ class AdManager(
         adLoader.loadAd(AdRequest.Builder().build())
 
     }
+
     //////
     fun loadAdmobNativeAd(
         view_holder: RecyclerView.ViewHolder?, nativeAdView: NativeAdView,
@@ -1273,11 +1330,10 @@ class AdManager(
             }
 
             override fun onAdLoaded() {
-                if (view_holder!=null) {
+                if (view_holder != null) {
                     adView = view_holder?.itemView?.findViewById(R.id.native_ad_view)
-                }else
-                {
-                    adView =nativeAdView
+                } else {
+                    adView = nativeAdView
                 }
                 adLayout?.visibility = View.INVISIBLE
                 android.os.Handler(Looper.getMainLooper()).postDelayed({

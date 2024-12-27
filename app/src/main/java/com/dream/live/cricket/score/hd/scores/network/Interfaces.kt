@@ -79,4 +79,33 @@ interface Interfaces {
     fun getTestRankingPlayerAsync(
         @Body body: RequestBody
     ): Call<List<PlayersRankingModel>>
+
+    //News detail ....
+    @POST("news/details")
+    fun getNewsDetail(
+        @Body body: RequestBody
+    ): Call<NewsdetailModel?>
+
+    //Get all news....
+    @POST("news/list")
+    fun getAllNews(
+        @Body body: RequestBody
+    ): Call<NewsModel?>
+
+    //get Scoreboard info....
+    @POST("matches/scorecard")
+    fun getScoreboard(
+        @Body body: RequestBody
+    ): Call<ScoreboardModel?>
+
+    @POST("commentaries/match")
+    fun getMatchCommentary(
+        @Body body: RequestBody
+    ): Call<CommentryModelClass>
+
+    //get team squad info....
+    @POST("matches/match_info")
+    fun getTeamSquadInfo(
+        @Body body: RequestBody
+    ): Call<SquadModel?>
 }

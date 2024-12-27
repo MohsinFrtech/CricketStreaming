@@ -19,6 +19,16 @@
 
     <string name="Exit">Exit</string>
 
+    <string-array name="matches_details">
+        <item>Commentary</item>
+        <item>Details</item>
+        <item>Scoreboard</item>
+        <item>Squads</item>
+        <item>News</item>
+
+
+    </string-array>
+
 
 
     <!--backPressedDialog-->

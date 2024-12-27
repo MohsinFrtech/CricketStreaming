@@ -139,7 +139,16 @@
             android:visibility="gone">
 
         </TextView>
-
+        <ImageView
+            android:layout_width="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:id="@+id/moreOption"
+            app:layout_constraintBottom_toBottomOf="@+id/lock_mode"
+            app:layout_constraintEnd_toStartOf="@+id/full_screen_icon"
+            android:src="@drawable/more_filled"
+            app:layout_constraintTop_toTopOf="@+id/lock_mode"
+            android:layout_height="@dimen/_30sdp"
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -2,6 +2,7 @@ package com.dream.live.cricket.score.hd.streaming.utils.objects
 
 import android.os.Build
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.algoName
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.algoTypeS1
@@ -27,6 +28,7 @@ import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.security.spec.KeySpec
 import java.util.Base64.getDecoder
+import java.util.Calendar
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -39,6 +41,47 @@ import kotlin.experimental.and
 
 object Defamation {
 
+    fun calculateDifferenceBetweenDates(channelDate: Long): Long {
+
+        val currentDate = Calendar.getInstance()
+        var different: Long = currentDate.timeInMillis - channelDate
+        if (different < 0) {
+            try {
+                val secondsInMilli: Long = 1000
+                val minutesInMilli = secondsInMilli * 60
+                val hoursInMilli = minutesInMilli * 60
+                val daysInMilli = hoursInMilli * 24
+
+                val elapsedDays = different / daysInMilli
+                different = different % daysInMilli
+
+                val elapsedHours = different / hoursInMilli
+                different = different % hoursInMilli
+
+                val elapsedMinutes = different / minutesInMilli
+                different = different % minutesInMilli
+
+                val elapsedSeconds = different / secondsInMilli
+                println("Difference: $elapsedDays days, $elapsedHours hours, $elapsedMinutes minutes, $elapsedSeconds seconds")
+
+                val totalTime =
+                    (elapsedHours * 60 * 60 * 1000)+(elapsedMinutes * 60 * 1000)+(elapsedSeconds * 1000)
+
+                val hours = totalTime / (60 * 60 * 1000)
+                val minutes = (totalTime % (60 * 60 * 1000)) / (60 * 1000)
+                val seconds = (totalTime % (60 * 1000)) / 1000
+                Log.d("Difference", "msg $totalTime $hours $minutes $seconds")
+
+                return Math.abs(totalTime)
+            } catch (e: Exception) {
+                return 0
+            }
+
+        } else {
+            return 0
+        }
+
+    }
 
 
     fun decryptBase6(vale:String?): String{

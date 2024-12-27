@@ -18,10 +18,13 @@ import com.dream.live.cricket.score.hd.R
 import com.dream.live.cricket.score.hd.databinding.FragmentChannelsBinding
 import com.dream.live.cricket.score.hd.streaming.adapters.ChannelAdapter
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
+import com.dream.live.cricket.score.hd.streaming.adsData.NewAdManager
 import com.dream.live.cricket.score.hd.streaming.models.Channel
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.playerActivityInPip
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -30,6 +33,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import com.teamd2.live.football.tv.utils.AppContextProvider
 import java.util.ArrayList
 
 class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
@@ -37,7 +41,6 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
     private var adManager: AdManager? = null
     private var adStatus = false
     private var navDirections: NavDirections? = null
-    private var adProviderName = "none"
     private var nativeFieldVal = ""
     private var listWithAd: List<Channel>? =
         ArrayList<Channel>()
@@ -81,6 +84,8 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
 
     override fun onResume() {
         super.onResume()
+        NewAdManager.setAdManager(this)
+
         viewModel?.dataModelList?.observe(viewLifecycleOwner)
         {
 
@@ -89,8 +94,7 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
             }
 
             if (!it.app_ads.isNullOrEmpty()) {
-                adProviderName =
-                    adManager?.checkProvider(it.app_ads!!, Constants.adBefore).toString()
+
                 Constants.location2TopProvider = adManager?.checkProvider(
                     it.app_ads!!,
                     Constants.adLocation2top
@@ -103,26 +107,13 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
                     it.app_ads!!,
                     Constants.adLocation2bottom
                 ).toString()
-                Constants.locationAfter =
-                    adManager?.checkProvider(it.app_ads!!, Constants.adAfter).toString()
-                if (adProviderName.equals(Constants.startApp, true)) {
+
+                if (locationAfter.equals(Constants.startApp, true)) {
                     if (Constants.videoFinish) {
                         Constants.videoFinish = false
-                        adManager?.loadAdProvider(
-                            adProviderName,
-                            Constants.adBefore, null, null, null, null
-                        )
-
+                        adManager?.loadAdProvider(locationAfter, locationAfter, null, null, null, null)
                     }
-                } else {
-                    adManager?.loadAdProvider(
-                        adProviderName,
-                        Constants.adBefore, null, null, null, null
-                    )
-
                 }
-
-
             }
 
         }
@@ -193,17 +184,49 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
     override fun navigation(viewId: NavDirections) {
         try {
             navDirections = viewId
-            if (adStatus) {
-                if (!adProviderName.equals("none", true)) {
-                    bindingChannel?.MainLottie?.visibility=View.VISIBLE
-                    adManager?.showAds(adProviderName)
-                    requireActivity().window.setFlags(
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                } else {
+            if (!Constants.locationBeforeProvider.equals("none", true)) {
+                if (!Constants.locationBeforeProvider.equals(Constants.startApp,true)){
+                    if (!Constants.locationBeforeProvider.equals(Constants.unity,true))
+                    {
+                        bindingChannel?.MainLottie?.visibility = View.VISIBLE
+                        val local = AppContextProvider.getContext()
+                        local?.let {
+                            NewAdManager.showAds(
+                                Constants.locationBeforeProvider,
+                                requireActivity(),
+                                it
+                            )
+                        }
+                    }
+                    else{
+                        if (playerActivityInPip){
+                            findNavController().navigate(viewId)
+                        }
+                        else{
+                            bindingChannel?.MainLottie?.visibility = View.VISIBLE
+                            val local = AppContextProvider.getContext()
+                            local?.let {
+                                NewAdManager.showAds(
+                                    Constants.locationBeforeProvider,
+                                    requireActivity(),
+                                    it
+                                )
+                            }
+                        }
+
+                    }
+//                    requireActivity().window.setFlags(
+//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+//                    )
+                }
+                else{
                     findNavController().navigate(viewId)
                 }
+
             } else {
+//                    requireActivity().getWindow()
+//                        .clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 findNavController().navigate(viewId)
             }
         } catch (e: Exception) {

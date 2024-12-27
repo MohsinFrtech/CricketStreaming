@@ -85,10 +85,10 @@ class UpcomingMatchesViewModel(application: Application) : AndroidViewModel(appl
                     responseResult.let {
                         if (it != null) {
 
-                            saveResponse(it)
-                            it.sortedByDescending { it1 ->
-                                it1.updated_at
-                            }
+//                            saveResponse(it)
+//                            it.sortedByDescending { it1 ->
+//                                it1.updated_at
+//                            }
 
                             _sliderList.value = it
                             _isLoading.value=false

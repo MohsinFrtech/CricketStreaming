@@ -8,10 +8,16 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import com.dream.live.cricket.score.hd.BuildConfig
 import com.dream.live.cricket.score.hd.scores.utility.Cons.base_url_scores
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiServices {
+    private val gson: Gson = GsonBuilder()
+        .setLenient()
+        .create()
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
@@ -45,10 +51,20 @@ object ApiServices {
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
 
     }
-
+    private val retrofit2: Retrofit.Builder by lazy {
+        Retrofit.Builder()
+            .baseUrl(base_url_scores)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+    }
 
     val retrofitService: Interfaces by lazy {
         retrofit
+            .build()
+            .create(Interfaces::class.java)
+    }
+    val retrofitService2: Interfaces by lazy {
+        retrofit2
             .build()
             .create(Interfaces::class.java)
     }

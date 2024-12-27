@@ -22,16 +22,20 @@ import com.dream.live.cricket.score.hd.scores.utility.Cons
 import com.dream.live.cricket.score.hd.scores.viewmodel.LiveViewModel
 import com.dream.live.cricket.score.hd.streaming.adapters.ChannelAdapter
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
+import com.dream.live.cricket.score.hd.streaming.adsData.NewAdManager
 import com.dream.live.cricket.score.hd.streaming.models.Channel
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.checkNativeAdProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeAdProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeFacebook
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.playerActivityInPip
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.dream.live.cricket.score.hd.utils.InternetUtil
 import com.facebook.ads.NativeAd
+import com.teamd2.live.football.tv.utils.AppContextProvider
 import java.util.ArrayList
 
 class MainFragment : Fragment(), NavigateData, AdManagerListener {
@@ -41,7 +45,6 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
     private val modelEvent by lazy {
         activity?.let { ViewModelProvider(it)[OneViewModel::class.java] }
     }
-    private var adProviderName = "none"
     private var nativeAdProviderName = "none"
     private var adManager: AdManager? = null
     private var liveChannelCount = 0
@@ -76,6 +79,8 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
 
     override fun onResume() {
         super.onResume()
+        NewAdManager.setAdManager(this)
+
         if (InternetUtil.isInternetOn(requireContext())) {
 
             setUpViewModel()
@@ -98,22 +103,11 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                 }
 
                 if (!it.app_ads.isNullOrEmpty()) {
-                    adProviderName =
-                        adManager?.checkProvider(it.app_ads!!, Constants.adBefore).toString()
-                    if (adProviderName.equals(Constants.startApp, true)) {
+                    if (locationAfter.equals(Constants.startApp, true)) {
                         if (Constants.videoFinish) {
                             Constants.videoFinish = false
-                            adManager?.loadAdProvider(
-                                adProviderName,
-                                Constants.adBefore, null, null, null, null
-                            )
+                            adManager?.loadAdProvider(locationAfter, locationAfter, null, null, null, null)
                         }
-                    } else {
-                        adManager?.loadAdProvider(
-                            adProviderName,
-                            Constants.adBefore, null, null, null, null
-                        )
-
                     }
 
                     nativeAdProviderName =
@@ -361,14 +355,49 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
     override fun navigation(viewId: NavDirections) {
         try {
             navDirections = viewId
-            if (adStatus) {
-                if (!adProviderName.equals("none", true)) {
-                    binding?.MainLottie?.visibility = View.VISIBLE
-                    adManager?.showAds(adProviderName)
-                } else {
+            if (!Constants.locationBeforeProvider.equals("none", true)) {
+                if (!Constants.locationBeforeProvider.equals(Constants.startApp,true)){
+                    if (!Constants.locationBeforeProvider.equals(Constants.unity,true))
+                    {
+                        binding?.MainLottie?.visibility = View.VISIBLE
+                        val local = AppContextProvider.getContext()
+                        local?.let {
+                            NewAdManager.showAds(
+                                Constants.locationBeforeProvider,
+                                requireActivity(),
+                                it
+                            )
+                        }
+                    }
+                    else{
+                        if (playerActivityInPip){
+                            findNavController().navigate(viewId)
+                        }
+                        else{
+                            binding?.MainLottie?.visibility = View.VISIBLE
+                            val local = AppContextProvider.getContext()
+                            local?.let {
+                                NewAdManager.showAds(
+                                    Constants.locationBeforeProvider,
+                                    requireActivity(),
+                                    it
+                                )
+                            }
+                        }
+
+                    }
+//                    requireActivity().window.setFlags(
+//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+//                    )
+                }
+                else{
                     findNavController().navigate(viewId)
                 }
+
             } else {
+//                    requireActivity().getWindow()
+//                        .clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 findNavController().navigate(viewId)
             }
         } catch (e: Exception) {

@@ -506,6 +506,7 @@ class LiveSliderAdapter(
         holder.bindScoreData(currentList[position])
         val data = currentList[position]
         holder.itemView.setSafeOnClickListener {
+            Cons.matchId =currentList[position].match_id
             if (!data.status.isNullOrEmpty()) {
                 if (source.equals("main", true)) {
 

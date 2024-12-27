@@ -16,11 +16,14 @@ import com.dream.live.cricket.score.hd.R
 import com.dream.live.cricket.score.hd.databinding.StreaminglayBinding
 import com.dream.live.cricket.score.hd.streaming.adapters.EventAdapter
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
+import com.dream.live.cricket.score.hd.streaming.adsData.NewAdManager
 import com.dream.live.cricket.score.hd.streaming.models.Event
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.middleAdProvider
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
+import com.teamd2.live.football.tv.utils.AppContextProvider
 import java.util.ArrayList
 
 class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
@@ -29,7 +32,6 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
     private val modelEvent by lazy {
         activity?.let { ViewModelProvider(it)[OneViewModel::class.java] }
     }
-    private var adProviderName="none"
     private var nativeAdProviderName="none"
     private var adManager: AdManager?=null
     private var liveChannelCount=0
@@ -45,6 +47,7 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
         binding?.lifecycleOwner=this
         binding?.model=modelEvent
         adManager= context?.let { activity?.let { it1 -> AdManager(it, it1,this) } }
+        NewAdManager.setAdManager(this)
         setUpViewModel()
         return view
     }
@@ -52,42 +55,18 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
 
     override fun onResume() {
         super.onResume()
+        NewAdManager.setAdManager(this)
+
         Constants.positionClick=-1
         Constants.previousClick=-1
-
     }
     private fun setUpViewModel() {
 
 
         modelEvent?.dataModelList?.observe(viewLifecycleOwner) {
-            Constants.middleAdProvider="none"
-
             if (it.live==true)
             {
                 binding?.noEventText?.visibility=View.GONE
-                if (!it.app_ads.isNullOrEmpty())
-                {
-                    adProviderName= adManager?.checkProvider(it.app_ads!!, Constants.adMiddle).toString()
-                    Constants.middleAdProvider=adProviderName
-                    if (!adProviderName.equals(Constants.startApp,true))
-                    {
-                        binding?.adView?.let { it1 ->
-                            binding?.fbAdView?.let { it2 ->
-                                binding?.startAppBanner?.let { it3 ->
-                                    adManager?.loadAdProvider(adProviderName, Constants.adMiddle,
-                                        it1, it2,binding?.unityBannerView, it3
-                                    )
-                                }
-                            }
-                        }
-
-                    }
-
-
-                    nativeAdProviderName=adManager?.checkProvider(it.app_ads!!, Constants.nativeAdLocation).toString()
-
-                }
-
 
                 if (!it.events.isNullOrEmpty()) {
 
@@ -174,19 +153,17 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
             Constants.positionClick=-1
             Constants.previousClick=-1
             navDirections=viewId
-            if (adStatus)
-            {
-
-                if (!adProviderName.equals("none",true)) {
-                    binding?.MainLottie?.visibility=View.VISIBLE
-                    adManager?.showAds(adProviderName)
+            if (!middleAdProvider.equals("none", true)) {
+                if (!middleAdProvider.equals(Constants.startApp,true)) {
+                    binding?.MainLottie?.visibility = View.VISIBLE
+                    val local = AppContextProvider.getContext()
+                    local?.let { NewAdManager.showAds(middleAdProvider, requireActivity(), it) }
                 }
-                else
-                {
+                else{
                     findNavController().navigate(viewId)
                 }
             }
-            else {
+            else{
                 findNavController().navigate(viewId)
             }
         }

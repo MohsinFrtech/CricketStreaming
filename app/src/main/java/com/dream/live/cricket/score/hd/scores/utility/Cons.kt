@@ -1,11 +1,14 @@
 package com.dream.live.cricket.score.hd.scores.utility
 
+import android.text.format.DateFormat
 import com.google.android.gms.ads.nativead.NativeAd
 import java.text.SimpleDateFormat
 import java.util.*
 
 object Cons {
     var s_token = ""
+    var newsId = ""
+    var matchId = 0
     ///Socket
     var socketUrl = ""
     var socketAuth = ""
@@ -37,6 +40,38 @@ object Cons {
         val date = Date(time)
         val format = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.ENGLISH)
         return format.format(date)
+    }
+
+    fun dateAndTime(channelDate: String?): String {
+        try {
+            val df = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            df.timeZone = TimeZone.getTimeZone("UTC")
+            val date = channelDate?.let { df.parse(it) }
+            df.timeZone = TimeZone.getDefault()
+            val formattedDate = date?.let { df.format(it) }
+            val date2: Date? = formattedDate?.let { df.parse(it) }
+            val cal = Calendar.getInstance()
+            if (date2 != null) {
+                cal.time = date2
+            }
+
+            val dayOfTheWeek =
+                DateFormat.format("EEEE", date) as String
+
+            val day = DateFormat.format("dd", date) as String
+
+            val monthString =
+                DateFormat.format("MMM", date) as String
+            val year = DateFormat.format("yyyy", date) as String
+
+
+
+            return "$dayOfTheWeek,$day $monthString $year"
+
+        } catch (e: Exception) {
+            return ""
+        }
+
     }
 
 }

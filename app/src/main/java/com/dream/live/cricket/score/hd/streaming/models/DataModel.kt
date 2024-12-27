@@ -79,6 +79,9 @@ data class Channel(
     var url: String?,
     var web_image_url: String?,
     var important:Boolean?,
+    var clear_key:String?,
+    var user_agent:String?,
+    var forwarded_for:String?,
     var isSelected: Boolean? = false
 ) : Parcelable
 
