@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dream.live.cricket.score.hd.databinding.NewsApiLayoutBinding
 import com.dream.live.cricket.score.hd.scores.model.StoryList
+import com.dream.live.cricket.score.hd.scores.ui.fragments.LiveScoreDetailDirections
 import com.dream.live.cricket.score.hd.scores.utility.Cons
 import com.dream.live.cricket.score.hd.scores.utility.listeners.NavigateData
 
@@ -56,8 +57,8 @@ class NewsAdapter(private val navigateData: NavigateData) :
 
         holder.itemView.setOnClickListener {
             Cons.newsId = currentList[position].story?.id.toString()
-           // val direction =  LiveScoreDetailDirections.actionLiveDetailsToNewsDetailFragment()
-         //   navigateData.navigation(direction)
+            val direction =  LiveScoreDetailDirections.actionLiveDetailsToNewsDetailFragment()
+            navigateData.navigation(direction)
         }
 
     }

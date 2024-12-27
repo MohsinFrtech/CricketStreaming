@@ -37,7 +37,6 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
         commentaryViewModel.apiResponseListener = this
         initialState()
         getAllCommentaryRelatedToMatch()
-
         getSquadInfo()
         return layout
     }
