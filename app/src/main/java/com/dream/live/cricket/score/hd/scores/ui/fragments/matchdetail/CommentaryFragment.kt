@@ -17,6 +17,7 @@ import com.dream.live.cricket.score.hd.databinding.CommentaryFragmentBinding
 import com.dream.live.cricket.score.hd.scores.adapter.CommentaryAdapter
 import com.dream.live.cricket.score.hd.scores.adapter.OverAdapter
 import com.dream.live.cricket.score.hd.scores.model.CommentryModelClass
+import com.dream.live.cricket.score.hd.scores.model.OverItemModel
 import com.dream.live.cricket.score.hd.scores.utility.listeners.ApiResponseListener
 import com.dream.live.cricket.score.hd.scores.viewmodel.CommentaryViewModel
 
@@ -40,7 +41,6 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
         getSquadInfo()
         return layout
     }
-
 
 
     private fun initialState() {
@@ -70,8 +70,7 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
                 if (it != null) {
                     setUpCommentaryData(it)
                 }
-            }
-            else{
+            } else {
                 binding?.recentOvs?.visibility = View.GONE
                 binding?.liveMatchDetail?.visibility = View.GONE
                 binding?.recyclerViewCommentary?.visibility = View.GONE
@@ -89,7 +88,7 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
             binding?.commentaryNotAvailable?.visibility = View.GONE
             if (commentryModelClass?.matchHeader?.state?.equals("Preview", true) == true
                 || commentryModelClass?.matchHeader?.state?.equals("Delay", true) == true
-                ||commentryModelClass?.matchHeader?.state?.equals("Abandon", true) == true
+                || commentryModelClass?.matchHeader?.state?.equals("Abandon", true) == true
 
             ) {
                 //match is preview means will started soon.
@@ -153,8 +152,9 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
                     if (commentryModelClass.miniscore != null) {
                         binding?.ketStatResult?.visibility = View.VISIBLE
                         if (commentryModelClass.miniscore!!.recentOvsStats != null) {
-                            val array = commentryModelClass.miniscore!!.recentOvsStats?.toCharArray()
-                            val newcharArray = ArrayList<String>()
+                            val array =
+                                commentryModelClass.miniscore!!.recentOvsStats?.toCharArray()
+                            val newcharArray = ArrayList<OverItemModel>()
                             var count = 0
                             var scoreCount = 0
 
@@ -162,24 +162,31 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
                                 if (!Character.isWhitespace(it)) {
                                     if (it != '|') {
                                         if (it != '.') {
+
+                                            if (isIntegerInRange(it)) {
+                                                val intValue =Character.getNumericValue(it)
+                                                scoreCount += intValue
+                                            }
+
 //                                            newcharArray.add(it.toString())
 //                                            Log.d("RecentOvssss", "ovs" + it)
 
-                                            if (count == "5".toInt() || count == "11".toInt())
-                                            {
-                                                newcharArray.add(it.toString())
-                                                newcharArray.add("|")
+                                            if (count == "5".toInt() || count == "11".toInt()) {
+
+                                                newcharArray.add(OverItemModel(it.toString()))
+                                                newcharArray.add(OverItemModel("|  $scoreCount"))
 //                                                if (newcharArray.remove("|")){
 //                                                    scoreCount = newcharArray.sumOf { it.toInt() }
 //                                                }
 
                                                 Log.d("SumofScore", scoreCount.toString())
-                                              //  newcharArray.add("| "+scoreCount)
-                                                count ++
-                                            }else{
-                                                newcharArray.add(it.toString())
+                                                scoreCount =0
+                                                //  newcharArray.add("| "+scoreCount)
+                                                count++
+                                            } else {
+                                                newcharArray.add(OverItemModel(it.toString()))
                                                 Log.d("RecentOvssss", "ovs" + it)
-                                                count ++
+                                                count++
                                             }
                                         }
                                     }
@@ -188,7 +195,7 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
                             binding?.recentOvs?.visibility = View.VISIBLE
                             binding?.rcText?.visibility = View.VISIBLE
 
-                            val listAdapter = OverAdapter(requireContext())
+                            val listAdapter = OverAdapter(requireContext(), newcharArray)
                             binding?.recentOvs?.layoutManager = LinearLayoutManager(
                                 requireContext(),
                                 LinearLayoutManager.HORIZONTAL,
@@ -270,7 +277,11 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
                         binding?.liveMatchDetail?.visibility = View.VISIBLE
 
                         /////////////////
-                        if (commentryModelClass?.matchHeader?.state?.equals("Complete", true) == true) {
+                        if (commentryModelClass?.matchHeader?.state?.equals(
+                                "Complete",
+                                true
+                            ) == true
+                        ) {
                             binding?.liveMatchDetail?.visibility = View.GONE
                         }
 
@@ -283,6 +294,9 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
             }
 
         }
+    }
+    fun isIntegerInRange(char: Char): Boolean {
+        return char.isDigit() && char in '0'..'9'
     }
 
     override fun onStarted() {

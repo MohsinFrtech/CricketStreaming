@@ -88,7 +88,6 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
 
         viewModel?.dataModelList?.observe(viewLifecycleOwner)
         {
-
             if (!it.extra_3.isNullOrEmpty()) {
                 nativeFieldVal = it.extra_3!!
             }

@@ -44,7 +44,6 @@ class AllMatchesViewModel : ViewModel() {
     private fun loadRecentMatches() {
         coroutineScope.launch {
             val addUser = LiveToken()
-
             addUser.token = Cons.s_token
             val body = Gson().toJson(addUser)
                 .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())

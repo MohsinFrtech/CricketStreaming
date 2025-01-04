@@ -24,8 +24,8 @@ android {
         applicationId "com.dream.live.cricket.score.hd"
         minSdk 21
         targetSdk 34
-        versionCode 32
-        versionName "3.2"
+        versionCode 34
+        versionName "3.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -166,5 +166,6 @@ dependencies {
 
     implementation "androidx.core:core-splashscreen:1.0.1"
 
+//    implementation 'co.notix:android-sdk:0.1.+'
 
 }
