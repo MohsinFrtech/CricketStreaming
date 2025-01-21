@@ -20,10 +20,19 @@ import com.chartboost.sdk.events.StartError
 import com.chartboost.sdk.privacy.model.CCPA
 import com.chartboost.sdk.privacy.model.COPPA
 import com.chartboost.sdk.privacy.model.GDPR
+import com.cleversolutions.ads.AdImpression
+import com.cleversolutions.ads.AdLoadCallback
+import com.cleversolutions.ads.AdPaidCallback
+import com.cleversolutions.ads.AdType
+import com.cleversolutions.ads.Audience
+import com.cleversolutions.ads.ConsentFlow
+import com.cleversolutions.ads.android.CAS
+import com.dream.live.cricket.score.hd.BuildConfig
 import com.dream.live.cricket.score.hd.streaming.models.AppAd
 import com.dream.live.cricket.score.hd.streaming.utils.Logger
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.casAiAdManager
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.googleAdMangerInterstitial
 import com.facebook.ads.Ad
 import com.facebook.ads.AdError
@@ -49,6 +58,8 @@ import com.unity3d.ads.IUnityAdsShowListener
 import com.unity3d.ads.UnityAds
 import com.unity3d.ads.UnityAdsShowOptions
 
+const val CAS_TAG = "CAS Sample Adsss"
+
 object NewAdManager {
 
     private val logger = Logger()
@@ -64,6 +75,7 @@ object NewAdManager {
     private var interstitialAdValue = ""
     private var nativeAdValue = ""
     private var mAdManagerInterstitialAd: AdManagerInterstitialAd? = null
+    private var isCasInterstitialReady = false
 
     ///function will return provider
     fun setAdManager(adManagerListen: AdManagerListener) {
@@ -93,11 +105,13 @@ object NewAdManager {
                             } else if (listItem.ad_provider.equals(Constants.startApp, true)) {
                                 adProvider = Constants.startApp
                                 checkAdValue(adLocation.title, listItem.ad_key, adProvider)
-                            }  else if (listItem.ad_provider.equals(Constants.adManagerAds, true)) {
+                            } else if (listItem.ad_provider.equals(Constants.adManagerAds, true)) {
                                 adProvider = Constants.adManagerAds
                                 checkAdValue(adLocation.title, listItem.ad_key, adProvider)
+                            } else if (listItem.ad_provider.equals(Constants.cas_Ai, true)) {
+                                adProvider = Constants.cas_Ai
+                                checkAdValue(adLocation.title, listItem.ad_key, adProvider)
                             }
-
                         }
 
 
@@ -138,9 +152,10 @@ object NewAdManager {
                 Constants.unityGameID = interstitialAdValue
             } else if (provider.equals(Constants.startApp, true)) {
                 Constants.startAppId = interstitialAdValue
-            }
-            else if (provider.equals(Constants.adManagerAds, true)) {
-                Constants.googleAdMangerInterstitial = interstitialAdValue
+            } else if (provider.equals(Constants.adManagerAds, true)) {
+                googleAdMangerInterstitial = interstitialAdValue
+            } else if (provider.equals(Constants.cas_Ai, true)) {
+                Constants.casAiId = interstitialAdValue
             }
         } else if (adLocation.equals(Constants.nativeAdLocation, true)) {
             nativeAdValue = adKey.toString()
@@ -166,8 +181,9 @@ object NewAdManager {
                 Constants.startAppId = bannerAdValue
             } else if (provider.equals(Constants.unity, true)) {
                 Constants.unityGameID = bannerAdValue
+            } else if (provider.equals(Constants.cas_Ai, true)) {
+                Constants.casAiId = bannerAdValue
             }
-
         }
     }
 
@@ -193,8 +209,7 @@ object NewAdManager {
                 context,
                 activity
             )
-        }
-        else  if (provider.equals(Constants.adManagerAds, true)) {
+        } else if (provider.equals(Constants.adManagerAds, true)) {
             adMobSdkInitializationOrAdmobAdWithManager(
                 adLocation,
                 adView,
@@ -204,8 +219,7 @@ object NewAdManager {
                 context,
                 activity
             )
-        }
-        else if (provider.equals(Constants.facebook, true)) {
+        } else if (provider.equals(Constants.facebook, true)) {
             facebookSdkInitialization(
                 adLocation,
                 adView,
@@ -240,6 +254,72 @@ object NewAdManager {
                 context,
                 activity
             )
+        } else if (provider.equals(Constants.cas_Ai, true)) {
+            //Cas Ai provider Initialization.....
+            casAiSdkInitialization(
+                adLocation,
+                adView,
+                linearLayout,
+                relativeLayout,
+                startAppBanner,
+                context,
+                activity
+            )
+        }
+    }
+
+
+    private fun casAiSdkInitialization(
+        adLocation: String,
+        adView: LinearLayout?,
+        linearLayout: LinearLayout?,
+        relativeLayout: RelativeLayout?,
+        banner: Banner?,
+        context: Context,
+        activity: Activity
+    ) {
+        if (Constants.isCasAiInit) {
+            loadAdAtParticularLocation(
+                adLocation,
+                Constants.cas_Ai, adView, linearLayout, relativeLayout, banner,
+                context,
+                activity
+            )
+        } else {
+            try {
+                //InitializeCasAiSdk....
+//                CAS.settings.debugMode = BuildConfig.DEBUG
+                CAS.settings.taggedAudience = Audience.NOT_CHILDREN
+                casAiAdManager = CAS.buildManager()
+                    .withManagerId(Constants.casAiId)
+//                    .withTestAdMode(BuildConfig.DEBUG)
+                    .withAdTypes(AdType.Banner, AdType.Interstitial, AdType.Rewarded)
+                    .withConsentFlow(
+                        ConsentFlow(isEnabled = true)
+                            .withDismissListener {
+                                Log.d(CAS_TAG, "Consent flow dismissed")
+                            }
+                    )
+                    .withCompletionListener {
+                        if (it.error == null) {
+                            Constants.isCasAiInit = true
+                            Log.d(CAS_TAG, "Ad manager initialized")
+                            loadAdAtParticularLocation(
+                                adLocation,
+                                Constants.cas_Ai, adView, linearLayout, relativeLayout, banner,
+                                context,
+                                activity
+                            )
+                        } else {
+                            Constants.isCasAiInit = false
+                            Log.d(CAS_TAG, "Ad manager initialization failed: " + it.error)
+                        }
+                    }
+                    .build(context)
+            } catch (e: java.lang.Exception) {
+                Log.d("Exception", "msg")
+            }
+
         }
 
     }
@@ -442,12 +522,11 @@ object NewAdManager {
             showFacebookAdInterstitial(context)
         } else if (adProviderShow.equals(Constants.startApp, true)) {
             showStartAppAd()
-        }
-        else if (adProviderShow.equals(Constants.adManagerAds, true)) {
-
+        } else if (adProviderShow.equals(Constants.adManagerAds, true)) {
             showAdmobInterstitialAdx(activity)
-        }
-        else{
+        } else if (adProviderShow.equals(Constants.cas_Ai, true)) {
+            showInterstitialCasAi(activity)
+        } else {
             adManagerListener?.onAdFinish()
         }
     }
@@ -486,6 +565,44 @@ object NewAdManager {
             UnityAdsShowOptions(),
             showListener
         )
+    }
+
+    private fun showInterstitialCasAi(activity: Activity) {
+        if (isCasInterstitialReady) {
+            val contentCallback = object : AdPaidCallback {
+                override fun onShown(ad: AdImpression) {
+                    Log.d(CAS_TAG, "Interstitial Ad shown from " + ad.network)
+                }
+
+                override fun onAdRevenuePaid(ad: AdImpression) {
+                    Log.d(CAS_TAG, "Interstitial Ad revenue paid from " + ad.network)
+                }
+
+                override fun onShowFailed(message: String) {
+                    adManagerListener?.onAdFinish()
+                    Log.e(CAS_TAG, "Interstitial Ad show failed: $message")
+//                label.text = message
+                }
+
+                override fun onClicked() {
+                    Log.d(CAS_TAG, "Interstitial Ad received Click")
+                }
+
+                override fun onClosed() {
+                    adManagerListener?.onAdFinish()
+                    Log.d(CAS_TAG, "Interstitial Ad received Close")
+//                label.text = "Closed"
+                }
+            }
+            if (casAiAdManager?.isInterstitialReady == true)
+                casAiAdManager?.showInterstitial(activity, contentCallback)
+            else
+                Log.e(CAS_TAG, "Interstitial Ad not ready to show")
+        } else {
+            createInterstitialCasAi()
+            adManagerListener?.onAdFinish()
+            //loadagain
+        }
 
     }
 
@@ -517,36 +634,85 @@ object NewAdManager {
                 loadFacebookInterstitialAd(context)
             } else if (adProviderName.equals(Constants.startApp, true)) {
                 loadStartAppAd(context)
-            }
-            else if (adProviderName.equals(Constants.adManagerAds, true)) {
+            } else if (adProviderName.equals(Constants.adManagerAds, true)) {
                 loadAdmobInterstitialAdx(context)
-            }
-            else{
+            } else if (adProviderName.equals(Constants.cas_Ai, true)) {
+                createInterstitialCasAi()
+            } else {
                 adManagerListener?.onAdFinish()
             }
         }
 
     }
+
     //Function to load adx interstitial....
     private fun loadAdmobInterstitialAdx(context: Context) {
         val adRequest = AdManagerAdRequest.Builder().build()
-        AdManagerInterstitialAd.load(context, googleAdMangerInterstitial, adRequest, object : AdManagerInterstitialAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("AdxLoaded","error"+adError?.message)
-                mAdManagerInterstitialAd = null
-                adManagerListener?.onAdLoad("failed")
-            }
+        AdManagerInterstitialAd.load(
+            context,
+            googleAdMangerInterstitial,
+            adRequest,
+            object : AdManagerInterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("AdxLoaded", "error" + adError?.message)
+                    mAdManagerInterstitialAd = null
+                    adManagerListener?.onAdLoad("failed")
+                }
 
-            override fun onAdLoaded(interstitialAd: AdManagerInterstitialAd) {
-                Log.d("AdxLoaded","loaded")
-                mAdManagerInterstitialAd = interstitialAd
-                adManagerListener?.onAdLoad("success")
-            }
-        })
+                override fun onAdLoaded(interstitialAd: AdManagerInterstitialAd) {
+                    Log.d("AdxLoaded", "loaded")
+                    mAdManagerInterstitialAd = interstitialAd
+                    adManagerListener?.onAdLoad("success")
+                }
+            })
     }
 
+
+    private fun createInterstitialCasAi() {
+
+//        val label = findViewById<TextView>(R.id.interStatusText)
+        // Set Ad load callback
+        casAiAdManager?.onAdLoadEvent?.add(object : AdLoadCallback {
+            override fun onAdLoaded(type: AdType) {
+                if (type == AdType.Interstitial) {
+                    isCasInterstitialReady = true
+                    Log.d(CAS_TAG, "Interstitial Ad loaded and ready to show")
+                }
+            }
+
+            override fun onAdFailedToLoad(type: AdType, error: String?) {
+                if (type == AdType.Interstitial) {
+                    isCasInterstitialReady = false
+                    Log.d(CAS_TAG, "Interstitial Ad received error: $error")
+                }
+            }
+        })
+
+        // Create Ad content callback
+
+        // Any loading mode, except manual,
+        // automatically controls the preparation of sdk for impressions.
+//        if (CAS.settings.loadingMode == LoadingManagerMode.Manual) {
+//            findViewById<Button>(R.id.loadInterBtn).setOnClickListener {
+//                label.text = "Loading"
+//                manager.loadInterstitial()
+//            }
+//        } else {
+//            if (manager.isInterstitialReady)
+//                label.text = "Loaded"
+//            else
+//                label.text = "Loading"
+//            findViewById<Button>(R.id.loadInterBtn).visibility = View.GONE
+//        }
+//
+//        findViewById<Button>(R.id.showInterBtn).setOnClickListener {
+//
+//        }
+    }
+
+
     private fun showAdmobInterstitialAdx(activity: Activity) {
-        mAdManagerInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+        mAdManagerInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdClicked() {
                 // Called when a click is recorded for an ad.
 
@@ -748,7 +914,7 @@ object NewAdManager {
 
 
             override fun onAdLoaded(event: CacheEvent, error: CacheError?) {
-                Log.d("chartboostttt","ad"+error?.code)
+                Log.d("chartboostttt", "ad" + error?.code)
                 adManagerListener?.onAdLoad("success")
             }
 
@@ -772,15 +938,14 @@ object NewAdManager {
     ///Show chartboost ads
     private fun showChartBoost(
     ) {
-        if (chartboostInterstitial !=null) {
+        if (chartboostInterstitial != null) {
             if (chartboostInterstitial?.isCached() == true) { // check is cached is not mandatory
                 chartboostInterstitial?.show()
             } else {
                 loadChartBoost()
                 adManagerListener?.onAdFinish()
             }
-        }
-        else{
+        } else {
             loadChartBoost()
             adManagerListener?.onAdFinish()
         }

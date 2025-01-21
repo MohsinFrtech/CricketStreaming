@@ -8,6 +8,7 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'com.google.firebase.crashlytics'
     id 'com.google.gms.google-services'
+    id'com.cleveradssolutions.gradle-plugin'
 }
 
 android {
@@ -24,8 +25,8 @@ android {
         applicationId "com.dream.live.cricket.score.hd"
         minSdk 21
         targetSdk 34
-        versionCode 34
-        versionName "3.4"
+        versionCode 38
+        versionName "3.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

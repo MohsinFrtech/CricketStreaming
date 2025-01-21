@@ -1,5 +1,6 @@
 package com.dream.live.cricket.score.hd.streaming.utils.objects
 
+import com.cleversolutions.ads.MediationManager
 import com.dream.live.cricket.score.hd.BuildConfig
 import com.dream.live.cricket.score.hd.streaming.models.FormatData
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.OnHomePressedListener
@@ -12,6 +13,10 @@ object Constants {
     var USER_AGENT = "ExoPlayer-Drm"
     var xForwardedKey =""
     var mListener: OnHomePressedListener? = null
+    var cas_Ai = "casAi"
+    var casAiId =""
+    var casAiAdManager: MediationManager? = null
+    var isCasAiInit = false
 
     var playerActivityInPip=false
     var location1Provider = "none"

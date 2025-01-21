@@ -154,6 +154,7 @@ class CommentaryFragment : Fragment(), ApiResponseListener {
                         if (commentryModelClass.miniscore!!.recentOvsStats != null) {
                             val array =
                                 commentryModelClass.miniscore!!.recentOvsStats?.toCharArray()
+
                             val newcharArray = ArrayList<OverItemModel>()
                             var count = 0
                             var scoreCount = 0
