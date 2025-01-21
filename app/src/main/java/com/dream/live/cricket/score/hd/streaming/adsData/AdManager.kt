@@ -124,14 +124,6 @@ class AdManager(
                                 adProvider = Constants.cas_Ai
                                 checkAdValue(adLocation.title, listItem.ad_key, adProvider)
                             }
-                            else if (listItem.ad_provider.equals(Constants.cas_Ai, true)) {
-                                adProvider = Constants.cas_Ai
-                                checkAdValue(adLocation.title, listItem.ad_key, adProvider)
-                            }
-                            else if (listItem.ad_provider.equals(Constants.cas_Ai, true)) {
-                                adProvider = Constants.cas_Ai
-                                checkAdValue(adLocation.title, listItem.ad_key, adProvider)
-                            }
                         }
 
 
