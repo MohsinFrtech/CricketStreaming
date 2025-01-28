@@ -1,11 +1,13 @@
 package com.dream.live.cricket.score.hd.scores.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,13 +62,9 @@ class UpcomingMatchesFragment:Fragment() , NavigateData,AdManagerListener {
 
 
     private fun setUpViewModel() {
-        upcomingViewModel.isTabSelect.observe(viewLifecycleOwner)
-        {
-
-
+        upcomingViewModel.isTabSelect.observe(viewLifecycleOwner, Observer {
             showFilteredList(it)
-
-        }
+        })
     }
 
     private fun showFilteredList(s: String) {
@@ -74,14 +72,10 @@ class UpcomingMatchesFragment:Fragment() , NavigateData,AdManagerListener {
 
         upcomingViewModel.isLoading.observe(viewLifecycleOwner)
         {
-
-            if (it)
-            {
-                bindingUpcomingMatches?.progressBar?.visibility=View.VISIBLE
-            }
-            else
-            {
-                bindingUpcomingMatches?.progressBar?.visibility=View.GONE
+            if (it) {
+                bindingUpcomingMatches?.progressBar?.visibility = View.VISIBLE
+            } else {
+                bindingUpcomingMatches?.progressBar?.visibility = View.GONE
             }
 
 
@@ -92,24 +86,24 @@ class UpcomingMatchesFragment:Fragment() , NavigateData,AdManagerListener {
 
             liveScores.clear()
 
-            if (!it.isNullOrEmpty())
-            {
-                bindingUpcomingMatches?.tvNoData?.visibility=View.GONE
+            if (!it.isNullOrEmpty()) {
+                bindingUpcomingMatches?.tvNoData?.visibility = View.GONE
 
-                for (match in it)
-                {
+                for (match in it) {
 
-                    if (match?.match_format.equals(s,true))
-                    {
+                    if (match?.match_format.equals(s, true)) {
                         match?.let { it1 -> liveScores.add(it1) }
                     }
+                }
+                if(!liveScores.isNullOrEmpty()){
 
                 }
+                else{
+                    bindingUpcomingMatches?.tvNoData?.visibility = View.VISIBLE
+                }
                 setAdapter2(liveScores)
-            }
-            else
-            {
-                bindingUpcomingMatches?.tvNoData?.visibility=View.VISIBLE
+            } else {
+                bindingUpcomingMatches?.tvNoData?.visibility = View.VISIBLE
 
             }
 
@@ -141,14 +135,21 @@ class UpcomingMatchesFragment:Fragment() , NavigateData,AdManagerListener {
                         it,null
                     )
                 }
+                bindingUpcomingMatches?.rvMatches?.visibility=View.VISIBLE
+
                 bindingUpcomingMatches?.rvMatches?.layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 bindingUpcomingMatches?.rvMatches?.adapter = listAdapter
                 listAdapter?.submitList(listWithAd)
 
+            }else
+            {
+                bindingUpcomingMatches?.rvMatches?.visibility=View.GONE
+                bindingUpcomingMatches?.tvNoData?.visibility = View.VISIBLE
+
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.d("Exception","msg")
         }
     }
 

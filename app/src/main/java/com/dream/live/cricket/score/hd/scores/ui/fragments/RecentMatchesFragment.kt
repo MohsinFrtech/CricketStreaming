@@ -161,15 +161,22 @@ class RecentMatchesFragment : Fragment(), NavigateData,AdManagerListener{
                         it,currentNativeAd
                     )
                 }
+                binding?.rvMatches?.visibility=View.VISIBLE
+
                 binding?.rvMatches?.layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 binding?.rvMatches?.adapter = listAdapter
                 listAdapter?.submitList(listWithAd)
 
+            } else
+            {
+                binding?.rvMatches?.visibility=View.GONE
+                binding?.tvNoData?.visibility = View.VISIBLE
+
             }
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.d("Exception","msg")
         }
     }
 

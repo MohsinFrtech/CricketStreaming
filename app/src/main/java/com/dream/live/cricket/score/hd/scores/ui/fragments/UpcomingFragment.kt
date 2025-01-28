@@ -80,21 +80,21 @@ class UpcomingFragment:Fragment() {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                if (tab?.position==0)
-                {
-                    recentViewModel.isTabSelect.value= t20Format
-
-                }
-                else if (tab?.position==1)
-                {
-                    recentViewModel.isTabSelect.value= odiFormat
-
-                }
-                else if (tab?.position==2)
-                {
-                    recentViewModel.isTabSelect.value= testFormat
-
-                }
+//                if (tab?.position==0)
+//                {
+//                    recentViewModel.isTabSelect.value= t20Format
+//
+//                }
+//                else if (tab?.position==1)
+//                {
+//                    recentViewModel.isTabSelect.value= odiFormat
+//
+//                }
+//                else if (tab?.position==2)
+//                {
+//                    recentViewModel.isTabSelect.value= testFormat
+//
+//                }
 
             }
         })
