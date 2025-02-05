@@ -4,6 +4,7 @@ import com.cleversolutions.ads.MediationManager
 import com.dream.live.cricket.score.hd.BuildConfig
 import com.dream.live.cricket.score.hd.streaming.models.FormatData
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.OnHomePressedListener
+import com.traumsportzone.live.cricket.tv.models.FormatDataAudio
 
 
 object Constants {
@@ -176,5 +177,11 @@ object Constants {
     var timeValueAtPlayer = 15
     const val hlsSource = "hls"
     const val preferenceNoteLay="Notes"
+
+    val dataFormatsAudio: MutableList<FormatDataAudio> =
+        java.util.ArrayList<FormatDataAudio>()
+
+    var positionClick4 = 0
+    var previousClick4 = -1
 
 }

@@ -19,6 +19,13 @@ import com.chartboost.sdk.events.*
 import com.chartboost.sdk.privacy.model.CCPA
 import com.chartboost.sdk.privacy.model.COPPA
 import com.chartboost.sdk.privacy.model.GDPR
+import com.cleveradssolutions.sdk.AdContent
+import com.cleveradssolutions.sdk.nativead.CASChoicesView
+import com.cleveradssolutions.sdk.nativead.CASMediaView
+import com.cleveradssolutions.sdk.nativead.CASNativeLoader
+import com.cleveradssolutions.sdk.nativead.CASNativeView
+import com.cleveradssolutions.sdk.nativead.NativeAdContent
+import com.cleveradssolutions.sdk.nativead.NativeAdContentCallback
 import com.cleversolutions.ads.AdImpression
 import com.cleversolutions.ads.AdLoadCallback
 import com.cleversolutions.ads.AdPaidCallback
@@ -302,6 +309,8 @@ class AdManager(
                 Constants.nativeFacebook = nativeAdValue
             } else if (provider.equals(Constants.adManagerAds, true)) {
                 Constants.googleAdMangerNative = nativeAdValue
+            }else if (provider.equals(Constants.cas_Ai, true)) {
+                Constants.casAiId = nativeAdValue
             }
 
         } else if (adLocation.equals(Constants.adLocation1, true)
@@ -685,6 +694,81 @@ class AdManager(
         }
 
     }
+
+
+    var casAdView: CASNativeView?=null
+
+    var count=0
+
+    fun loadNativeAdCasAi(adLayout: ConstraintLayout?,container: CASNativeView) {
+
+        val nativeAdCallback = object : NativeAdContentCallback() {
+            override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContent) {
+                Log.d("AdTypeValue","loaded")
+
+                adLayout?.visibility = View.INVISIBLE
+                registerNativeAdContent(nativeAd)
+                inflateNativeAdView(container)
+//                    container?.visibility = View.VISIBLE
+                casAdView?.let { populateNativeAdView(it) }
+
+            }
+            override fun onNativeAdFailedToLoad(error: com.cleversolutions.ads.AdError) {
+                Log.d("AdTypeValue","error"+error.message)
+
+                adLayout?.visibility = View.GONE
+                // (Optional) Handle Ad load errors
+            }
+            override fun onNativeAdFailedToShow(nativeAd: NativeAdContent, error: com.cleversolutions.ads.AdError) {
+                // (Optional) Handle Ad render errors.
+                // Called from CASNativeView.setNativeAd(nativeAd)
+            }
+            override fun onNativeAdClicked(nativeAd: NativeAdContent, ad: AdContent) {
+                // (Optional) Called when the native ad is clicked by the user.
+            }
+        }
+        val casId = Constants.casAiId
+        val adLoader = CASNativeLoader(context, casId, nativeAdCallback)
+//        adLoader.adChoicesPlacement = AdChoicesPlacement.TOP_LEFT
+        adLoader.isStartVideoMuted = true
+//        adLoader.onImpressionListener = impressionListener // optional
+
+        adLoader.load()
+    }
+
+    fun inflateNativeAdView(container: CASNativeView) {
+//        adView = CASNativeView(this)
+        val size = com.cleversolutions.ads.AdSize.MEDIUM_RECTANGLE
+        casAdView?.setAdTemplateSize(size)
+
+//        customizeAdViewAppearance(adView)
+
+        container.addView(casAdView)
+    }
+
+    fun registerNativeAdContent(nativeAd: NativeAdContent) {
+        casAdView = CASNativeView(context)
+        casAdView?.setNativeAd(nativeAd)
+    }
+
+    fun populateNativeAdView(adView: CASNativeView) {
+
+        // You can also omit adChoicesView and it will be created automatically.
+        adView.adChoicesView = adView.findViewById<CASChoicesView>(R.id.ad_choices_view)
+
+        adView.mediaView = adView.findViewById<CASMediaView>(R.id.ad_media_view)
+//        adView.adLabelView = adView.findViewById<TextView>(R.id.ad_label)
+        adView.headlineView = adView.findViewById<TextView>(R.id.ad_headline)
+        adView.iconView = adView.findViewById<ImageView>(R.id.ad_app_icon)
+//        adView.callToActionView = adView.findViewById<Button>(R.id.ad_call_to_action)
+//        adView.bodyView = adView.findViewById<TextView>(R.id.ad_body)
+//        adView.advertiserView = adView.findViewById<TextView>(R.id.ad_advertiser)
+//        adView.storeView = adView.findViewById<TextView>(R.id.ad_store)
+//        adView.priceView = adView.findViewById<TextView>(R.id.ad_price)
+//        adView.reviewCountView = adView.findViewById<TextView>(R.id.ad_review_count)
+        adView.starRatingView = adView.findViewById<View>(R.id.ad_star_rating)
+    }
+
 
 
 

@@ -122,11 +122,13 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.hlsSour
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationBeforeProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.timeValueAtPlayer
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.xForwardedKey
+import com.dream.live.cricket.score.hd.streaming.utils.playerutils.PlayerScreenBottomSheetLang
 import com.facebook.ads.AdSettings
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teamd2.live.football.tv.utils.AppContextProvider
+import com.traumsportzone.live.cricket.tv.models.FormatDataAudio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.KeyManagementException
@@ -280,6 +282,16 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             }
         }
 
+        bindingExoPlayback?.lang?.setOnClickListener {
+            if (player != null){
+                if (!isShowingTrackSelectionDialog && willHaveContent(player!!)){
+                    getAudioPresentInsideUrl(player)
+                }
+            }
+        }
+
+
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
             checkHomeButton()
         } else {
@@ -288,6 +300,80 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //            }
         }
 
+    }
+
+    private fun getAudioPresentInsideUrl(player: ExoPlayer?) {
+        if (player?.currentTracks != null) {
+            if (!player.currentTracks.isEmpty) {
+                Constants.dataFormatsAudio.clear()
+                val tracks = player.currentTracks
+
+//                val videoTracks = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
+//                Constants.dataFormatsAudio.add(FormatDataAudio(null, null))
+
+                tracks.groups.forEach { trackGroup ->
+                    (0 until trackGroup.length).forEach { i ->
+                        Log.d("valuesAudio" + " text", "${trackGroup.length}")
+                        if (trackGroup.type == C.TRACK_TYPE_TEXT) {
+                            val track = trackGroup.getTrackFormat(i)
+                            if (track.language != null) {
+                                Constants.dataFormatsAudio.add(FormatDataAudio(track, trackGroup))
+                            }
+                            Log.d("valuesAudio" + " text", "${track.language}")
+                            // ...
+                        } else if (trackGroup.type == C.TRACK_TYPE_AUDIO) {
+                            val track = trackGroup.getTrackFormat(i)
+                            if (track.language != null) {
+                                Constants.dataFormatsAudio.add(FormatDataAudio(track, trackGroup))
+                            }
+                            Log.d("valuesAudio" + "Audio", track.language.toString()+" "+i)
+                        }
+
+                    }
+                }
+
+
+                if (!Constants.dataFormatsAudio.isNullOrEmpty()) {
+                    val fullscreenModal =
+                        PlayerScreenBottomSheetLang(player, Constants.dataFormatsAudio.size)
+                    supportFragmentManager.let {
+                        fullscreenModal.show(
+                            it,
+                            "FullscreenModalBottomSheetDialog"
+                        )
+                    }
+                }
+
+
+//                if (!Constants.dataFormats.isNullOrEmpty()) {
+//                    val fullscreenModal =
+//                        PlayerScreenBottomLang(player, Constants.dataFormats.size)
+//                    supportFragmentManager.let {
+//                        fullscreenModal.show(
+//                            it,
+//                            "FullscreenModalBottomSheetDialog"
+//                        )
+//                    }
+//                }
+            }
+//            val trackGroups = player.currentTracks
+//
+//            for (group in trackGroups) {
+//                for (track in group.tracks) {
+//                    // Check track type and language
+//                    if (track.type == C.TRACK_TYPE_TEXT) {
+//                        // Handle text tracks (e.g., subtitles)
+//                        val language = track.language
+//                        // ...
+//                    } else if (track.type == C.TRACK_TYPE_AUDIO) {
+//                        // Handle audio tracks
+//                        val language = track.language
+//                        // ...
+//                    }
+//                }
+//            }
+        }
+        /////
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -569,35 +655,98 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 hideTimerLayout()
                 timerFinishAndPlayAgain()
             } else {
-                if (timerValue > 0) {
-                    showTimerLay()
-                    timer = object : CountDownTimer(Math.abs(timerValue), 1000) {
-                        // Callback fired on regular interval.
-                        override fun onTick(millisUntilFinished: Long) {
-                            val hours = millisUntilFinished / (60 * 60 * 1000)
-                            val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-                            val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-                            if (hours == compareValue && minutes <= timeValueAtPlayer) {
+                if (timeValueAtPlayer > 60) {
+                    val convertIntoHours: Long = (timeValueAtPlayer / 60).toLong()
+                    val minutesRemaining: Long = (timeValueAtPlayer % 60).toLong()
+                    if (hoursMat <= convertIntoHours) {
+                        if (hoursMat == convertIntoHours) {
+                            if (minutesMat <= minutesRemaining) {
                                 hideTimerLayout()
                                 timerFinishAndPlayAgain()
                             } else {
-                                binding?.timeValue?.text = "$hours : $minutes : $seconds"
+                                showTimerLay()
+                                timer = object : CountDownTimer(Math.abs(timerValue), 1000) {
+                                    // Callback fired on regular interval.
+                                    override fun onTick(millisUntilFinished: Long) {
+                                        val hours = millisUntilFinished / (60 * 60 * 1000)
+                                        val minutes =
+                                            (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                                        val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                                        if (hours <= convertIntoHours && minutes <= minutesRemaining) {
+                                            hideTimerLayout()
+                                            timerFinishAndPlayAgain()
+                                        } else {
+                                            binding?.timeValue?.text =
+                                                "$hours : $minutes : $seconds"
+                                        }
+                                    }
+
+                                    // Callback fired when the time is up.
+                                    override fun onFinish() {
+                                        hideTimerLayout()
+                                        timerFinishAndPlayAgain()
+                                        Log.d("Difference", "Done!!!")
+                                    }
+                                }.start() // Start the countdown timer
                             }
-
-                            Log.d("Difference", "$hours $minutes $seconds second(s) remaining")
-                        }
-
-                        // Callback fired when the time is up.
-                        override fun onFinish() {
+                        } else {
                             hideTimerLayout()
                             timerFinishAndPlayAgain()
-                            Log.d("Difference", "Done!!!")
                         }
-                    }.start() // Start the countdown timer
+                    } else {
+                        showTimerLay()
+                        timer = object : CountDownTimer(Math.abs(timerValue), 1000) {
+                            // Callback fired on regular interval.
+                            override fun onTick(millisUntilFinished: Long) {
+                                val hours = millisUntilFinished / (60 * 60 * 1000)
+                                val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                                val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                                if (hours <= convertIntoHours && minutes <= minutesRemaining) {
+                                    hideTimerLayout()
+                                    timerFinishAndPlayAgain()
+                                } else {
+                                    binding?.timeValue?.text = "$hours : $minutes : $seconds"
+                                }
+                            }
+
+                            // Callback fired when the time is up.
+                            override fun onFinish() {
+                                hideTimerLayout()
+                                timerFinishAndPlayAgain()
+                                Log.d("Difference", "Done!!!")
+                            }
+                        }.start() // Start the countdown timer
+                    }
                 } else {
-                    hideTimerLayout()
-                    timerFinishAndPlayAgain()
+                    if (timerValue > 0) {
+                        showTimerLay()
+                        timer = object : CountDownTimer(Math.abs(timerValue), 1000) {
+                            // Callback fired on regular interval.
+                            override fun onTick(millisUntilFinished: Long) {
+                                val hours = millisUntilFinished / (60 * 60 * 1000)
+                                val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                                val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                                if (hours == compareValue && minutes <= timeValueAtPlayer) {
+                                    hideTimerLayout()
+                                    timerFinishAndPlayAgain()
+                                } else {
+                                    binding?.timeValue?.text = "$hours : $minutes : $seconds"
+                                }
+                            }
+
+                            // Callback fired when the time is up.
+                            override fun onFinish() {
+                                hideTimerLayout()
+                                timerFinishAndPlayAgain()
+                                Log.d("Difference", "Done!!!")
+                            }
+                        }.start() // Start the countdown timer
+                    } else {
+                        hideTimerLayout()
+                        timerFinishAndPlayAgain()
+                    }
                 }
+
             }
         }
     }

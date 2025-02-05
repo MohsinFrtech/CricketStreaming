@@ -27,6 +27,7 @@ import com.dream.live.cricket.score.hd.streaming.models.Channel
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cas_Ai
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.checkNativeAdProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.currentCountryCode
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
@@ -169,6 +170,11 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                                     it, binding?.adLoadLay2
                                 )
                             }
+                        }
+                    }else if(nativeAdProviderName.equals(cas_Ai, true)){
+                        binding?.casAdContainer?.visibility = View.VISIBLE
+                        binding?.casAdContainer?.let{
+                            adManager?.loadNativeAdCasAi(binding?.adLoadLay3,it)
                         }
                     }
 

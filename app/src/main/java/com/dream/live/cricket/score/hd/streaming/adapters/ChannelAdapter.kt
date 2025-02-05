@@ -31,6 +31,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.USER_AGENT
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cas_Ai
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.channel_url_val
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.dash
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.defaultString
@@ -163,6 +164,10 @@ class ChannelAdapter(
                                 binding2?.adLoadLay
                             )
                         }
+                    }
+                }else if(adType.equals(cas_Ai, true)){
+                    binding2?.casAdContainer?.let{
+                        adManager.loadNativeAdCasAi(binding2?.adLoadLay3,it)
                     }
                 }
 

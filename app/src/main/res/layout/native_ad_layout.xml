@@ -266,6 +266,87 @@
             android:visibility="visible"
             android:layout_height="wrap_content">
         </com.facebook.ads.NativeAdLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/_10sdp"
+            android:id="@+id/adLoadLay3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            android:background="@color/gnt_white"
+            android:layout_height="@dimen/_180sdp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14sdp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="Ad is Loading...."
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="wrap_content"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.cleveradssolutions.sdk.nativead.CASNativeView
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/cas_ad_container"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:id="@+id/ad_app_icon"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:id="@+id/ad_headline"
+                        android:layout_height="wrap_content"/>
+
+                    <com.cleveradssolutions.sdk.nativead.CASChoicesView
+                        android:layout_width="wrap_content"
+                        android:id="@+id/ad_choices_view"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+
+                <com.cleveradssolutions.sdk.nativead.CASMediaView
+                    android:layout_width="match_parent"
+                    android:id="@+id/ad_media_view"
+                    android:layout_height="wrap_content"/>
+
+                <com.cleveradssolutions.sdk.nativead.CASStarRatingView
+                    android:layout_width="match_parent"
+                    android:id="@+id/ad_star_rating"
+                    android:visibility="gone"
+                    android:layout_height="@dimen/_40sdp">
+
+                </com.cleveradssolutions.sdk.nativead.CASStarRatingView>
+
+
+
+            </LinearLayout>
+
+        </com.cleveradssolutions.sdk.nativead.CASNativeView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

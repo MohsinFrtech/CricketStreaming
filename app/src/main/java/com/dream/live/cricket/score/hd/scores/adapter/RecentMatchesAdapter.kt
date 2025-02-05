@@ -24,6 +24,7 @@ import com.dream.live.cricket.score.hd.scores.utility.Cons.convertLongToTime
 import com.dream.live.cricket.score.hd.streaming.adsData.AdManager
 import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cas_Ai
 import com.google.android.gms.ads.nativead.NativeAd
 import java.text.SimpleDateFormat
 import java.util.*
@@ -540,6 +541,10 @@ class RecentMatchesAdapter(
                                 binding2?.adLoadLay
                             )
                         }
+                    }
+                }else if(adType.equals(cas_Ai, true)){
+                    binding2?.casAdContainer?.let{
+                        adManager.loadNativeAdCasAi(binding2?.adLoadLay3,it)
                     }
                 }
             }
