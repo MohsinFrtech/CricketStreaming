@@ -172,4 +172,9 @@ object Constants {
     const val appVersionName = BuildConfig.VERSION_NAME
     const val appVersionCode = BuildConfig.VERSION_CODE
 
+    var currentCountryCode = ""
+    var timeValueAtPlayer = 15
+    const val hlsSource = "hls"
+    const val preferenceNoteLay="Notes"
+
 }

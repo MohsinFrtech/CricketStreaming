@@ -728,8 +728,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
         } else {
             ratingGiven = false
         }
-
-//        checkVpn()
+        checkVpn()
     }
 
     private fun checkVpn() {
@@ -753,24 +752,19 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
                 } else {
                     binding?.adblockLayout?.visibility = View.VISIBLE
-
                 }
             } else {
                 binding?.adblockLayout?.visibility = View.GONE
 
             }
         }
-
     }
-
-
 
     override fun onNegativeDialogText(key: String) {
         when (key) {
             "baseValue" -> finishAffinity()
             "isInternet" -> finishAffinity()
             "eventValue" -> finishAffinity()
-
         }
     }
 
@@ -784,7 +778,6 @@ class MainActivity : AppCompatActivity(), DialogListener,
             binding.bottomNav.visibility = View.GONE
         } else {
             binding.bottomNav.visibility = View.VISIBLE
-
         }
 
         if (destination.id == R.id.home) {

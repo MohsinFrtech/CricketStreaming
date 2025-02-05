@@ -74,11 +74,7 @@ class FirebaseService : FirebaseMessagingService() {
                     super.onLoadFailed(errorDrawable)
                     sendPersonalNotif(null, data)
                 }
-
-
             })
-
-
     }
 
     /////if notification type is personal notification....
@@ -117,7 +113,7 @@ class FirebaseService : FirebaseMessagingService() {
         val notificationBuilder =
             NotificationCompat.Builder(this, channelId)
                 .setStyle(bigText)
-                .setSmallIcon(R.drawable.splash_icon)
+                .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(title)
                 .setContentText(description)
                 .setAutoCancel(true)

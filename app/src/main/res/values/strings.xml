@@ -45,7 +45,7 @@
     <string name="no_internet_string">Internet connection lost! , please check your internet connection.</string>
     <string name="retry">Retry</string>
     <string name="notifications">Notifications</string>
-    <string name="notified">Enable Notifications</string>
+    <string name="notified">Please Enable Notifications</string>
 
     <!--ExpandedScreen-->
     <string name="media_route_menu_title">Play on&#8230;</string>
@@ -74,7 +74,7 @@
     <string name="app_rating">App Rating..</string>
 
     //Splash screen..
-    <string name="Allow">We will notify you about the latest game updates,upcoming matches,and live stars.</string>
+    <string name="Allow">Stay updated with the latest game news, upcoming matches and live stats through our notifications.</string>
     <string name="skip">Okay</string>
     <string name="allow_text">okay</string>
     <string name="stringValue">not now</string>

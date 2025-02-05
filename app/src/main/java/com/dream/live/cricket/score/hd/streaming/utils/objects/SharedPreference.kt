@@ -60,4 +60,13 @@ class SharedPreference(context: Context?) {
         return mPref?.getBoolean(key, false)
     }
 
+    fun saveNotificationPermission(key: String, value: Boolean) {
+        mEditor?.putBoolean(key, value)
+        mEditor?.commit()
+    }
+
+    fun getNotificationPermission(key: String):Boolean? {
+        return mPref?.getBoolean(key, false)
+    }
+
 }

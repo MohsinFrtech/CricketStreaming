@@ -15,6 +15,7 @@ import com.dream.live.cricket.score.hd.streaming.models.Event
 import com.dream.live.cricket.score.hd.streaming.ui.fragments.StreamingFragmentDirections
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.CodeUtils.setSafeOnClickListener
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 
 class EventAdapter(val context: Context, private val navigateData: NavigateData, val list: List<Event?>,
                    private val adType:String, private val adManager: AdManager
@@ -58,15 +59,26 @@ class EventAdapter(val context: Context, private val navigateData: NavigateData,
             {
                 if (i.live == true)
                 {
-                    liveChannelCount++
+                    var channel_belongs_country = false
+
+                    if (!i.country_codes.isNullOrEmpty()){
+                        i.country_codes?.forEach {
+                            code->
+                            if (code?.equals(Constants.currentCountryCode, true) == true){
+                                channel_belongs_country = true
+                            }
+                        }
+                        if (channel_belongs_country){
+                            liveChannelCount++
+                        }
+                    }else{
+                        liveChannelCount++
+                    }
                 }
-
             }
-
             bindingEvent?.liveChannels?.text= "$liveChannelCount Channels"
 
         }
-
 
         holder.itemView.setSafeOnClickListener {
 

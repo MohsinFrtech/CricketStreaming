@@ -28,6 +28,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListe
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.checkNativeAdProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.currentCountryCode
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeAdProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeFacebook
@@ -199,21 +200,36 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                     val liveAndImpChannels: MutableList<Channel> =
                         ArrayList<Channel>()
                     for (event in it.events!!) {
-                        if (event.live == true) {
 
+                        var channel_belongs_country = false
+
+                        if (event.live == true) {
                             if (!event.channels.isNullOrEmpty()) {
+
 
                                 for (channel in event.channels!!) {
                                     if (channel.live == true) {
+                                        if (!channel.country_codes.isNullOrEmpty()){
+                                            channel.country_codes?.forEach {
+                                                code->
+                                                if (code?.equals(currentCountryCode, true) == true){
+                                                    channel_belongs_country = true
+                                                }
+                                            }
+                                            if (channel_belongs_country){
+                                                if (channel.important == true) {
+                                                    liveAndImpChannels.add(channel)
 
-                                        if (channel.important == true) {
-                                            liveAndImpChannels.add(channel)
+                                                }
+                                            }
 
+                                        }else{
+                                            if (channel.important == true) {
+                                                liveAndImpChannels.add(channel)
+                                            }
                                         }
-
                                     }
                                 }
-
                             }
                         }
                     }

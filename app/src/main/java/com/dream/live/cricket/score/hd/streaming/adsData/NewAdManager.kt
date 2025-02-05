@@ -822,7 +822,6 @@ object NewAdManager {
                 context,
                 activity
             )
-
         } else {
             Chartboost.addDataUseConsent(context, GDPR(GDPR.GDPR_CONSENT.BEHAVIORAL))
             Chartboost.addDataUseConsent(context, CCPA(CCPA.CCPA_CONSENT.OPT_IN_SALE))
@@ -851,10 +850,7 @@ object NewAdManager {
                 }
             }
         }
-
-
     }
-
 
     private fun facebookSdkInitialization(
         adLocation: String,
@@ -876,7 +872,6 @@ object NewAdManager {
                 context,
                 activity
             )
-
         } else {
             AudienceNetworkAds
                 .buildInitSettings(context)

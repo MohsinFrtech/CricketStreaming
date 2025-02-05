@@ -23,6 +23,7 @@ import com.dream.live.cricket.score.hd.streaming.models.Channel
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.currentCountryCode
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.playerActivityInPip
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
@@ -139,10 +140,22 @@ class ChannelFragment : Fragment(), NavigateData, AdManagerListener {
             val liveChannels: MutableList<Channel> =
                 ArrayList<Channel>()
             for (channel in channels!!) {
+                var channel_belongs_country = false
                 if (channel.live == true) {
-                    liveChannels.add(channel)
+                    if (!channel.country_codes.isNullOrEmpty()){
+                        channel.country_codes?.forEach {
+                            code->
+                            if (code?.equals(currentCountryCode, true) == true){
+                                channel_belongs_country = true
+                            }
+                        }
+                        if (channel_belongs_country){
+                            liveChannels.add(channel)
+                        }
+                    }else{
+                        liveChannels.add(channel)
+                    }
                 }
-
             }
 
             if (liveChannels.isNotEmpty()) {

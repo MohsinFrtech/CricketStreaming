@@ -61,6 +61,7 @@ import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
@@ -117,7 +118,9 @@ import com.dream.live.cricket.score.hd.streaming.utils.HomeWatcher
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.adBefore
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.clearKeyKey
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.dash
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.hlsSource
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationBeforeProvider
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.timeValueAtPlayer
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.xForwardedKey
 import com.facebook.ads.AdSettings
 import com.google.gson.Gson
@@ -126,8 +129,16 @@ import com.google.gson.JsonObject
 import com.teamd2.live.football.tv.utils.AppContextProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.security.KeyManagementException
+import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 
 class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
@@ -554,7 +565,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             val minutesMat = (timerValue % (60 * 60 * 1000)) / (60 * 1000)
             Log.d("Difference", "$hoursMat $minutesMat  second(s) remaining")
 
-            if (hoursMat == compareValue && minutesMat <= 15) {
+            if (hoursMat == compareValue && minutesMat <= timeValueAtPlayer) {
                 hideTimerLayout()
                 timerFinishAndPlayAgain()
             } else {
@@ -566,7 +577,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                             val hours = millisUntilFinished / (60 * 60 * 1000)
                             val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
                             val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-                            if (hours == compareValue && minutes <= 15) {
+                            if (hours == compareValue && minutes <= timeValueAtPlayer) {
                                 hideTimerLayout()
                                 timerFinishAndPlayAgain()
                             } else {
@@ -643,6 +654,11 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 setUpPlayerDashWithAgent(path)
             }
         }
+        else if (channel_Type.equals(hlsSource, true)){
+            if (path.isNotEmpty()){
+                setUpPlayerWithM3u8(path)
+            }
+        }
         else if (channel_Type.equals(userType3, true)) {
             if (path.isNotEmpty()) {
                 lifecycleScope.launch(Dispatchers.Main) {
@@ -655,12 +671,21 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
     @OptIn(UnstableApi::class)
-    private fun setUpPlayerDashWithAgent(path: String) {
+    private fun setUpPlayerWithM3u8(path: String) {
 
         binding?.lottiePlayer?.visibility = View.GONE
         val listDrmModel: MutableList<DrmModel> = mutableListOf()
 
+
+        // Setup DefaultDrmSessionManager for ClearKey
+//        val keyId = "9002ec8c3dbc55c5bccdcd6871d80fd0".toByteArray(Charsets.UTF_8)
+//        val key = "7099325123bae7810db508727bb0bc7d".toByteArray(Charsets.UTF_8)
+
         val drmKey = clearKeyKey
+
+//        val drmKeyId =
+//            "8ab47741930c476780515f9a00decb0a"
+
         var drmBody = ""
 
         if (drmKey.contains(":")) {
@@ -676,8 +701,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 val drmKeyIdBytes =
                     elementsKey[count].chunked(2).map { it.toInt(16).toByte() }.toByteArray()
                 val encodedDrmKeyId = Base64.encodeToString(
-                    drmKeyIdBytes,
-                    Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+                    drmKeyIdBytes, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
                 )
 
                 count += 1
@@ -685,8 +709,222 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 val drmKeyBytes =
                     elementsKey[count].chunked(2).map { it.toInt(16).toByte() }.toByteArray()
                 val encodedDrmKey = Base64.encodeToString(
-                    drmKeyBytes,
-                    Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+                    drmKeyBytes, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+                )
+
+                count += 1
+
+
+
+                listDrmModel.add(DrmModel("oct", encodedDrmKey, encodedDrmKeyId))
+            }
+
+            val jsonObject = JsonObject()
+            val jsonArray = JsonArray()
+
+            for (keyData in listDrmModel) {
+                val keyJsonObject = JsonObject()
+                keyJsonObject.addProperty("kty", keyData.ktyString)
+                keyJsonObject.addProperty("k", keyData.drmKey)
+                keyJsonObject.addProperty("kid", keyData.drmKeyId)
+                jsonArray.add(keyJsonObject)
+            }
+
+            jsonObject.add("keys", jsonArray)
+            jsonObject.addProperty("type", "temporary")
+
+            val gson = Gson()
+            val jsonString = gson.toJson(jsonObject)
+
+            drmBody = jsonString
+
+//            Log.d(
+//                "DrmBoday", "body" +drmBody
+//            )
+        } else {
+
+        }
+
+
+
+        val dashMediaItem = MediaItem.Builder().setUri(path).setMimeType(MimeTypes.APPLICATION_M3U8)
+            .setMediaMetadata(MediaMetadata.Builder().setTitle("Live Football Tv Teamd2").build())
+            .build()
+
+        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
+        val trackSelector = DefaultTrackSelector(this, videoTrackSelectionFactory)
+        trackSelector.setParameters(
+            trackSelector.buildUponParameters().setPreferredVideoMimeType(MimeTypes.VIDEO_H264)
+        )
+        /////////
+//        val trackSelector = DefaultTrackSelector(this)
+        val loadControl = DefaultLoadControl()
+
+        val drmCallback = LocalMediaDrmCallback(drmBody.toByteArray())
+        val drmSessionManager =
+            DefaultDrmSessionManager.Builder().setPlayClearSamplesWithoutKeys(true)
+                .setMultiSession(false).setKeyRequestParameters(HashMap())
+                .setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
+                .build(drmCallback)
+
+        val customDrmSessionManager: DrmSessionManager = drmSessionManager
+        ///////////////
+        val defaultHttpDataSourceFactory =
+            DefaultHttpDataSource.Factory().setUserAgent(Constants.USER_AGENT).setTransferListener(
+                DefaultBandwidthMeter.Builder(this).setResetOnNetworkTypeChange(false).build()
+            )
+
+
+        val dashChunkSourceFactory: DashChunkSource.Factory = DefaultDashChunkSource.Factory(
+            defaultHttpDataSourceFactory
+        )
+        val manifestDataSourceFactory =
+            DefaultHttpDataSource.Factory().setUserAgent(Constants.USER_AGENT)
+
+        var dataSourceFactory: DataSource.Factory? = null
+
+
+        if (xForwardedKey != null) {
+            if (xForwardedKey.isNotEmpty()) {
+                dataSourceFactory = DefaultDataSource.Factory(
+                    this, CustomHttpDataSourceFactoryWithHeader()
+                )
+
+            } else {
+                dataSourceFactory = DefaultDataSource.Factory(
+                    this, CustomHttpDataSourceFactory(Constants.USER_AGENT)
+                )
+            }
+        } else {
+            dataSourceFactory = DefaultDataSource.Factory(
+                this, CustomHttpDataSourceFactory(Constants.USER_AGENT)
+            )
+        }
+
+        var mediaSource: MediaSource?=null
+
+
+        if (clearKeyKey.isNullOrEmpty()){
+            Log.d("ComingInSection","yes")
+            mediaSource =
+                dataSourceFactory?.let {
+                    HlsMediaSource.Factory(dataSourceFactory)
+//                    .setDrmSessionManagerProvider { customDrmSessionManager }
+                        .createMediaSource(dashMediaItem)
+                }
+        }
+        else{
+            Log.d("ComingInSection","no")
+
+            mediaSource =
+                dataSourceFactory?.let {
+                    HlsMediaSource.Factory(dataSourceFactory)
+                        .setDrmSessionManagerProvider { customDrmSessionManager }
+                        .createMediaSource(dashMediaItem)
+                }
+        }
+
+
+        val renderersFactory =
+            DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+
+        ////////
+        val renderersFactory2 =
+            DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+                .setEnableDecoderFallback(true)
+
+        player = ExoPlayer.Builder(this, renderersFactory2).setTrackSelector(trackSelector)
+            .setLoadControl(loadControl)
+//            .setSeekForwardIncrementMs(10000L)
+//            .setSeekBackIncrementMs(10000L)
+            .build()
+
+        binding?.playerView?.player = player
+        binding?.playerView?.keepScreenOn = true
+
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            bindingExoPlayback?.fullScreenIcon?.setImageDrawable(context?.let {
+                ContextCompat.getDrawable(
+                    it, R.drawable.ic_full_screen
+                )
+            })
+            count = 1
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+        }
+
+        when (mLocation) {
+            PlaybackLocation.LOCAL -> {
+                if (mCastSession != null && mCastSession?.remoteMediaClient != null) {
+                    mCastSession?.remoteMediaClient?.stop()
+                    mCastContext?.sessionManager?.endCurrentSession(true)
+                }
+                mPlaybackState = PlaybackState.IDLE
+
+                if (player != null) {
+                    player?.addListener(this)
+                    mediaSource?.let { player?.setMediaSource(it, true) }
+                    player?.prepare()
+                    binding?.playerView?.requestFocus()
+                    player?.playWhenReady = true
+                }
+
+            }
+
+            PlaybackLocation.REMOTE -> {
+                mCastSession?.remoteMediaClient?.play()
+                mPlaybackState = PlaybackState.PLAYING
+            }
+
+            else -> {
+            }
+        }
+        ////////////
+//        setOnGestureListeners()
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun setUpPlayerDashWithAgent(path: String) {
+
+        binding?.lottiePlayer?.visibility = View.GONE
+        val listDrmModel: MutableList<DrmModel> = mutableListOf()
+
+
+        // Setup DefaultDrmSessionManager for ClearKey
+//        val keyId = "9002ec8c3dbc55c5bccdcd6871d80fd0".toByteArray(Charsets.UTF_8)
+//        val key = "7099325123bae7810db508727bb0bc7d".toByteArray(Charsets.UTF_8)
+
+        val drmKey = clearKeyKey
+
+//        val drmKeyId =
+//            "8ab47741930c476780515f9a00decb0a"
+
+        var drmBody = ""
+
+        if (drmKey.contains(":")) {
+            val elementsKey = drmKey.split(":") // Split the string by commas
+//            val elementsKeyId = drmKeyId.split(",") // Split the string by commas
+
+            var length = elementsKey.size + 1
+            var finalLen = length / 2
+
+            var count = 0
+            for (element in 0 until finalLen) {
+
+                val drmKeyIdBytes =
+                    elementsKey[count].chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+                val encodedDrmKeyId = Base64.encodeToString(
+                    drmKeyIdBytes, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+                )
+
+                count += 1
+
+                val drmKeyBytes =
+                    elementsKey[count].chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+                val encodedDrmKey = Base64.encodeToString(
+                    drmKeyBytes, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
                 )
 
                 count += 1
@@ -743,10 +981,8 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //        )
 
 
-        val dashMediaItem = MediaItem.Builder()
-            .setUri(path)
-            .setMimeType(MimeTypes.APPLICATION_MPD)
-            .setMediaMetadata(MediaMetadata.Builder().setTitle("Cricket Streaming").build())
+        val dashMediaItem = MediaItem.Builder().setUri(path).setMimeType(MimeTypes.APPLICATION_MPD)
+            .setMediaMetadata(MediaMetadata.Builder().setTitle("Live Football TV").build())
             .build()
 
         val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
@@ -759,21 +995,17 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         val loadControl = DefaultLoadControl()
 
         val drmCallback = LocalMediaDrmCallback(drmBody.toByteArray())
-        val drmSessionManager = DefaultDrmSessionManager.Builder()
-            .setPlayClearSamplesWithoutKeys(true)
-            .setMultiSession(false)
-            .setKeyRequestParameters(HashMap())
-            .setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
-            .build(drmCallback)
+        val drmSessionManager =
+            DefaultDrmSessionManager.Builder().setPlayClearSamplesWithoutKeys(true)
+                .setMultiSession(false).setKeyRequestParameters(HashMap())
+                .setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
+                .build(drmCallback)
 
         val customDrmSessionManager: DrmSessionManager = drmSessionManager
         ///////////////
-        val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
-            .setUserAgent(Constants.USER_AGENT)
-            .setTransferListener(
-                DefaultBandwidthMeter.Builder(this)
-                    .setResetOnNetworkTypeChange(false)
-                    .build()
+        val defaultHttpDataSourceFactory =
+            DefaultHttpDataSource.Factory().setUserAgent(Constants.USER_AGENT).setTransferListener(
+                DefaultBandwidthMeter.Builder(this).setResetOnNetworkTypeChange(false).build()
             )
 
 
@@ -782,32 +1014,79 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         )
         val manifestDataSourceFactory =
             DefaultHttpDataSource.Factory().setUserAgent(Constants.USER_AGENT)
-        var dataSourceFactory: DataSource.Factory?=null
 
-//        xForwardedKey =""
+
+        // Create a custom SSL context with the provided certificate
+//        val trustManager = object : X509TrustManager {
+//            override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+//            }
+//
+//            override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+//            }
+//
+//            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+//        }
+        // Set up the SSL context to trust all certificates
+//        val sslContext = SSLContext.getInstance("TLS")
+//        sslContext.init(null, arrayOf<TrustManager>(trustManager), null)
+        ///////////////////////////////////////////////////////////////////////////////
+        //Create a trust manager that does not validate certificate chains
+        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+            override fun getAcceptedIssuers(): Array<X509Certificate>? {
+                return null
+            }
+
+            override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) {
+                //
+            }
+
+            override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) {
+                //
+            }
+        })
+        //Install the all-trusting trust manager
+//        // Create a DataSource factory using OkHttp
+//        val dataSourceFactory = OkHttpDataSourceFactory(client)
+//
+//        // 5. Create a custom DataSource.Factory
+//        val dataSourceFactoryManifest = DataSource.Factory {
+//            val defaultHttpDataSource = DefaultHttpDataSource.Factory()
+//                .setSslSocketFactory(sslContext.socketFactory)
+//                .createDataSource()
+//            defaultHttpDataSource
+//        }
+
+        try {
+            val sc = SSLContext.getInstance("TLS")
+            sc.init(null, trustAllCerts, SecureRandom())
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.socketFactory)
+        } catch (e: KeyManagementException) {
+            Log.d("Error", "KeyManagementException")
+        } catch (e: NoSuchAlgorithmException) {
+            Log.d("Error", "KeyManagementException")
+
+        }
+        var dataSourceFactory: DataSource.Factory? = null
+
+        //Below lines must be commentted on Live ID
+        // xForwardedKey ="13.106.174.0"
+        //  xForwardedKey = "49.50.223.255"
 
         if (xForwardedKey != null) {
             if (xForwardedKey.isNotEmpty()) {
-                dataSourceFactory =
-                    DefaultDataSource.Factory(
-                        this,
-                        CustomHttpDataSourceFactoryWithHeader()
-                    )
+                dataSourceFactory = DefaultDataSource.Factory(
+                    this, CustomHttpDataSourceFactoryWithHeader()
+                )
 
             } else {
-                dataSourceFactory =
-                    DefaultDataSource.Factory(
-                        this,
-                        CustomHttpDataSourceFactory(Constants.USER_AGENT)
-                    )
-            }
-        }
-        else{
-            dataSourceFactory =
-                DefaultDataSource.Factory(
-                    this,
-                    CustomHttpDataSourceFactory(Constants.USER_AGENT)
+                dataSourceFactory = DefaultDataSource.Factory(
+                    this, CustomHttpDataSourceFactory(Constants.USER_AGENT)
                 )
+            }
+        } else {
+            dataSourceFactory = DefaultDataSource.Factory(
+                this, CustomHttpDataSourceFactory(Constants.USER_AGENT)
+            )
         }
 
 //        val headersMap = HashMap<String, String>()
@@ -815,12 +1094,10 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //        headersMap.put("x-forwarded-for", "49.50.223.255")
 
 
-        val dashMediaSource =
-            dataSourceFactory?.let {
-                DashMediaSource.Factory(it)
-                    .setDrmSessionManagerProvider { customDrmSessionManager }
-                    .createMediaSource(dashMediaItem)
-            }
+        val dashMediaSource = dataSourceFactory?.let {
+            DashMediaSource.Factory(it).setDrmSessionManagerProvider { customDrmSessionManager }
+                .createMediaSource(dashMediaItem)
+        }
         //        DataSource.Factory dataSourceFactory = DemoUtil.getDataSourceFactory(PlayerActivity.this,headersMap);
 
         ///////////////
@@ -831,16 +1108,15 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //            .setDrmSessionManagerProvider { customDrmSessionManager }
 //            .createMediaSource(dashMediaItem)
 
-        val renderersFactory = DefaultRenderersFactory(this)
-            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+        val renderersFactory =
+            DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
 
         ////////
-        val renderersFactory2 = DefaultRenderersFactory(this)
-            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
-            .setEnableDecoderFallback(true)
+        val renderersFactory2 =
+            DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+                .setEnableDecoderFallback(true)
 
-        player = ExoPlayer.Builder(this, renderersFactory2)
-            .setTrackSelector(trackSelector)
+        player = ExoPlayer.Builder(this, renderersFactory2).setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
 //            .setSeekForwardIncrementMs(10000L)
 //            .setSeekBackIncrementMs(10000L)
@@ -852,14 +1128,11 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-            bindingExoPlayback?.fullScreenIcon?.setImageDrawable(
-                context?.let {
-                    ContextCompat.getDrawable(
-                        it,
-                        R.drawable.ic_full_screen
-                    )
-                }
-            )
+            bindingExoPlayback?.fullScreenIcon?.setImageDrawable(context?.let {
+                ContextCompat.getDrawable(
+                    it, R.drawable.ic_full_screen
+                )
+            })
             count = 1
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
@@ -871,8 +1144,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                     mCastSession?.remoteMediaClient?.stop()
                     mCastContext?.sessionManager?.endCurrentSession(true)
                 }
-                mPlaybackState =
-                    PlaybackState.IDLE
+                mPlaybackState = PlaybackState.IDLE
 
                 if (player != null) {
                     player?.addListener(this)
@@ -886,8 +1158,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
             PlaybackLocation.REMOTE -> {
                 mCastSession?.remoteMediaClient?.play()
-                mPlaybackState =
-                    PlaybackState.PLAYING
+                mPlaybackState = PlaybackState.PLAYING
             }
 
             else -> {
@@ -1373,6 +1644,11 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 val token = baseUrl.let { it1 -> Defamation.improveDeprecatedCode(it1) }
                 path = baseUrl + token
                 setUpPlayerP2p(path)
+            }
+            else if (channel_Type.equals(hlsSource, true)){
+                if (path.isNotEmpty()){
+                    setUpPlayerWithM3u8(path)
+                }
             }
             else if (channel_Type.equals(dash, true)) {
                 if (path.isNotEmpty()) {
@@ -1979,7 +2255,6 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
             }
         })
 
-
         val loadData = MediaLoadRequestData.Builder()
             .setMediaInfo(buildMediaInfo())
             .build()
@@ -1987,7 +2262,6 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         remoteMediaClient.load(loadData)
 //        buildMediaInfo()?.let { remoteMediaClient.load(loadData) }
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -2009,7 +2283,6 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                         player!!.playWhenReady = false
                     }
                 }
-
             } else {
                 if (player != null) {
                     player!!.playWhenReady = false
@@ -2087,10 +2360,8 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 }
             }
         }
-
-//        checkVpn()
+        checkVpn()
     }
-
 
     /////Media builder function
     private fun buildMediaInfo(): MediaInfo {
@@ -2128,7 +2399,6 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //            binding?.playerView?.hideController()
                 binding?.myToolbar?.visibility = View.GONE
 //            removeAllAdsViews()
-
             } else {
                 // Show the video controls if the video is not playing
 //            binding?.playerView?.showController()
@@ -2153,7 +2423,6 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         loadLocation2TopPermanentProvider()
         loadLocation2BottomProvider()
     }
-
 
     @OptIn(UnstableApi::class)
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -2226,10 +2495,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 }
 
                 if (bindingExoPlayback?.lockAffect?.visibility == View.VISIBLE) {
-                    //
                     bindingExoPlayback?.fullScreenIcon?.visibility = View.GONE
-
-
                 } else {
 
                     bindingExoPlayback?.fullScreenIcon?.visibility = View.VISIBLE
@@ -2243,12 +2509,9 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                         }
                     )
                     count = 1
-
                 }
-
             }
         }
-
     }
 
     override fun onStop() {
@@ -2324,7 +2587,6 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 }
 
                 override fun onSessionStarted(castSession: CastSession, s: String) {
-
                     onApplicationConnected(castSession)
                 }
 
@@ -2349,7 +2611,9 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
                 }
 
                 override fun onSessionResumeFailed(castSession: CastSession, i: Int) {
+
                     onApplicationDisconnected()
+                    Log.d("castDisconnectionIssue", castSession.toString())
                 }
 
                 override fun onSessionSuspended(castSession: CastSession, i: Int) {

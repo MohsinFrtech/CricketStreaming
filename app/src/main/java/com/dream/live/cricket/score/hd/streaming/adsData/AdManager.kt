@@ -125,15 +125,9 @@ class AdManager(
                                 checkAdValue(adLocation.title, listItem.ad_key, adProvider)
                             }
                         }
-
-
                     }
-
                 }
-
-
             }
-
         }
 
         ////If provider exist then initialize sdk of the particular provider

@@ -149,6 +149,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/notifying"
                 android:text="@string/Allow"/>
 
+            <TextView
+                android:id="@+id/notifying3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="center_horizontal"
+                android:text="If you don't allow now, you can enable notifications later in Settings."
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notifying2" />
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -161,7 +174,7 @@
                 android:gravity="center_horizontal"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notifying2"
+                app:layout_constraintTop_toBottomOf="@+id/notifying3"
                 android:textColor="@android:color/white"
                 android:text="@string/skip"
                 android:layout_height="@dimen/_40sdp">
@@ -182,18 +195,33 @@
             </LinearLayout>
 
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
                 android:id="@+id/skipBtn"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/yesBtn"
-                app:layout_constraintStart_toStartOf="@+id/yesBtn"
-                app:layout_constraintTop_toBottomOf="@+id/yesBtn"
-                android:textSize="@dimen/_12sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:background="@drawable/new_dot_bg_channel"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:text="@string/skip"
                 android:textColor="@android:color/white"
-                android:text="@string/stringValue"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/yesBtn">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
+                    android:text="Go to Settings"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

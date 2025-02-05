@@ -21,6 +21,7 @@ import com.dream.live.cricket.score.hd.streaming.models.Event
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.AdManagerListener
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.NavigateData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.currentCountryCode
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.middleAdProvider
 import com.dream.live.cricket.score.hd.streaming.viewmodel.OneViewModel
 import com.teamd2.live.football.tv.utils.AppContextProvider
@@ -77,20 +78,44 @@ class StreamingFragment:Fragment(), NavigateData, AdManagerListener {
                         ArrayList<Event>()
 
                     for (event in it.events!!) {
+                        var event_belongs_country = false
                         if (event.live == true) {
-                            if (!event.channels.isNullOrEmpty()) {
-
-                                for (channel in event.channels!!)
-                                {
-                                    if (channel.live == true)
-                                    {
-                                        liveChannelCount++
+                            if (!event.country_codes.isNullOrEmpty()){
+                                event.country_codes!!.forEach {
+                                    code->
+                                    Log.d("eventCountryCode", code)
+                                    if (code?.equals(currentCountryCode, true) == true){
+                                        event_belongs_country = true
                                     }
                                 }
-
-                                if (liveChannelCount>0)
-                                {
-                                    liveEvents.add(event)
+                                if (event_belongs_country){
+                                    if (!event.channels.isNullOrEmpty()) {
+                                        for (channel in event.channels!!)
+                                        {
+                                            if (channel.live == true)
+                                            {
+                                                liveChannelCount++
+                                            }
+                                        }
+                                        if (liveChannelCount>0)
+                                        {
+                                            liveEvents.add(event)
+                                        }
+                                    }
+                                }
+                            }else{
+                                if (!event.channels.isNullOrEmpty()) {
+                                    for (channel in event.channels!!)
+                                    {
+                                        if (channel.live == true)
+                                        {
+                                            liveChannelCount++
+                                        }
+                                    }
+                                    if (liveChannelCount>0)
+                                    {
+                                        liveEvents.add(event)
+                                    }
                                 }
                             }
                         }

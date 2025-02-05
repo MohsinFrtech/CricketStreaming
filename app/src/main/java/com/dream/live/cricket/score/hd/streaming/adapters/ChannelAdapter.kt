@@ -34,6 +34,7 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.USER_AG
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.channel_url_val
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.dash
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.defaultString
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.hlsSource
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.nativeFacebook
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.passphraseVal
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.positionClick
@@ -208,6 +209,22 @@ class ChannelAdapter(
                             0
                         }
 
+                        /// For handling initial time.......
+                        if (!currentList[position]?.initial_time.isNullOrEmpty()){
+                            val timeFromCms = currentList[position]?.initial_time?.toString()
+                            if (timeFromCms != null) {
+                                Constants.timeValueAtPlayer = timeFromCms.toInt()
+                            }
+                            else{
+                                Constants.timeValueAtPlayer = 15
+                            }
+                        }
+                        else{
+                            Constants.timeValueAtPlayer = 15
+                        }
+                        ////////////////////////////////////////////
+
+
                         if (currentList[position]?.channel_type.equals(
                                 userType1, true
                             )
@@ -269,7 +286,42 @@ class ChannelAdapter(
                                     navigateData.navigation(channelDirection)
                                 }
                             }
-                        } else if (currentList[position]?.channel_type.equals(
+                        }else if(currentList[position]?.channel_type.equals(
+                                hlsSource, true)){
+                            //for playing dash media...
+                            Constants.clearKeyKey =""
+                            USER_AGENT = "ExoPlayer-Drm"
+                            xForwardedKey =""
+                            ///Dash media source...
+                            if (!currentList[position]?.clear_key.isNullOrEmpty())
+                            {
+                                Constants.clearKeyKey = currentList[position]?.clear_key.toString()
+                            }
+                            //User Agent...
+                            if (!currentList[position]?.user_agent.isNullOrEmpty()){
+                                USER_AGENT = currentList[position]?.user_agent.toString()
+                            }
+
+                            if (!currentList[position]?.forwarded_for.isNullOrEmpty()){
+                                xForwardedKey = currentList[position]?.forwarded_for.toString()
+                            }
+
+                            if (destination.equals("channel", true)) {
+                                val channelDirection = ChannelFragmentDirections.actionChannelToPlayer(
+                                    currentList[position].url, currentList[position].url,
+                                    hlsSource,timeValue
+                                )
+                                navigateData.navigation(channelDirection)
+                            } else {
+                                val channelDirection =
+                                    ChannelFragmentDirections.actionChannelToPlayer(
+                                        currentList[position].url, currentList[position].url,
+                                        hlsSource,timeValue
+                                    )
+                                navigateData.navigation(channelDirection)
+                            }
+                        }
+                        else if (currentList[position]?.channel_type.equals(
                                 userType3, true
                             )
                         ) {

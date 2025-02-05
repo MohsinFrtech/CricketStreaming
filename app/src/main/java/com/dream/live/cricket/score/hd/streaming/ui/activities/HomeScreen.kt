@@ -1,6 +1,7 @@
 package com.dream.live.cricket.score.hd.streaming.ui.activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -42,11 +44,13 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementD
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementMainData
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementMainType
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.cementType
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.currentCountryCode
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.emptyCheck
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationAfter
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.locationBeforeProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.middleAdProvider
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.passVal
+import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.preferenceNoteLay
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.rateShown
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.splash_status
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.tapPositionProvider
@@ -114,6 +118,7 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
     private val viewModel by lazy {
         ViewModelProvider(this)[OneViewModel::class.java]
     }
+    private var isFromNotification = false
     private var ifPermissionGrantedThenNotResume=false
 
     private var permissionCount = 0
@@ -122,14 +127,24 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                ifPermissionGrantedThenNotResume=true
+                isFromNotification = true
+              //  ifPermissionGrantedThenNotResume=true
                 bindingHome?.notificationLayout?.visibility = View.GONE
                 // Permission is granted. Continue the action or workflow in your
                 subscribeOrUnSubscribeTopic()
-
             } else {
-                ifPermissionGrantedThenNotResume=true
-                bindingHome?.notificationLayout?.visibility = View.VISIBLE
+//                ifPermissionGrantedThenNotResume=true
+//                bindingHome?.notificationLayout?.visibility = View.VISIBLE
+                isFromNotification = true
+                permissionCount++
+                if (permissionCount==1){
+                    makePermission()
+                    permissionCount++
+                    preference?.saveNotificationPermission(preferenceNoteLay, true)
+                }
+                else{
+                    bindingHome?.notificationLayout?.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -154,6 +169,9 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
                 }
             }
         })
+
+        currentCountryCode = getNetworkCountryCode(this).toString()
+
         Constants.app_update_dialog=false
         splash_status =false
         rateShown =false
@@ -177,14 +195,33 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 
         bindingHome?.yesBtn?.setOnClickListener {
             bindingHome?.notificationLayout?.visibility = View.GONE
-            makePermission()
+          //  makePermission()
+            sliderRotation()
         }
         bindingHome?.skipBtn?.setOnClickListener {
 
 //            requestPermissionLauncher.unregister()
+//            bindingHome?.notificationLayout?.visibility = View.GONE
+//            navigationToNextScreen()
             bindingHome?.notificationLayout?.visibility = View.GONE
-            navigationToNextScreen()
+            try {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts(
+                    "package",
+                    packageName, null
+                )
+                intent.data = uri
+                startActivity(intent)
+            }
+            catch (e:java.lang.Exception){
+                Log.d("Exception","msg")
+            }
         }
+    }
+
+    fun getNetworkCountryCode(context: Context): String? {
+        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        return telephonyManager.networkCountryIso // Returns ISO country code (e.g., "us", "in")
     }
 
     private fun checkNotificationPermission() {
@@ -201,55 +238,53 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 
                 }
 
-                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
-                -> {
-                    bindingHome?.notificationLayout?.visibility = View.VISIBLE
-
-                }
+//                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+//                -> {
+//                    bindingHome?.notificationLayout?.visibility = View.VISIBLE
+//
+//                }
 
                 else -> {
                     // You can directly ask for the permission.
                     // The registered ActivityResultCallback gets the result of this request.
                     makePermission()
-
                 }
-
             }
         } else {
             subscribeOrUnSubscribeTopic()
         }
-
-
     }
 
     private fun makePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
-            if (permissionCount > 3) {
-                bindingHome?.notificationLayout?.visibility = View.GONE
-                navigationToNextScreen()
+//            if (permissionCount > 3) {
+//                bindingHome?.notificationLayout?.visibility = View.GONE
+//                navigationToNextScreen()
+//
+//            } else if (permissionCount == 2) {
+//                bindingHome?.notificationLayout?.visibility = View.GONE
+//
+//                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//                val uri = Uri.fromParts(
+//                    "package",
+//                    packageName, null
+//                )
+//                intent.data = uri
+//                startActivity(intent)
+//            } else {
+//                requestPermissionLauncher.launch(
+//                    Manifest.permission.POST_NOTIFICATIONS
+//                )
+//            }
+//
+//            permissionCount++
 
-            } else if (permissionCount == 2) {
-                bindingHome?.notificationLayout?.visibility = View.GONE
-
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                val uri = Uri.fromParts(
-                    "package",
-                    packageName, null
-                )
-                intent.data = uri
-                startActivity(intent)
-            } else {
-                requestPermissionLauncher.launch(
-                    Manifest.permission.POST_NOTIFICATIONS
-                )
-            }
-
-            permissionCount++
-
+            requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
         }
     }
-
 
     private fun subscribeOrUnSubscribeTopic() {
 
@@ -287,9 +322,11 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 
     override fun onResume() {
         super.onResume()
-        if (!ifPermissionGrantedThenNotResume) {
+        //if (!ifPermissionGrantedThenNotResume) {
+        if (!isFromNotification){
             showConsentDialog()
         }
+        // }
     }
 
     private fun showConsentDialog() {
@@ -304,11 +341,14 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
                     checkNecessities()
                     Log.d("UmpDataCollected", "ump" + consentError.message)
                 }
+                else{
+                    checkNecessities()
+                }
 
                 if (googleMobileAdsConsentManager?.canRequestAds == true) {
                     preference?.saveConsent(Constants.consentKey, true)
                     Log.d("UmpDataCollected", "yes")
-                    checkNecessities()
+               //     checkNecessities()
 //                initializeMobileAdsSdk()
                 } else {
                     //
@@ -327,9 +367,7 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 //                checkNecessities()
                 }
             }
-
         }
-
     }
 
     private fun checkNecessities() {
@@ -353,10 +391,8 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
                 },
                 2000
             )
-
         }
     }
-
 
     private fun emulatorCheck() {
         lifecycleScope.launch {
@@ -394,16 +430,13 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 
             } catch (e: Exception) {
                 Log.d("Exception", "" + e.message)
-
             }
-
         }
     }
 
     private fun getDeviceStateDescription(state: Boolean) {
         //if (state is DeviceState.Emulator) {
         if (state) {
-
             CustomDialogue(this).showDialog(
                 this, "Alert!", "Please use application on real device",
                 "", "Ok", "baseValue"
@@ -415,7 +448,10 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 
     override fun onDestroy() {
         super.onDestroy()
-        requestPermissionLauncher.unregister()
+      //  requestPermissionLauncher.unregister()
+        if (requestPermissionLauncher != null) {
+            requestPermissionLauncher.unregister()
+        }
     }
 
     ///Navigation to next Screen
@@ -487,9 +523,7 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
             } else {
                 sendValue = fitX
             }
-
 //            getApiBaseUrl(replaceChar)
-
 
             val (array1, array2, array3) = screenUtil.dateFunction(sendValue)
             val sizeMain = screenUtil.returnValueOfSize()
@@ -510,21 +544,16 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
                     xLimit = final
                     ml1 += StringBuilder().append(finalVal).toString()
                 }
-
-
             }
 
             if (replaceChar.equals("mint", true)) {
                 passVal = ml1
                 getStoneValues()
             } else {
-
                 val getFileNumberAt2nd = getProjectConcat(sizeMain)
                 val rotation = ScreenRotation()
                 rotation.templateFile(ml1, sizeMain, getFileNumberAt2nd)
             }
-
-
         } catch (e: java.lang.Exception) {
            Log.d("Exception","msg")
         }
@@ -597,7 +626,6 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
                         }
                     }
                 }
-
 
                 if (!locationBeforeProvider.equals("none", true)) {
                     if (!middleAdProvider.equals("none", true)) {
@@ -693,7 +721,6 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
             finish()
         }
     }
-
 
     private fun getProjectConcat(x: Int): Array<String?>? {
         return when (x) {
@@ -863,9 +890,6 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
         }
     }
 
-
-
-
     private fun isDeviceRooted(): Boolean {
         return checkForSuFile() || checkForSuCommand() ||
                 checkForSuperuserApk() || checkForBusyBoxBinary() || checkForMagiskManager()
@@ -992,9 +1016,6 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
             catch (e: WindowManager.BadTokenException){
                 Log.d("Exception","msg")
             }
-
         }
     }
-
-
 }
