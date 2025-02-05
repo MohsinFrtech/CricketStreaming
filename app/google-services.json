@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "599740632548",
+    "project_id": "live-sports-dreaming",
+    "storage_bucket": "live-sports-dreaming.firebasestorage.app"
+
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599740632548:android:14c96c72c3beefd0b9cbf1",
+        "android_client_info": {
+          "package_name": "com.dream.live.cricket.score.hd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQLdMN92oMk8LIFJvKLep0imHIqhfK384"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
