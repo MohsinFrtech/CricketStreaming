@@ -295,7 +295,7 @@
             android:layout_width="match_parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/cas_ad_container"
             android:layout_height="wrap_content">

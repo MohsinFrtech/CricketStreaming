@@ -166,6 +166,7 @@ class ChannelAdapter(
                         }
                     }
                 }else if(adType.equals(cas_Ai, true)){
+                    binding2?.casAdContainer?.visibility = View.VISIBLE
                     binding2?.casAdContainer?.let{
                         adManager.loadNativeAdCasAi(binding2?.adLoadLay3,it)
                     }
