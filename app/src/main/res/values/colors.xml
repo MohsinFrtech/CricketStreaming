@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<color name="colorPrimary">#1a1c22</color>-->
-    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimary">#1aaff4</color>
     <!--<color name="colorPrimary">#3c3c3c</color>-->
 <!--     <color name="colorPrimaryDark">#E91E57C9</color>-->
-    <color name="colorPrimaryDark">#1e2d3f</color>
-    <color name="colorAccent">#186FCB</color>
+    <color name="colorPrimaryDark">#1aaff4</color>
+    <color name="colorAccent">#1aaff4</color>
     <color name="colorRed">#801424</color>
     <color name="detail_tv">#FFFFFF</color>
     <color name="background">#e1ebf0</color>

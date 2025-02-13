@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
             WindowManager.LayoutParams.FLAG_SECURE
         )
         AdSettings.addTestDevice("1fc9259a-88bf-4c7c-bcdc-0014d5b63674")
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.noChange)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
         adManager = AdManager(this, this, this)
 //        adManager?.loadAdmobInterstitialAdx()
         context = this
@@ -775,6 +775,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
     ) {
 
         if (destination.id == R.id.channel || destination.id == R.id.live_details) {
+
             binding.bottomNav.visibility = View.GONE
         } else {
             binding.bottomNav.visibility = View.VISIBLE

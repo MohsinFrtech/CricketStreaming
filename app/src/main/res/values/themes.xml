@@ -10,7 +10,7 @@
         <!-- Customize your theme here. -->
     </style>
     <style name="HomeScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimaryDark">@color/noChange</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/noChange</item>
     </style>
 

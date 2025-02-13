@@ -11,14 +11,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background">
+            android:background="@color/white">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/main"
                 android:layout_width="match_parent"
                 app:layout_constraintBottom_toTopOf="@+id/contentIndex"
                 android:layout_height="wrap_content"
-                android:background="@color/noChange"
+                android:background="@color/colorPrimary"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -71,13 +71,13 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/iconTint" />
+                    app:tint="@color/white" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:text="@string/ranking"
                     android:layout_marginStart="@dimen/_10sdp"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgRanking"
                     app:layout_constraintEnd_toStartOf="@+id/imgForRank"
@@ -92,7 +92,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="@+id/imgRanking"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/imgRanking" />
+                    app:layout_constraintTop_toTopOf="@+id/imgRanking"
+                    app:tint="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -115,7 +116,7 @@
                 <ImageView
                     android:id="@+id/imgBrowseTeam"
                     android:layout_width="wrap_content"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:contentDescription="@string/browse_teams"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
@@ -129,7 +130,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:text="@string/browseTeam"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     android:layout_marginStart="@dimen/_10sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgBrowseTeam"
@@ -145,7 +146,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             <View
@@ -168,7 +170,7 @@
                     android:id="@+id/imgBrowseSeries"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:contentDescription="@string/browse_series"
                     android:layout_marginBottom="@dimen/_5sdp"
                     android:layout_width="wrap_content"
@@ -181,7 +183,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:text="@string/browseSeries"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgBrowseSeries"
@@ -197,7 +199,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -225,7 +228,7 @@
                     android:id="@+id/imgNotification"
                     android:layout_width="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:contentDescription="@string/notifications"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
@@ -238,7 +241,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:text="@string/notification"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgNotification"
@@ -260,6 +263,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutDarkTheme"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_marginTop="1sp"
                 android:layout_height="wrap_content"
@@ -269,7 +273,7 @@
                 <ImageView
                     android:id="@+id/imgDarkTheme"
                     android:layout_marginTop="@dimen/_5sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:contentDescription="@string/dark_mode"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
@@ -284,7 +288,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:text="@string/darkTheme"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgDarkTheme"
                     app:layout_constraintEnd_toStartOf="@+id/notification_on_off2"
@@ -324,7 +328,7 @@
                 <ImageView
                     android:id="@+id/imgRateUS"
                     android:layout_width="wrap_content"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:contentDescription="@string/rate_us"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginStart="@dimen/_10sdp"
@@ -339,7 +343,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:text="@string/rateUs"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgRateUS"
                     app:layout_constraintEnd_toStartOf="@+id/imgForRateUS"
@@ -354,7 +358,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -369,7 +374,7 @@
                 <ImageView
                     android:id="@+id/imgFeedBack"
                     android:layout_marginStart="@dimen/_10sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:contentDescription="@string/feedback"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
@@ -384,7 +389,7 @@
                     android:layout_height="match_parent"
                     android:text="@string/feedback"
                     android:layout_marginStart="@dimen/_10sdp"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgFeedBack"
                     app:layout_constraintEnd_toStartOf="@+id/imgForFeedBack"
@@ -399,7 +404,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -416,7 +422,7 @@
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:contentDescription="@string/share"
                     android:layout_marginBottom="@dimen/_5sdp"
                     android:layout_height="wrap_content"
@@ -429,7 +435,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:text="@string/share"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgShare"
                     app:layout_constraintEnd_toStartOf="@+id/imgForShare"
@@ -444,7 +450,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -464,7 +471,7 @@
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/termsofuse_dark"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -474,7 +481,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:text="@string/terms"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     android:layout_marginStart="@dimen/_10sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgTerms"
@@ -490,7 +497,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -508,7 +516,7 @@
                     android:layout_width="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/privacypolicy_dark"
@@ -519,7 +527,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:text="@string/privacy_policy"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     android:layout_marginStart="@dimen/_10sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgPP"
@@ -535,7 +543,8 @@
                     android:src="@drawable/forwards"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -552,7 +561,7 @@
                     android:layout_width="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    app:tint="@color/iconTint"
+                    app:tint="@color/white"
                     android:layout_marginBottom="@dimen/_5sdp"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/version_dark"
@@ -564,7 +573,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:text="@string/versionApp"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgVersion"
                     app:layout_constraintEnd_toStartOf="@+id/versiontext"
@@ -578,7 +587,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:textColor="@color/moreTextColor"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_12sdp"
                     android:text="">
 

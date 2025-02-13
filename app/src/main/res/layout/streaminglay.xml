@@ -11,7 +11,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@drawable/background_main"
         android:focusable="true"
         android:focusableInTouchMode="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -19,7 +19,7 @@
         app:refreshing="@{model.isLoading}">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@color/background"
+            android:background="@drawable/background_main"
             android:layout_height="match_parent">
 
 
@@ -119,7 +119,7 @@
                 android:textStyle="bold"
                 android:fontFamily="@font/raleway_medium"
                 android:textSize="@dimen/_16sdp"
-                android:textColor="@color/textColor"
+                android:textColor="@color/white"
                 android:layout_marginTop="@dimen/_20sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

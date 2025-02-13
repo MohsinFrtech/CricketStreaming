@@ -157,7 +157,7 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.noChange)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
         preference = SharedPreference(this)
         FirebaseApp.initializeApp(this)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
