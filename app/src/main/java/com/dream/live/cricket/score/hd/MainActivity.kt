@@ -146,12 +146,13 @@ class MainActivity : AppCompatActivity(), DialogListener,
         )
         AdSettings.addTestDevice("1fc9259a-88bf-4c7c-bcdc-0014d5b63674")
         window.navigationBarColor = ContextCompat.getColor(this, R.color.noChange)
-//        startDestination(false)
+        startDestination(Constants.liveCheck)
         adManager = AdManager(this, this, this)
 //        adManager?.loadAdmobInterstitialAdx()
         context = this
         setUpActionBar()
         preference = SharedPreference(context)
+//        startDestination(false)
         binding.lifecycleOwner = this
         binding.modelData = viewModel
         viewModel?.apiResponseListener = this
@@ -170,7 +171,17 @@ class MainActivity : AppCompatActivity(), DialogListener,
                 }
             }
         })
-        setUpNavigationGraph()
+        if (Constants.liveCheck){
+            binding?.bottomNav?.visibility= View.VISIBLE
+            binding?.bottomNav2?.visibility= View.GONE
+
+            setUpNavigationGraph()
+        }
+        else {
+            binding?.bottomNav?.visibility= View.GONE
+            binding?.bottomNav2?.visibility= View.VISIBLE
+            setUpNavigationGraph2()
+        }
 
         setUpViewModel()
     }
@@ -906,186 +917,341 @@ class MainActivity : AppCompatActivity(), DialogListener,
         destination: NavDestination,
         arguments: Bundle?
     ) {
-
-        if (destination.id == R.id.channel || destination.id == R.id.live_details) {
-            binding.bottomNav.visibility = View.GONE
-        } else {
-            binding.bottomNav.visibility = View.VISIBLE
+        if (Constants.liveCheck == true) {
+            if (destination.id == R.id.channel || destination.id == R.id.live_details) {
+                binding.bottomNav.visibility = View.GONE
+            } else {
+                binding.bottomNav.visibility = View.VISIBLE
+            }
         }
 
 
-        if (destination.id == R.id.streaming) {
-            itemView?.removeAllViews()
-            itemView2?.removeAllViews()
-            itemView3?.removeAllViews()
-            itemView4?.removeAllViews()
-            itemView5?.removeAllViews()
-
-            val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.streamingactive, bottomMenuView22, false)
-            itemView?.addView(viewCustom22)
-            val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
-            itemView2?.addView(viewCustom3)
-
-            val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom6 =
-                LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
-            itemView3?.addView(viewCustom6)
-
-
-            val bottomMenuView111 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom16 = LayoutInflater.from(this)
-                .inflate(R.layout.upcominginactive, bottomMenuView111, false)
-            itemView4?.addView(viewCustom16)
-
-
-            val bottomMenuView21 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom21 =
-                LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView21, false)
-            itemView5?.addView(viewCustom21)
-        } else if (destination.id == R.id.home) {
-            itemView?.removeAllViews()
-            itemView2?.removeAllViews()
-            itemView3?.removeAllViews()
-            itemView4?.removeAllViews()
-            itemView5?.removeAllViews()
-
-            val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom22 =
-                LayoutInflater.from(this).inflate(R.layout.homeactive, bottomMenuView22, false)
-            itemView2?.addView(viewCustom22)
-            val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
-            itemView?.addView(viewCustom3)
-
-            val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom6 =
-                LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
-            itemView3?.addView(viewCustom6)
-
-
-            val bottomMenuView31 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom31 = LayoutInflater.from(this)
-                .inflate(R.layout.upcominginactive, bottomMenuView31, false)
-            itemView4?.addView(viewCustom31)
-
-
-            val bottomMenuView32 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom32 =
-                LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView32, false)
-            itemView5?.addView(viewCustom32)
-
-        } else if (destination.id == R.id.recentFragment) {
-
-            itemView?.removeAllViews()
-            itemView2?.removeAllViews()
-            itemView3?.removeAllViews()
-            itemView4?.removeAllViews()
-            itemView5?.removeAllViews()
-
-            val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.homeinactive, bottomMenuView22, false)
-            itemView2?.addView(viewCustom22)
-
-            val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
-            itemView?.addView(viewCustom3)
-
-
-            val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom6 =
-                LayoutInflater.from(this).inflate(R.layout.recentactive, bottomMenuView6, false)
-            itemView3?.addView(viewCustom6)
-
-            val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom33 = LayoutInflater.from(this)
-                .inflate(R.layout.upcominginactive, bottomMenuView33, false)
-            itemView4?.addView(viewCustom33)
-
-
-            val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom34 =
-                LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView34, false)
-            itemView5?.addView(viewCustom34)
-
-        } else if (destination.id == R.id.upcomingFragment) {
-            itemView?.removeAllViews()
-            itemView2?.removeAllViews()
-            itemView3?.removeAllViews()
-            itemView4?.removeAllViews()
-            itemView5?.removeAllViews()
-
-            val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.homeinactive, bottomMenuView22, false)
-            itemView2?.addView(viewCustom22)
-
-            val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
-            itemView?.addView(viewCustom3)
-
-
-            val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom6 =
-                LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
-            itemView3?.addView(viewCustom6)
-
-            val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom33 =
-                LayoutInflater.from(this).inflate(R.layout.upcomingactive, bottomMenuView33, false)
-            itemView4?.addView(viewCustom33)
-
-
-            val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom34 =
-                LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView34, false)
-            itemView5?.addView(viewCustom34)
-
+        if (Constants.liveCheck == false) {
+            if (destination.id == R.id.home) {
+                backBoolean = true
+            } else {
+                backBoolean = false
+            }
         } else {
-            itemView?.removeAllViews()
-            itemView2?.removeAllViews()
-            itemView3?.removeAllViews()
-            itemView4?.removeAllViews()
-            itemView5?.removeAllViews()
-
-            val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.homeinactive, bottomMenuView22, false)
-            itemView2?.addView(viewCustom22)
-
-            val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.streamingactive, bottomMenuView3, false)
-            itemView?.addView(viewCustom3)
-
-
-            val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom6 =
-                LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
-            itemView3?.addView(viewCustom6)
-
-            val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom33 = LayoutInflater.from(this)
-                .inflate(R.layout.upcominginactive, bottomMenuView33, false)
-            itemView4?.addView(viewCustom33)
-
-
-            val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
-            val viewCustom34 =
-                LayoutInflater.from(this).inflate(R.layout.moreactive, bottomMenuView34, false)
-            itemView5?.addView(viewCustom34)
+            backBoolean = destination.id == R.id.streaming
         }
+
+        if (Constants.liveCheck){
+            if (destination.id == R.id.streaming) {
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 = LayoutInflater.from(this)
+                    .inflate(R.layout.streamingactive, bottomMenuView22, false)
+                itemView?.addView(viewCustom22)
+                val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                itemView2?.addView(viewCustom3)
+
+                val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+
+                val bottomMenuView111 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom16 = LayoutInflater.from(this)
+                    .inflate(R.layout.upcominginactive, bottomMenuView111, false)
+                itemView4?.addView(viewCustom16)
+
+
+                val bottomMenuView21 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom21 =
+                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView21, false)
+                itemView5?.addView(viewCustom21)
+            } else if (destination.id == R.id.home) {
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 =
+                    LayoutInflater.from(this).inflate(R.layout.homeactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+                val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+                val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+
+                val bottomMenuView31 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom31 = LayoutInflater.from(this)
+                    .inflate(R.layout.upcominginactive, bottomMenuView31, false)
+                itemView4?.addView(viewCustom31)
+
+
+                val bottomMenuView32 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom32 =
+                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView32, false)
+                itemView5?.addView(viewCustom32)
+
+            } else if (destination.id == R.id.recentFragment) {
+
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 = LayoutInflater.from(this)
+                    .inflate(R.layout.homeinactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+
+                val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+
+                val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.recentactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+                val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom33 = LayoutInflater.from(this)
+                    .inflate(R.layout.upcominginactive, bottomMenuView33, false)
+                itemView4?.addView(viewCustom33)
+
+
+                val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom34 =
+                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView34, false)
+                itemView5?.addView(viewCustom34)
+
+            } else if (destination.id == R.id.upcomingFragment) {
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 = LayoutInflater.from(this)
+                    .inflate(R.layout.homeinactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+
+                val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+
+                val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+                val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom33 =
+                    LayoutInflater.from(this).inflate(R.layout.upcomingactive, bottomMenuView33, false)
+                itemView4?.addView(viewCustom33)
+
+
+                val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom34 =
+                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView34, false)
+                itemView5?.addView(viewCustom34)
+
+            } else {
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 = LayoutInflater.from(this)
+                    .inflate(R.layout.homeinactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+
+                val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+
+                val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+                val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom33 = LayoutInflater.from(this)
+                    .inflate(R.layout.upcominginactive, bottomMenuView33, false)
+                itemView4?.addView(viewCustom33)
+
+
+                val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom34 =
+                    LayoutInflater.from(this).inflate(R.layout.moreactive, bottomMenuView34, false)
+                itemView5?.addView(viewCustom34)
+            }
+        }
+        else{
+            ////////////
+             // if false....
+           if (destination.id == R.id.home) {
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+//                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 =
+                    LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+                val bottomMenuView3 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.homeactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+                val bottomMenuView6 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.upcominginactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+
+                val bottomMenuView31 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom31 = LayoutInflater.from(this)
+                    .inflate(R.layout.moreinactive, bottomMenuView31, false)
+                itemView4?.addView(viewCustom31)
+
+
+//                val bottomMenuView32 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+//                val viewCustom32 =
+//                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView32, false)
+//                itemView5?.addView(viewCustom32)
+
+            } else if (destination.id == R.id.recentFragment) {
+
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 = LayoutInflater.from(this)
+                    .inflate(R.layout.recentactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+
+                val bottomMenuView3 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+
+                val bottomMenuView6 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.upcominginactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+                val bottomMenuView33 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom33 = LayoutInflater.from(this)
+                    .inflate(R.layout.moreinactive, bottomMenuView33, false)
+                itemView4?.addView(viewCustom33)
+
+
+//                val bottomMenuView34 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+//                val viewCustom34 =
+//                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView34, false)
+//                itemView5?.addView(viewCustom34)
+
+            } else if (destination.id == R.id.upcomingFragment) {
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 = LayoutInflater.from(this)
+                    .inflate(R.layout.recentinactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+
+                val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+
+                val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.upcomingactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+                val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom33 =
+                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView33, false)
+                itemView4?.addView(viewCustom33)
+//
+//
+//                val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+//                val viewCustom34 =
+//                    LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView34, false)
+//                itemView5?.addView(viewCustom34)
+
+            } else {
+                itemView?.removeAllViews()
+                itemView2?.removeAllViews()
+                itemView3?.removeAllViews()
+                itemView4?.removeAllViews()
+                itemView5?.removeAllViews()
+
+                val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom22 = LayoutInflater.from(this)
+                    .inflate(R.layout.recentinactive, bottomMenuView22, false)
+                itemView2?.addView(viewCustom22)
+
+                val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom3 =
+                    LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                itemView?.addView(viewCustom3)
+
+
+                val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom6 =
+                    LayoutInflater.from(this).inflate(R.layout.upcominginactive, bottomMenuView6, false)
+                itemView3?.addView(viewCustom6)
+
+                val bottomMenuView33 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+                val viewCustom33 = LayoutInflater.from(this)
+                    .inflate(R.layout.moreactive, bottomMenuView33, false)
+                itemView4?.addView(viewCustom33)
+
+
+//                val bottomMenuView34 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
+//                val viewCustom34 =
+//                    LayoutInflater.from(this).inflate(R.layout.moreactive, bottomMenuView34, false)
+//                itemView5?.addView(viewCustom34)
+            }
+        }
+
+
 
 
         //////////////////////
-        backBoolean = destination.id == R.id.streaming
+//        backBoolean = destination.id == R.id.streaming
 
 
     }

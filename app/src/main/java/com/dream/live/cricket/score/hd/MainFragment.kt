@@ -93,7 +93,11 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
         // Observe Live Data for updating Data in slider
         liveViewModel.sliderList.observe(viewLifecycleOwner) {
             if (it != null) {
+                binding?.noDataText?.visibility=View.GONE
                 setAdapter2(it)
+            }
+            else{
+                binding?.noDataText?.visibility=View.VISIBLE
             }
         }
         modelEvent?.dataModelList?.observe(viewLifecycleOwner) {
@@ -287,6 +291,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
 
             var tFormatList: MutableList<LiveScoresModel?> = liveScores.toMutableList()
             if (!tFormatList.isNullOrEmpty()) {
+                binding?.noDataText?.visibility=View.GONE
                 tFormatList.sortBy {
                     it?.id
                 }
@@ -307,6 +312,9 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                 }
                 binding?.recyclerviewSlider?.itemAnimator = animator
             }
+            else{
+                binding?.noDataText?.visibility=View.VISIBLE
+            }
 
 //            tFormatList.sortBy {
 //                it?.id
@@ -314,7 +322,7 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
 //            binding?.progressBar?.visibility=View.GONE
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.d("Exception","msg")
         }
     }
 
