@@ -442,7 +442,7 @@
                     android:textColor="@color/textColor"
                     android:textSize="@dimen/_12sdp"
                     android:textStyle="bold"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/adContainerNative" />
 

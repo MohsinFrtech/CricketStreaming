@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
         )
         AdSettings.addTestDevice("1fc9259a-88bf-4c7c-bcdc-0014d5b63674")
         window.navigationBarColor = ContextCompat.getColor(this, R.color.noChange)
+//        startDestination(false)
         adManager = AdManager(this, this, this)
 //        adManager?.loadAdmobInterstitialAdx()
         context = this
@@ -174,6 +175,31 @@ class MainActivity : AppCompatActivity(), DialogListener,
         setUpViewModel()
     }
 
+    private fun startDestination(value: Boolean) {
+        try {
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val inflater = navHostFragment.navController.navInflater
+            val graph = inflater.inflate(R.navigation.nav_graph)
+            if (graph!=null){
+                if (value == true) {
+                    graph?.setStartDestination(R.id.streaming)
+//
+                } else {
+                    graph?.setStartDestination(R.id.home)
+//
+                }
+
+                val navController = navHostFragment?.navController
+                navController?.setGraph(graph, intent.extras)
+            }
+
+        }
+        catch (e:Exception){
+            Log.d("Exception","msg")
+        }
+
+    }
 
 
 
@@ -186,8 +212,8 @@ class MainActivity : AppCompatActivity(), DialogListener,
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.home,
                 R.id.streaming,
+                R.id.home,
                 R.id.recentFragment,
                 R.id.upcomingFragment,
                 R.id.moreFragment
@@ -201,14 +227,14 @@ class MainActivity : AppCompatActivity(), DialogListener,
         val view = bottomMenuView.getChildAt(0)
         itemView = view as BottomNavigationItemView
         val viewCustom =
-            LayoutInflater.from(this).inflate(R.layout.homeactive, bottomMenuView, false)
+            LayoutInflater.from(this).inflate(R.layout.streamingactive, bottomMenuView, false)
         itemView?.addView(viewCustom)
 
         val bottomMenuView2 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
         val view2 = bottomMenuView2.getChildAt(1)
         itemView2 = view2 as BottomNavigationItemView
         val viewCustom2 =
-            LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView2, false)
+            LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView2, false)
         itemView2?.addView(viewCustom2)
 
 
@@ -291,6 +317,113 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
 
 
+    private fun setUpNavigationGraph2() {
+        val navHostFragment: NavHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+//                R.id.streaming,
+                R.id.home,
+                R.id.recentFragment,
+                R.id.upcomingFragment,
+                R.id.moreFragment
+            )
+        )
+        navController = navHostFragment.navController
+        setupActionBarWithNavController(navController!!, appBarConfiguration)
+        binding.bottomNav2.setupWithNavController(navController!!)
+
+        val bottomMenuView = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+        val view = bottomMenuView.getChildAt(0)
+        itemView = view as BottomNavigationItemView
+        val viewCustom =
+            LayoutInflater.from(this).inflate(R.layout.homeactive, bottomMenuView, false)
+        itemView?.addView(viewCustom)
+
+        val bottomMenuView2 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+        val view2 = bottomMenuView2.getChildAt(1)
+        itemView2 = view2 as BottomNavigationItemView
+        val viewCustom2 =
+            LayoutInflater.from(this).inflate(R.layout.recentinactive, bottomMenuView2, false)
+        itemView2?.addView(viewCustom2)
+
+
+        val bottomMenuView4 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+        val view3 = bottomMenuView4.getChildAt(2)
+        itemView3 = view3 as BottomNavigationItemView
+        val viewCustom4 =
+            LayoutInflater.from(this).inflate(R.layout.upcominginactive, bottomMenuView4, false)
+        itemView3?.addView(viewCustom4)
+
+
+        val bottomMenuView5 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+        val view5 = bottomMenuView5.getChildAt(3)
+        itemView4 = view5 as BottomNavigationItemView
+        val viewCustom5 =
+            LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView4, false)
+        itemView4?.addView(viewCustom5)
+
+
+//        val bottomMenuView6 = binding.bottomNav2.getChildAt(0) as BottomNavigationMenuView
+//        val view6 = bottomMenuView6.getChildAt(4)
+//        itemView5 = view6 as BottomNavigationItemView
+//        val viewCustom6 =
+//            LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView4, false)
+//        itemView5?.addView(viewCustom6)
+
+        //Add custom tab menu
+
+        navController!!.addOnDestinationChangedListener(this)
+
+
+        binding.bottomNav2.setOnItemSelectedListener { item ->
+
+            try {
+                navigationTap += 1
+                if (navigationTap == showNavigationAd) {
+
+                    if (!Constants.tapPositionProvider.equals("none", true)) {
+                        if (!Constants.tapPositionProvider.equals(Constants.startApp,true)) {
+                            navigationTap = 0
+                            showNavigationAd += 1
+                            val local = AppContextProvider.getContext()
+                            local?.let { NewAdManager.showAds(Constants.tapPositionProvider, this, it) }
+                        }
+                        else{
+                            if (Constants.tapPositionProvider.equals(Constants.startApp, true)) {
+                                adManager?.loadAdProvider(
+                                    Constants.tapPositionProvider,
+                                    Constants.tap, null, null, null,null)
+                            }
+                        }
+                    }
+                    else{
+                        navigationTap =0
+                    }
+                    //showInterAd
+                }
+            } catch (e: Exception) {
+                Log.d("Exception","msg")
+            }
+
+            Log.d("idMenuee","id"+item.itemId+" "+"sep"+navController?.currentDestination?.id)
+            if (item.itemId!= navController?.currentDestination?.id){
+                navController?.navigate(item.itemId,null,NavOptions.Builder().setLaunchSingleTop(true).build())
+            }
+
+//            if (item.itemId != navController!!.currentDestination?.id) {
+//                // If it is, do nothing or handle the reselection as desired
+//                // In this case, we are not performing any action
+//                navController?.navigate(item)
+//            } else {
+//                // Navigate to the selected item using NavigationUI
+//                NavigationUI.onNavDestinationSelected(item, navController!!)
+//            }
+            true
+        }
+
+
+    }
 
 
 
@@ -780,22 +913,22 @@ class MainActivity : AppCompatActivity(), DialogListener,
             binding.bottomNav.visibility = View.VISIBLE
         }
 
-        if (destination.id == R.id.home) {
+
+        if (destination.id == R.id.streaming) {
             itemView?.removeAllViews()
             itemView2?.removeAllViews()
             itemView3?.removeAllViews()
             itemView4?.removeAllViews()
             itemView5?.removeAllViews()
 
-
             val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.streaming_inactive, bottomMenuView22, false)
-            itemView2?.addView(viewCustom22)
+                .inflate(R.layout.streamingactive, bottomMenuView22, false)
+            itemView?.addView(viewCustom22)
             val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.homeactive, bottomMenuView3, false)
-            itemView?.addView(viewCustom3)
+                LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+            itemView2?.addView(viewCustom3)
 
             val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom6 =
@@ -813,7 +946,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
             val viewCustom21 =
                 LayoutInflater.from(this).inflate(R.layout.moreinactive, bottomMenuView21, false)
             itemView5?.addView(viewCustom21)
-        } else if (destination.id == R.id.streaming) {
+        } else if (destination.id == R.id.home) {
             itemView?.removeAllViews()
             itemView2?.removeAllViews()
             itemView3?.removeAllViews()
@@ -822,11 +955,11 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
             val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom22 =
-                LayoutInflater.from(this).inflate(R.layout.streamingactive, bottomMenuView22, false)
+                LayoutInflater.from(this).inflate(R.layout.homeactive, bottomMenuView22, false)
             itemView2?.addView(viewCustom22)
             val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
             itemView?.addView(viewCustom3)
 
             val bottomMenuView6 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
@@ -856,12 +989,12 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
             val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.streaming_inactive, bottomMenuView22, false)
+                .inflate(R.layout.homeinactive, bottomMenuView22, false)
             itemView2?.addView(viewCustom22)
 
             val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
             itemView?.addView(viewCustom3)
 
 
@@ -890,12 +1023,12 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
             val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.streaming_inactive, bottomMenuView22, false)
+                .inflate(R.layout.homeinactive, bottomMenuView22, false)
             itemView2?.addView(viewCustom22)
 
             val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                LayoutInflater.from(this).inflate(R.layout.streaming_inactive, bottomMenuView3, false)
             itemView?.addView(viewCustom3)
 
 
@@ -916,8 +1049,6 @@ class MainActivity : AppCompatActivity(), DialogListener,
             itemView5?.addView(viewCustom34)
 
         } else {
-
-
             itemView?.removeAllViews()
             itemView2?.removeAllViews()
             itemView3?.removeAllViews()
@@ -926,12 +1057,12 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
             val bottomMenuView22 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom22 = LayoutInflater.from(this)
-                .inflate(R.layout.streaming_inactive, bottomMenuView22, false)
+                .inflate(R.layout.homeinactive, bottomMenuView22, false)
             itemView2?.addView(viewCustom22)
 
             val bottomMenuView3 = binding.bottomNav.getChildAt(0) as BottomNavigationMenuView
             val viewCustom3 =
-                LayoutInflater.from(this).inflate(R.layout.homeinactive, bottomMenuView3, false)
+                LayoutInflater.from(this).inflate(R.layout.streamingactive, bottomMenuView3, false)
             itemView?.addView(viewCustom3)
 
 
@@ -954,7 +1085,7 @@ class MainActivity : AppCompatActivity(), DialogListener,
 
 
         //////////////////////
-        backBoolean = destination.id == R.id.home
+        backBoolean = destination.id == R.id.streaming
 
 
     }

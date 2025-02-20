@@ -36,39 +36,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.media3.common.MimeTypes
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.common.Tracks
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.datasource.HttpDataSource
-import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.LoadControl
-import androidx.media3.exoplayer.dash.DashChunkSource
-import androidx.media3.exoplayer.dash.DashMediaSource
-import androidx.media3.exoplayer.dash.DefaultDashChunkSource
-import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
-import androidx.media3.exoplayer.drm.DrmSessionManager
-import androidx.media3.exoplayer.drm.FrameworkMediaDrm
-import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
-import androidx.media3.exoplayer.hls.HlsMediaSource
-import androidx.media3.exoplayer.source.ConcatenatingMediaSource
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
-import androidx.media3.exoplayer.trackselection.TrackSelector
-import androidx.media3.exoplayer.upstream.BandwidthMeter
-import androidx.media3.exoplayer.upstream.DefaultAllocator
-import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
-import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.navigation.navArgs
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadRequestData
@@ -110,9 +77,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.common.collect.ImmutableList
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.p2pengine.core.p2p.EngineExceptionListener
-import com.p2pengine.core.p2p.PlayerInteractor
-import com.p2pengine.core.utils.EngineException
 import com.p2pengine.sdk.P2pEngine
 import com.dream.live.cricket.score.hd.streaming.utils.HomeWatcher
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.adBefore
@@ -124,11 +88,42 @@ import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.timeVal
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants.xForwardedKey
 import com.dream.live.cricket.score.hd.streaming.utils.playerutils.PlayerScreenBottomSheetLang
 import com.facebook.ads.AdSettings
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.LoadControl
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.MediaMetadata
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Tracks
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
+import com.google.android.exoplayer2.drm.DrmSessionManager
+import com.google.android.exoplayer2.drm.FrameworkMediaDrm
+import com.google.android.exoplayer2.drm.LocalMediaDrmCallback
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.dash.DashChunkSource
+import com.google.android.exoplayer2.source.dash.DashMediaSource
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelector
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.upstream.BandwidthMeter
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.util.MimeTypes
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teamd2.live.football.tv.utils.AppContextProvider
-import com.traumsportzone.live.cricket.tv.models.FormatDataAudio
+import com.dream.live.cricket.score.hd.streaming.models.FormatDataAudio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.KeyManagementException
@@ -552,7 +547,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         }
     }
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     private fun getTracksPresentInsideUrl(player: ExoPlayer?) {
 
         if (player?.currentTracks != null) {
@@ -819,7 +814,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         }
     }
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     private fun setUpPlayerWithM3u8(path: String) {
 
         binding?.lottiePlayer?.visibility = View.GONE
@@ -897,7 +892,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
 
         val dashMediaItem = MediaItem.Builder().setUri(path).setMimeType(MimeTypes.APPLICATION_M3U8)
-            .setMediaMetadata(MediaMetadata.Builder().setTitle("Live Football Tv Teamd2").build())
+            .setMediaMetadata(MediaMetadata.Builder().setTitle("Cricket Streaming").build())
             .build()
 
         val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
@@ -1034,7 +1029,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //        setOnGestureListeners()
     }
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     private fun setUpPlayerDashWithAgent(path: String) {
 
         binding?.lottiePlayer?.visibility = View.GONE
@@ -1131,7 +1126,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 
 
         val dashMediaItem = MediaItem.Builder().setUri(path).setMimeType(MimeTypes.APPLICATION_MPD)
-            .setMediaMetadata(MediaMetadata.Builder().setTitle("Live Football TV").build())
+            .setMediaMetadata(MediaMetadata.Builder().setTitle("Cricket Streaming").build())
             .build()
 
         val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
@@ -1317,7 +1312,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
 //        setOnGestureListeners()
     }
 
-    @UnstableApi
+//    @UnstableApi
     class CustomHttpDataSourceFactoryWithHeader(
     ) : HttpDataSource.Factory {
         override fun createDataSource(): HttpDataSource {
@@ -1332,7 +1327,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
 
-    @UnstableApi
+//    @UnstableApi
     class CustomHttpDataSourceFactory(
         private val userAgent: String,
     ) : HttpDataSource.Factory {
@@ -1462,151 +1457,151 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     private fun setUpPlayerP2p(link: String?) {
 
-        try {
-            logger.printLog(tAG, "setUpPlayer P2p")
-            val parsedUrl = P2pEngine.getInstance()?.parseStreamUrl(link!!)
-
-            // Create LoadControl
-            val loadControl: LoadControl = DefaultLoadControl.Builder()
-                .setAllocator(DefaultAllocator(true, 16))
-                .setBufferDurationsMs(
-                    VideoPlayerConfig.MIN_BUFFER_DURATION,
-                    VideoPlayerConfig.MAX_BUFFER_DURATION,
-                    VideoPlayerConfig.MIN_PLAYBACK_START_BUFFER,
-                    VideoPlayerConfig.MIN_PLAYBACK_RESUME_BUFFER
-                )
-                .setTargetBufferBytes(-1)
-                .setPrioritizeTimeOverSizeThresholds(true)
-                .build()
-
-            binding?.lottiePlayer?.visibility = View.GONE
-
-            val meter: BandwidthMeter = DefaultBandwidthMeter.Builder(this).build()
-            val trackSelector: TrackSelector = DefaultTrackSelector(this)
-            // 2. Create a default LoadControl
-            player = null
-            player = context?.let {
-                ExoPlayer.Builder(it)
-                    //.setBandwidthMeter(meter)
-                    //.setTrackSelector(trackSelector)
-                    .setLoadControl(loadControl)
-                    .build()
-            }
-            binding?.playerView?.player = player
-            binding?.playerView?.keepScreenOn = true
-            //Initialize data source factory
-            val defaultDataSourceFactory = DefaultHttpDataSource.Factory()
-            val mediaItem2 = MediaItem.Builder()
-                .setUri(parsedUrl)
-                .setMimeType(MimeTypes.APPLICATION_M3U8)
-                .build()
-
-            //Initialize hlsMediaSource
-            val hlsMediaSource: HlsMediaSource =
-                HlsMediaSource.Factory(defaultDataSourceFactory).createMediaSource(mediaItem2)
-            val concatenatedSource = ConcatenatingMediaSource(hlsMediaSource)
-
-            val orientation = resources.configuration.orientation
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-                bindingExoPlayback?.fullScreenIcon?.setImageDrawable(
-                    context?.let {
-                        ContextCompat.getDrawable(
-                            it,
-                            R.drawable.ic_full_screen
-                        )
-                    }
-                )
-                count = 1
-            } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-            }
-
-            when (mLocation) {
-                PlaybackLocation.LOCAL -> {
-                    if (mCastSession != null && mCastSession?.remoteMediaClient != null) {
-                        mCastSession?.remoteMediaClient?.stop()
-                        mCastContext?.sessionManager?.endCurrentSession(true)
-                    }
-                    mPlaybackState =
-                        PlaybackState.IDLE
-
-                    if (player != null) {
-
-                        P2pEngine.getInstance()?.setPlayerInteractor(object : PlayerInteractor() {
-                            override fun onBufferedDuration(): Long {
-                                return if (player != null) {
-                                    player!!.bufferedPosition - player!!.currentPosition
-                                } else {
-                                    -1
-                                }
-                            }
-                        })
-
-                        P2pEngine.getInstance()?.registerExceptionListener(object :
-                            EngineExceptionListener {
-                            override fun onTrackerException(e: EngineException) {
-                                // Tracker Exception
-                                logger.printLog(tAG, "P2pEngine onTrackerException : ${e.cause}")
-                                logger.printLog(
-                                    tAG,
-                                    "P2pEngine onTrackerException : ${e.localizedMessage}"
-                                )
-                            }
-
-                            override fun onSignalException(e: EngineException) {
-                                // Signal Server Exception
-                                logger.printLog(tAG, "P2pEngine onSignalException : ${e.cause}")
-                                logger.printLog(
-                                    tAG,
-                                    "P2pEngine onSignalException : ${e.localizedMessage}"
-                                )
-                            }
-
-                            override fun onSchedulerException(e: EngineException) {
-                                // Scheduler Exception
-                                logger.printLog(tAG, "P2pEngine onSchedulerException : ${e.cause}")
-                                logger.printLog(
-                                    tAG,
-                                    "P2pEngine onSchedulerException : ${e.localizedMessage}"
-                                )
-                            }
-
-                            override fun onOtherException(e: EngineException) {
-                                // Other Exception
-                                logger.printLog(tAG, "P2pEngine onOtherException : ${e.cause}")
-                                logger.printLog(
-                                    tAG,
-                                    "P2pEngine onOtherException : ${e.localizedMessage}"
-                                )
-                            }
-                        })
-
-
-                        player?.addListener(this)
-                        player?.setMediaSource(concatenatedSource)
-                        player?.prepare()
-                        binding?.playerView?.requestFocus()
-                        player?.playWhenReady = true
-                    }
-
-                }
-
-                PlaybackLocation.REMOTE -> {
-                    mCastSession?.remoteMediaClient?.play()
-                    mPlaybackState =
-                        PlaybackState.PLAYING
-                }
-
-                else -> {
-                }
-            }
-        } catch (e: Exception) {
-            Log.d("Exception", "msg")
-        }
+//        try {
+//            logger.printLog(tAG, "setUpPlayer P2p")
+//            val parsedUrl = P2pEngine.getInstance()?.parseStreamUrl(link!!)
+//
+//            // Create LoadControl
+//            val loadControl: LoadControl = DefaultLoadControl.Builder()
+//                .setAllocator(DefaultAllocator(true, 16))
+//                .setBufferDurationsMs(
+//                    VideoPlayerConfig.MIN_BUFFER_DURATION,
+//                    VideoPlayerConfig.MAX_BUFFER_DURATION,
+//                    VideoPlayerConfig.MIN_PLAYBACK_START_BUFFER,
+//                    VideoPlayerConfig.MIN_PLAYBACK_RESUME_BUFFER
+//                )
+//                .setTargetBufferBytes(-1)
+//                .setPrioritizeTimeOverSizeThresholds(true)
+//                .build()
+//
+//            binding?.lottiePlayer?.visibility = View.GONE
+//
+//            val meter: BandwidthMeter = DefaultBandwidthMeter.Builder(this).build()
+//            val trackSelector: TrackSelector = DefaultTrackSelector(this)
+//            // 2. Create a default LoadControl
+//            player = null
+//            player = context?.let {
+//                ExoPlayer.Builder(it)
+//                    //.setBandwidthMeter(meter)
+//                    //.setTrackSelector(trackSelector)
+//                    .setLoadControl(loadControl)
+//                    .build()
+//            }
+//            binding?.playerView?.player = player
+//            binding?.playerView?.keepScreenOn = true
+//            //Initialize data source factory
+//            val defaultDataSourceFactory = DefaultHttpDataSource.Factory()
+//            val mediaItem2 = MediaItem.Builder()
+//                .setUri(parsedUrl)
+//                .setMimeType(MimeTypes.APPLICATION_M3U8)
+//                .build()
+//
+//            //Initialize hlsMediaSource
+//            val hlsMediaSource: HlsMediaSource =
+//                HlsMediaSource.Factory(defaultDataSourceFactory).createMediaSource(mediaItem2)
+//            val concatenatedSource = ConcatenatingMediaSource(hlsMediaSource)
+//
+//            val orientation = resources.configuration.orientation
+//            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//                binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+//                bindingExoPlayback?.fullScreenIcon?.setImageDrawable(
+//                    context?.let {
+//                        ContextCompat.getDrawable(
+//                            it,
+//                            R.drawable.ic_full_screen
+//                        )
+//                    }
+//                )
+//                count = 1
+//            } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//                binding?.playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+//            }
+//
+//            when (mLocation) {
+//                PlaybackLocation.LOCAL -> {
+//                    if (mCastSession != null && mCastSession?.remoteMediaClient != null) {
+//                        mCastSession?.remoteMediaClient?.stop()
+//                        mCastContext?.sessionManager?.endCurrentSession(true)
+//                    }
+//                    mPlaybackState =
+//                        PlaybackState.IDLE
+//
+//                    if (player != null) {
+//
+//                        P2pEngine.getInstance()?.setPlayerInteractor(object : PlayerInteractor() {
+//                            override fun onBufferedDuration(): Long {
+//                                return if (player != null) {
+//                                    player!!.bufferedPosition - player!!.currentPosition
+//                                } else {
+//                                    -1
+//                                }
+//                            }
+//                        })
+//
+//                        P2pEngine.getInstance()?.registerExceptionListener(object :
+//                            EngineExceptionListener {
+//                            override fun onTrackerException(e: EngineException) {
+//                                // Tracker Exception
+//                                logger.printLog(tAG, "P2pEngine onTrackerException : ${e.cause}")
+//                                logger.printLog(
+//                                    tAG,
+//                                    "P2pEngine onTrackerException : ${e.localizedMessage}"
+//                                )
+//                            }
+//
+//                            override fun onSignalException(e: EngineException) {
+//                                // Signal Server Exception
+//                                logger.printLog(tAG, "P2pEngine onSignalException : ${e.cause}")
+//                                logger.printLog(
+//                                    tAG,
+//                                    "P2pEngine onSignalException : ${e.localizedMessage}"
+//                                )
+//                            }
+//
+//                            override fun onSchedulerException(e: EngineException) {
+//                                // Scheduler Exception
+//                                logger.printLog(tAG, "P2pEngine onSchedulerException : ${e.cause}")
+//                                logger.printLog(
+//                                    tAG,
+//                                    "P2pEngine onSchedulerException : ${e.localizedMessage}"
+//                                )
+//                            }
+//
+//                            override fun onOtherException(e: EngineException) {
+//                                // Other Exception
+//                                logger.printLog(tAG, "P2pEngine onOtherException : ${e.cause}")
+//                                logger.printLog(
+//                                    tAG,
+//                                    "P2pEngine onOtherException : ${e.localizedMessage}"
+//                                )
+//                            }
+//                        })
+//
+//
+//                        player?.addListener(this)
+//                        player?.setMediaSource(concatenatedSource)
+//                        player?.prepare()
+//                        binding?.playerView?.requestFocus()
+//                        player?.playWhenReady = true
+//                    }
+//
+//                }
+//
+//                PlaybackLocation.REMOTE -> {
+//                    mCastSession?.remoteMediaClient?.play()
+//                    mPlaybackState =
+//                        PlaybackState.PLAYING
+//                }
+//
+//                else -> {
+//                }
+//            }
+//        } catch (e: Exception) {
+//            Log.d("Exception", "msg")
+//        }
 
 
     }
@@ -1716,7 +1711,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
     ///
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     private fun setImageViewListener(string: String, id: Int) {
         if (binding?.playerView != null) {
 
@@ -2311,7 +2306,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
     }
 
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     private fun setUpPlayer(link: String?) {
         binding?.lottiePlayer?.visibility = View.GONE
 
@@ -2535,7 +2530,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         }
     }
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPictureInPictureModeChanged(
         isInPictureInPictureMode: Boolean,
@@ -2573,7 +2568,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         loadLocation2BottomProvider()
     }
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (binding?.playerView != null) {
@@ -2819,7 +2814,7 @@ class PlayerScreen : AppCompatActivity(), Player.Listener, AdManagerListener,
         invalidateOptionsMenu()
     }
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     private fun setOnGestureListeners() {
 
         binding?.playerView?.setOnClickListener {

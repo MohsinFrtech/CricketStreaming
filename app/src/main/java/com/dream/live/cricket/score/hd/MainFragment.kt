@@ -200,69 +200,71 @@ class MainFragment : Fragment(), NavigateData, AdManagerListener {
                 }
 
 
-                if (!it.events.isNullOrEmpty()) {
+//                if (!it.events.isNullOrEmpty()) {
+//
+//                    liveChannelCount = 0
+//                    val liveAndImpChannels: MutableList<Channel> =
+//                        ArrayList<Channel>()
+//                    for (event in it.events!!) {
+//
+//                        var channel_belongs_country = false
+//
+//                        if (event.live == true) {
+//                            if (!event.channels.isNullOrEmpty()) {
+//
+//
+//                                for (channel in event.channels!!) {
+//                                    if (channel.live == true) {
+//                                        if (!channel.country_codes.isNullOrEmpty()){
+//                                            channel.country_codes?.forEach {
+//                                                code->
+//                                                if (code?.equals(currentCountryCode, true) == true){
+//                                                    channel_belongs_country = true
+//                                                }
+//                                            }
+//                                            if (channel_belongs_country){
+//                                                if (channel.important == true) {
+//                                                    liveAndImpChannels.add(channel)
+//
+//                                                }
+//                                            }
+//
+//                                        }else{
+//                                            if (channel.important == true) {
+//                                                liveAndImpChannels.add(channel)
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                    val channelRemoveDuplicate: MutableList<Channel> = ArrayList<Channel>()
+//                    if (liveAndImpChannels.isNotEmpty()) {
+//                        showLiveImpChannels()
+//                        for (element in liveAndImpChannels) {
+//                            // If this element is not present in newList
+//                            // then add it
+//                            if (!channelRemoveDuplicate.contains(element)) {
+//                                channelRemoveDuplicate.add(element)
+//                            }
+//                        }
+//                        binding?.gameRecycler?.visibility = View.VISIBLE
+//                        channelRemoveDuplicate.sortBy { it1 ->
+//                            it1.priority
+//                        }
+//                        setAdapter(channelRemoveDuplicate)
+//                    } else {
+//                        hideLiveImpChannels()
+//                    }
+//
+//                } else {
+//                    hideLiveImpChannels()
+//                }
 
-                    liveChannelCount = 0
-                    val liveAndImpChannels: MutableList<Channel> =
-                        ArrayList<Channel>()
-                    for (event in it.events!!) {
 
-                        var channel_belongs_country = false
-
-                        if (event.live == true) {
-                            if (!event.channels.isNullOrEmpty()) {
-
-
-                                for (channel in event.channels!!) {
-                                    if (channel.live == true) {
-                                        if (!channel.country_codes.isNullOrEmpty()){
-                                            channel.country_codes?.forEach {
-                                                code->
-                                                if (code?.equals(currentCountryCode, true) == true){
-                                                    channel_belongs_country = true
-                                                }
-                                            }
-                                            if (channel_belongs_country){
-                                                if (channel.important == true) {
-                                                    liveAndImpChannels.add(channel)
-
-                                                }
-                                            }
-
-                                        }else{
-                                            if (channel.important == true) {
-                                                liveAndImpChannels.add(channel)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    val channelRemoveDuplicate: MutableList<Channel> = ArrayList<Channel>()
-                    if (liveAndImpChannels.isNotEmpty()) {
-                        showLiveImpChannels()
-                        for (element in liveAndImpChannels) {
-                            // If this element is not present in newList
-                            // then add it
-                            if (!channelRemoveDuplicate.contains(element)) {
-                                channelRemoveDuplicate.add(element)
-                            }
-                        }
-                        binding?.gameRecycler?.visibility = View.VISIBLE
-                        channelRemoveDuplicate.sortBy { it1 ->
-                            it1.priority
-                        }
-                        setAdapter(channelRemoveDuplicate)
-                    } else {
-                        hideLiveImpChannels()
-                    }
-
-                } else {
-                    hideLiveImpChannels()
-                }
-            } else {
-                hideLiveImpChannels()
+//            } else {
+//                hideLiveImpChannels()
             }
         }
     }

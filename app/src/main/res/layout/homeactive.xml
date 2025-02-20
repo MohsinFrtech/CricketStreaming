@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:srcCompat="@drawable/home_active"
+        app:srcCompat="@drawable/score_active"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

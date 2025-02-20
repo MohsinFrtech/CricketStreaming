@@ -45,7 +45,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/channelName"
-                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     android:id="@+id/dateOfChannel"
                     android:textColor="@color/textColor"
@@ -54,7 +53,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:textSize="@dimen/_14sdp">
+                    android:textSize="@dimen/_12sdp">
 
                 </TextView>
 

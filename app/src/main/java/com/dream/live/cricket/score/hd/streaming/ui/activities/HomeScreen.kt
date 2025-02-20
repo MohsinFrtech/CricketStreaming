@@ -597,6 +597,12 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 
                 getIndexValue(it.extra_2!!)
             }
+            if (it.live == true){
+                Constants.liveCheck = true
+            }
+            else{
+                Constants.liveCheck = false
+            }
 
             if (!it.app_ads.isNullOrEmpty()) {
 

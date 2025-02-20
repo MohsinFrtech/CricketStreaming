@@ -4,7 +4,7 @@ import com.cleversolutions.ads.MediationManager
 import com.dream.live.cricket.score.hd.BuildConfig
 import com.dream.live.cricket.score.hd.streaming.models.FormatData
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.OnHomePressedListener
-import com.traumsportzone.live.cricket.tv.models.FormatDataAudio
+import com.dream.live.cricket.score.hd.streaming.models.FormatDataAudio
 
 
 object Constants {
@@ -19,6 +19,7 @@ object Constants {
     var casAiAdManager: MediationManager? = null
     var isCasAiInit = false
 
+    var liveCheck = false
     var playerActivityInPip=false
     var location1Provider = "none"
     var tapPositionProvider ="none"

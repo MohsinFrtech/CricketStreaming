@@ -14,19 +14,16 @@
         android:clickable="true"
         android:focusable="true">
 
-        <androidx.media3.ui.PlayerView
+        <com.google.android.exoplayer2.ui.StyledPlayerView
             android:id="@+id/playerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="true"
-            android:keepScreenOn="true"
             android:visibility="visible"
             app:controller_layout_id="@layout/exo_playback_control_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:show_buffering="always"
-            app:surface_type="surface_view" />
+            app:show_buffering="always" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topAdLay"

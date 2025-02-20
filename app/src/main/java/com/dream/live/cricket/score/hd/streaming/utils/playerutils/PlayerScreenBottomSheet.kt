@@ -9,12 +9,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.OptIn
 import androidx.databinding.DataBindingUtil
-import androidx.media3.common.C
-import androidx.media3.common.TrackSelectionOverride
-import androidx.media3.common.TrackSelectionParameters
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dream.live.cricket.score.hd.R
 import com.dream.live.cricket.score.hd.databinding.PlayerScreenBottomLayoutBinding
@@ -22,6 +16,11 @@ import com.dream.live.cricket.score.hd.streaming.adapters.FormatDataAdapter
 import com.dream.live.cricket.score.hd.streaming.models.FormatData
 import com.dream.live.cricket.score.hd.streaming.utils.interfaces.FormatSelection
 import com.dream.live.cricket.score.hd.streaming.utils.objects.Constants
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.common.collect.ImmutableList
@@ -107,7 +106,7 @@ class PlayerScreenBottomSheet(player: ExoPlayer, size: Int) : BottomSheetDialogF
         }
     }
 
-    @OptIn(UnstableApi::class)
+//    @OptIn(UnstableApi::class)
     override
     fun navigation(viewId: FormatData, pos: Int) {
         val SUPPORTED_TRACK_TYPES = ImmutableList.of(

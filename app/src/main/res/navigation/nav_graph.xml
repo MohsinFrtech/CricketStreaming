@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/home">
+    app:startDestination="@id/streaming">
 
     <fragment
         android:id="@+id/home"
@@ -122,7 +122,7 @@
     <fragment
         android:id="@+id/streaming"
         android:name="com.dream.live.cricket.score.hd.streaming.ui.fragments.StreamingFragment"
-        android:label="Upcoming Fragment"
+        android:label="Streaming Fragment"
         tools:layout="@layout/streaminglay">
 
         <action
