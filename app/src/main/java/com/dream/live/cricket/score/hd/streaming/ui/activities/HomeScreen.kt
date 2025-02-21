@@ -203,6 +203,7 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 //            requestPermissionLauncher.unregister()
 //            bindingHome?.notificationLayout?.visibility = View.GONE
 //            navigationToNextScreen()
+            isFromNotification = false
             bindingHome?.notificationLayout?.visibility = View.GONE
             try {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -442,7 +443,13 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
                 "", "Ok", "baseValue"
             )
         } else {
-            checkNotificationPermission()
+            val checkNoticationLayShow = preference?.getNotificationPermission(preferenceNoteLay)
+            if (checkNoticationLayShow == true) {
+                navigationToNextScreen()
+            }
+            else{
+                checkNotificationPermission()
+            }
         }
     }
 

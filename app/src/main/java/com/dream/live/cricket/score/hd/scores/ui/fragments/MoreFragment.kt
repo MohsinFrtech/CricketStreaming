@@ -3,6 +3,7 @@ package com.dream.live.cricket.score.hd.scores.ui.fragments
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -43,13 +45,44 @@ class MoreFragment:Fragment() {
 
         val getAppMode=preference?.getString(Constants.preferenceMode)
 
-        binding?.notificationOnOff2?.isOn = getAppMode.equals("dark",true)
-
+//        binding?.notificationOnOff2?.isOn = getAppMode.equals("dark",true)
+        if (getAppMode.equals("dark", true)) {
+            @Suppress("DEPRECATION")
+            binding?.notificationOnOff2?.thumbDrawable?.setColorFilter(
+                ContextCompat.getColor(
+                    requireActivity(),
+                    R.color.colorAccent
+                ), PorterDuff.Mode.MULTIPLY
+            )
+            @Suppress("DEPRECATION")
+            binding?.notificationOnOff2?.trackDrawable?.setColorFilter(
+                ContextCompat.getColor(
+                    requireActivity(),
+                    R.color.white
+                ), PorterDuff.Mode.MULTIPLY
+            )
+            binding?.notificationOnOff2?.isChecked = true
+        } else {
+            @Suppress("DEPRECATION")
+            binding?.notificationOnOff2?.thumbDrawable?.setColorFilter(
+                ContextCompat.getColor(
+                    requireActivity(),
+                    R.color.gray
+                ), PorterDuff.Mode.MULTIPLY
+            )
+            @Suppress("DEPRECATION")
+            binding?.notificationOnOff2?.trackDrawable?.setColorFilter(
+                ContextCompat.getColor(
+                    requireActivity(),
+                    R.color.gray
+                ), PorterDuff.Mode.SRC_IN
+            )
+            binding?.notificationOnOff2?.isChecked = false
+        }
         binding?.notificationOnOff?.isOn = getStatus==true
 
 
         binding?.notificationOnOff?.setOnToggledListener { toggleableView, isOn ->
-
             if (isOn)
             {
                 preference?.saveBool(Constants.preferenceKey, true)
@@ -64,29 +97,77 @@ class MoreFragment:Fragment() {
         }
 
 
-        binding?.notificationOnOff2?.setOnToggledListener { toggleableView, isOn ->
+//        binding?.notificationOnOff2?.setOnToggledListener { toggleableView, isOn ->
+//
+//            if (isOn)
+//            {
+//                Constants.modeCheckValue="dark"
+//                binding?.notificationOnOff2?.isOn=true
+//                AppCompatDelegate
+//                    .setDefaultNightMode(
+//                        AppCompatDelegate
+//                            .MODE_NIGHT_YES)
+//                preference?.saveString(Constants.preferenceMode,"dark")
+//            }
+//            else
+//            {
+//
+//                Constants.modeCheckValue="light"
+//                binding?.notificationOnOff2?.isOn=false
+//                AppCompatDelegate
+//                    .setDefaultNightMode(
+//                        AppCompatDelegate
+//                            .MODE_NIGHT_NO
+//                    )
+//                preference?.saveString(Constants.preferenceMode,"light")
+//
+//            }
+//
+//        }
 
-            if (isOn)
-            {
-                Constants.modeCheckValue="dark"
-                binding?.notificationOnOff2?.isOn=true
-                AppCompatDelegate
-                    .setDefaultNightMode(
-                        AppCompatDelegate
-                            .MODE_NIGHT_YES)
-                preference?.saveString(Constants.preferenceMode,"dark")
-            }
-            else
-            {
+        //////////////////
+        binding?.notificationOnOff2?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                @Suppress("DEPRECATION")
+                binding?.notificationOnOff2?.thumbDrawable?.setColorFilter(
+                    ContextCompat.getColor(
+                        requireActivity(),
+                        R.color.colorAccent
+                    ), PorterDuff.Mode.MULTIPLY
+                )
+                @Suppress("DEPRECATION")
+                binding?.notificationOnOff2?.trackDrawable?.setColorFilter(
+                    ContextCompat.getColor(
+                        requireActivity(),
+                        R.color.white
+                    ), PorterDuff.Mode.MULTIPLY
+                )
 
-                Constants.modeCheckValue="light"
-                binding?.notificationOnOff2?.isOn=false
-                AppCompatDelegate
-                    .setDefaultNightMode(
-                        AppCompatDelegate
-                            .MODE_NIGHT_NO
-                    )
-                preference?.saveString(Constants.preferenceMode,"light")
+                preference?.saveString(Constants.preferenceMode, "dark")
+                Constants.modeCheckValue = "dark"
+                AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_YES
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                binding?.notificationOnOff2?.thumbDrawable?.setColorFilter(
+                    ContextCompat.getColor(
+                        requireActivity(),
+                        R.color.gray
+                    ), PorterDuff.Mode.MULTIPLY
+                )
+                @Suppress("DEPRECATION")
+                binding?.notificationOnOff2?.trackDrawable?.setColorFilter(
+                    ContextCompat.getColor(
+                        requireActivity(),
+                        R.color.gray
+                    ), PorterDuff.Mode.SRC_IN
+                )
+                preference?.saveString(Constants.preferenceMode, "light")
+                Constants.modeCheckValue = "light"
+                AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_NO
+                )
 
             }
 

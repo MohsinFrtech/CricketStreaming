@@ -135,7 +135,6 @@ class MainActivity : AppCompatActivity(), DialogListener,
             AppCompatDelegate.setDefaultNightMode(
                 AppCompatDelegate.MODE_NIGHT_NO
             )
-
         }
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
