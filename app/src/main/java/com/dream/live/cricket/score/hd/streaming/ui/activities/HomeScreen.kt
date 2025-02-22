@@ -195,7 +195,16 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
 
         bindingHome?.yesBtn?.setOnClickListener {
             bindingHome?.notificationLayout?.visibility = View.GONE
-          //  makePermission()
+
+            val modeValue = preference?.getString(Constants.preferenceMode)
+
+            if (modeValue.equals("dark", true)) {
+
+                Constants.modeCheckValue = "dark"
+            } else {
+                Constants.modeCheckValue = "light"
+
+            }
             sliderRotation()
         }
         bindingHome?.skipBtn?.setOnClickListener {
@@ -304,21 +313,15 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
             navigationToNextScreen()
             ///means already subscribe to topic...
         } else {
-
-
             FirebaseMessaging.getInstance().subscribeToTopic("event")
                 .addOnCompleteListener { task ->
                     if (task.isComplete) {
                         //
                         preference?.saveBool(Constants.preferenceKey, true)
-
                     }
                 }
-
             navigationToNextScreen()
         }
-
-
     }
 
     override fun onResume() {
@@ -445,6 +448,15 @@ class HomeScreen : AppCompatActivity(), DialogListener ,ApiResponseListener{
         } else {
             val checkNoticationLayShow = preference?.getNotificationPermission(preferenceNoteLay)
             if (checkNoticationLayShow == true) {
+                val modeValue = preference?.getString(Constants.preferenceMode)
+
+                if (modeValue.equals("dark", true)) {
+
+                    Constants.modeCheckValue = "dark"
+                } else {
+                    Constants.modeCheckValue = "light"
+
+                }
                 navigationToNextScreen()
             }
             else{
